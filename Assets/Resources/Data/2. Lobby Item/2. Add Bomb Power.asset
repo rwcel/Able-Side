@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93a78cf0f6d84704d8af4af356a8afac, type: 3}
+  m_Name: 2. Add Bomb Power
+  m_EditorClassIdentifier: 
+  type: 1
+  sprite: {fileID: 21300000, guid: 3da3ae997c7876b49a15bada8b8f8e0a, type: 3}
+  itemName: "\uD3ED\uD0C4 \uD6A8\uACFC \uC99D\uAC00"
+  nameLanguageNum: 31
+  description: + Add{0} Bomb
+  descLanguageNum: 32
+  value: 3
+  price: 40
+  isFree: 1

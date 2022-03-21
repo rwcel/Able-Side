@@ -1,0 +1,210 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ddd95856c1b49d4d904b60d88409ce5, type: 3}
+  m_Name: LevelData
+  m_EditorClassIdentifier: 
+  FirstPos: {x: 0, y: -6.5, z: 0}
+  BetweenPos: {x: 0, y: 2, z: 0.5}
+  LeftOutPos: {x: -5, y: -14, z: -1}
+  RightOutPos: {x: 5, y: -14, z: -1}
+  MaxShowCharacterNum: 6
+  MaxSpawnCharacterNum: 5
+  MaxTicket: 5
+  TicketTime: 300
+  TicketPrice: 126
+  MaxTimeBase: 7
+  MaxBombCount: 40
+  DecreaseBombCount: 2
+  FeverComboNum: 10
+  DeleteBombCharacters: 10
+  GoodsSprites:
+  - {fileID: 21300000, guid: 1d4e2799179fa1643b446891c692be33, type: 3}
+  - {fileID: 21300000, guid: 2191ae1d0c0e4814f8251bf07701abeb, type: 3}
+  - {fileID: 21300000, guid: 7dbd0251aaa70004dade4425ff70a0e5, type: 3}
+  PackageSprite: {fileID: 21300000, guid: 72fe7c1d4541e2047996958b8f426861, type: 3}
+  LobbyItemDatas:
+  - {fileID: 11400000, guid: 23456fabcaad8374f9e1ef34f453df50, type: 2}
+  - {fileID: 11400000, guid: 79163e25603af3f4a9b6602029d7cf73, type: 2}
+  - {fileID: 11400000, guid: 3c456786901718440971a5c94aacf2f2, type: 2}
+  - {fileID: 11400000, guid: 9b9ed6e42a10002479307eb1c2335a52, type: 2}
+  - {fileID: 11400000, guid: f58e2818878a82047856358173eecc20, type: 2}
+  - {fileID: 11400000, guid: 15568e3802bc08d45ba9f031b46e48c0, type: 2}
+  InGameItemDatas:
+  - {fileID: 11400000, guid: a27ffbc6e060f7d4f8e6125bedb82cd6, type: 2}
+  - {fileID: 11400000, guid: 0e2bc1aaceffba04c8dcf8ef132360ff, type: 2}
+  - {fileID: 11400000, guid: 3f64fb051551abe438b04e2aff29c68d, type: 2}
+  - {fileID: 11400000, guid: 1fbb16391659bb447bde9cd4abc67358, type: 2}
+  - {fileID: 11400000, guid: fa36cc7705b472841aff16a4276d4a98, type: 2}
+  - {fileID: 11400000, guid: b2c0fb82c0aa6e04bbdd518230b79a22, type: 2}
+  - {fileID: 11400000, guid: bec59dba729acd847bbc81831bf72dfd, type: 2}
+  - {fileID: 11400000, guid: 9ef67e886e203b54f99fafe8dafce5e6, type: 2}
+  - {fileID: 11400000, guid: ede22a16958eacc428f2c01786b59c01, type: 2}
+  - {fileID: 11400000, guid: 47d2dbd3b50e54146aab7f6fa50d322d, type: 2}
+  - {fileID: 11400000, guid: f865df569cfc7264bb4a4b7e74e6430e, type: 2}
+  FeverDatas:
+  - {fileID: 11400000, guid: f7f3c806ece462744ad95ae279117fe7, type: 2}
+  - {fileID: 11400000, guid: 3d0c5836262fd4d4685708d34a20e0e2, type: 2}
+  - {fileID: 11400000, guid: d500260e896b6ef439ba55be7aad9337, type: 2}
+  - {fileID: 11400000, guid: d09416e0b3f82854ea469061915af13f, type: 2}
+  ProfileDatas:
+  - {fileID: 11400000, guid: fc2d404295b7bd14d999164c376662e9, type: 2}
+  - {fileID: 11400000, guid: a4514b263e33d7c43aa5c23bcff0870c, type: 2}
+  - {fileID: 11400000, guid: 593e019b159c55841a682bb3d39e117c, type: 2}
+  - {fileID: 11400000, guid: a78ecc002523d9c499655890d55a5ded, type: 2}
+  - {fileID: 11400000, guid: 51aa3baf9fcb37b40a0b68e0f84fdb12, type: 2}
+  - {fileID: 11400000, guid: d2fc9097ccc8b7a4ab4cfcd9ce1126c9, type: 2}
+  - {fileID: 11400000, guid: a79083825c5a21b4dac19ef072f76963, type: 2}
+  - {fileID: 11400000, guid: 75e3b8f1d99aa0d448b37e3c9568a400, type: 2}
+  ShopDatas:
+  - {fileID: 11400000, guid: 0b70789208d51a94ba4e3a2e2489d3b1, type: 2}
+  - {fileID: 11400000, guid: f85359deeedd6ab44bb7de6ca819222e, type: 2}
+  - {fileID: 11400000, guid: 49e026e0e871c914dafcf6b816884d80, type: 2}
+  - {fileID: 11400000, guid: f0a3534037a99614d80d0445f7dd53f3, type: 2}
+  - {fileID: 11400000, guid: 4aa49323289af1d4da5889107d6ce9fe, type: 2}
+  - {fileID: 11400000, guid: 8915fefb9d5ed8d449410529521ba170, type: 2}
+  - {fileID: 11400000, guid: d4fe05950fecdea4b8ade83304568e79, type: 2}
+  TicketData: {fileID: 11400000, guid: 30496bfa7e63beb41a296f47845e73b9, type: 2}
+  BaseScore: 10
+  OpenScores: a0860100e093040020a1070060ae0a00
+  TimeInfos:
+  - score: 0
+    decreaseTime: 1
+    successTime: 0.5
+    failTime: 1
+  - score: 100000
+    decreaseTime: 1
+    successTime: 0.5
+    failTime: 1
+  - score: 300000
+    decreaseTime: 2
+    successTime: 0.4
+    failTime: 1.2
+  - score: 500000
+    decreaseTime: 2
+    successTime: 0.4
+    failTime: 1.2
+  - score: 700000
+    decreaseTime: 2
+    successTime: 0.3
+    failTime: 1.4
+  - score: 1000000
+    decreaseTime: 3
+    successTime: 0.3
+    failTime: 1.4
+  - score: 1500000
+    decreaseTime: 3
+    successTime: 0.2
+    failTime: 1.6
+  ScoreComboInfos:
+  - combo: 0
+    score: 10
+    rewardScore: 0
+  - combo: 10
+    score: 100
+    rewardScore: 10000
+  - combo: 20
+    score: 500
+    rewardScore: 20000
+  - combo: 30
+    score: 1000
+    rewardScore: 30000
+  - combo: 50
+    score: 1500
+    rewardScore: 50000
+  - combo: 100
+    score: 2000
+    rewardScore: 100000
+  - combo: 150
+    score: 2000
+    rewardScore: 150000
+  - combo: 200
+    score: 5000
+    rewardScore: 250000
+  - combo: 250
+    score: 5000
+    rewardScore: 250000
+  - combo: 300
+    score: 5000
+    rewardScore: 300000
+  - combo: 350
+    score: 7000
+    rewardScore: 350000
+  - combo: 400
+    score: 7000
+    rewardScore: 400000
+  - combo: 500
+    score: 10000
+    rewardScore: 500000
+  ItemComboInfos:
+  - combo: 100
+    normalBoxPercent: 50
+    normalBoxCount: 1
+    rareBoxPercent: 0
+    rareBoxCount: 0
+  - combo: 200
+    normalBoxPercent: 50
+    normalBoxCount: 1
+    rareBoxPercent: 50
+    rareBoxCount: 1
+  - combo: 1000
+    normalBoxPercent: 0
+    normalBoxCount: 0
+    rareBoxPercent: 50
+    rareBoxCount: 2
+  - combo: 1000000
+    normalBoxPercent: 0
+    normalBoxCount: 0
+    rareBoxPercent: 50
+    rareBoxCount: 2
+  ItemComboUnit: 10
+  JumbleInfos:
+  - score: 300000
+    count: 10
+    percent: 15
+  - score: 500000
+    count: 10
+    percent: 10
+  - score: 700000
+    count: 10
+    percent: 5
+  - score: 1000000
+    count: 10
+    percent: 7
+  JumblePauseTime: 2
+  ReverseInfos:
+  - score: 700000
+    count: 10
+    percent: 7
+    time: 5
+  - score: 1000000
+    count: 10
+    percent: 7
+    time: 5
+  - score: 1500000
+    count: 10
+    percent: 10
+    time: 5
+  ReversePauseTime: 2
+  BlurInfos:
+  - score: 500000
+    count: 10
+    percent: 7
+    time: 5
+  - score: 700000
+    count: 10
+    percent: 5
+    time: 5
+  - score: 1000000
+    count: 10
+    percent: 7
+    time: 5
+  BlurPauseTime: 2

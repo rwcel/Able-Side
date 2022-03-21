@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd1642ecd25a994d94176eb658ae9e7, type: 3}
+  m_Name: 5. Dia Set 5
+  m_EditorClassIdentifier: 
+  type: 0
+  items:
+  - id: 101
+    value: 6000
+  - id: 102
+    value: 1800
+  price: 55000
+  sprite: {fileID: 21300000, guid: d31ade507f90815418386eb2e1be84eb, type: 3}
+  nameNum: 0
+  productID: com.ablegames.sidetab.diaset5

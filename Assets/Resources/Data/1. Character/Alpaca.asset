@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea806f1ca8dd2b4e95ac6330f338929, type: 3}
+  m_Name: Alpaca
+  m_EditorClassIdentifier: 
+  type: 0
+  prefab: {fileID: 84962662152946678, guid: e05966be9537bf247bba6c0e34df5172, type: 3}
+  headSprite: {fileID: 21300000, guid: 86f8ce8526f17414f8cca3a6046f2187, type: 3}

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "475014832220",
+    "project_id": "sidetab-4019323",
+    "storage_bucket": "sidetab-4019323.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475014832220:android:a90ccb01691389a73fc699",
+        "android_client_info": {
+          "package_name": "com.ablegames.SideTab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475014832220-3bidc9qekva7uli03hhfremomkdtmsp9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvfqrHWD5XGpwYnY6Sm8045g6MTRwPt5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475014832220-3bidc9qekva7uli03hhfremomkdtmsp9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

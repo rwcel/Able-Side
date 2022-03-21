@@ -1,0 +1,80 @@
+0 : Game Setting
+1 : BGM
+2 : SFX
+3 : Alarm
+4 : Language
+5 : English
+6 : Term & Services
+7 : Policy
+8 : Notice
+9 : C/S Team
+10 : Info
+11 : Coupon
+12 : How To Play
+13 : Account Setting
+14 : Copy
+15 : Switch Account
+16 : Setting
+17 : Game Start
+18 : High Score
+19 : Rank
+20 : UnRanked
+21 : Start
+22 : Cancel
+23 : Buy
+24 : Free
+25 : Charge
+26 : Get Item
+27 : Ad
+28 : Mail
+29 : Add Max Time
+30 : Add PlayTime {0}
+31 : Add Bomb Power
+32 : + Add{0} Bomb
+33 : Max Item
+34 : Add InGame Item {0}
+35 : Super Fever Start
+36 : Super Fever Start : {0} Time
+37 : Add Score
+38 : +{0}% Bonus Score
+39 : Parm Shield
+40 : {0}% InCorrect Shield
+41 : Add Dia +{0}
+42 : Tmp Add Bomb Power
+43 : Bonus Character
+44 : Bomb Full Gauge
+45 : Time Charge
+46 : Prevent Obstacle
+47 : Tmp Shield
+48 : Super Fever
+49 : Shop
+50 : Home
+51 : Combo
+52 : Save
+53 : Exit
+54 : Edit Profile
+55 : Over Accumulate Score - {0}
+56 : {0}% Bonus
+57 : Wood
+58 : Bronze
+59 : Silver
+60 : Gold
+61 : Sapphire
+62 : Rose
+63 : Platinum
+64 : Ruby
+65 : Diamond {0}
+66 : Bonus {0}
+70 : Weekly Package
+71 : Item Gacha
+72 : Copy Completed.
+73 : Recv
+74 : View
+75 : Ban Word
+76 : Nickname Duplicate
+77 : Short Nickname
+78 : Success
+79 : Fail
+80 : Okay
+200 : Would you buy item using the diamond {0}
+400 : Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic
