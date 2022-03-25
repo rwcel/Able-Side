@@ -216,15 +216,15 @@ public class ItemSelectUI : PopupUI
                             gameController.AddItem(gameController.StartGacha());
                         }
                         break;
+                    case ELobbyItem.Shield:
+                        //gameController.Shield += Values.Shield_Value;
+                        gameController.IsShield = true;
+                        break;
                     case ELobbyItem.SuperFeverStart:
                         gameController.IsStartFever = true;
                         break;
                     case ELobbyItem.AddScore:
                         gameController.ExtraScore += Values.AddScore_Value * 0.01f;
-                        break;
-                    case ELobbyItem.Shield:
-                        //gameController.Shield += Values.Shield_Value;
-                        gameController.IsShield = true;
                         break;
                     default:
                         Debug.LogError("Not Item!");

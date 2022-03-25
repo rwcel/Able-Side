@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PopupUI : MonoBehaviour
 {
+    [SerializeField] protected UnityEngine.UI.Button closeButton;
+
     protected GameManager _GameManager;
     protected GamePopup _GamePopup;
 

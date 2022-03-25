@@ -11,6 +11,7 @@ using UnityEngine.SignInWithApple;
 #endif
 using BackEnd;
 using static BackEnd.SendQueue;
+using BackEnd.GlobalSupport;
 using LitJson;
 
 public class DailyGift
@@ -90,8 +91,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     private static readonly int _Code_SignUp = 201;
     private static readonly int _Code_Login = 200;
-    private static readonly int _Code_NotFederationData = 204;
-    private static readonly int _Code_FederationData = 200;
+    private static readonly int _Code_Refresh = 401;
 
     #region 게임 데이터
 
@@ -171,7 +171,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     //private static readonly string comboRankUUID = "f5fc83e0-943f-11ec-a8f8-13e7955bbb97";       // 일일
     private static readonly string resultRankUUID = "12e8c840-a405-11ec-afae-c5cd66ba001b";                   // 통합 월간 랭킹
 
-    private static readonly string key_ItemGachaProbability = "4273";
+    private static readonly string key_ItemGachaProbability = "4392";
     private static readonly string key_DailyGiftChart = "DailyGiftChart";
 
     private bool isAlarm;           // 푸시알림
@@ -326,56 +326,8 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         });
     }
 
-    public void SuccessLogin()
-    {
-        _LoginUI.CloseAll();
-        //Debug.Log("로그인 성공 : " + loginType.ToString());
-        switch (loginType)
-        {
-            case ELogin.Google:
-                var googleBro = Backend.BMember.CheckUserInBackend(GetTokens(), FederationType.Google);
-                if(googleBro.IsSuccess())
-                {
-                    if (int.Parse(googleBro.GetStatusCode()) == _Code_NotFederationData)
-                    {
-                        _LoginUI.ShowPrivacyUI();
-                    }
-                    else if(int.Parse(googleBro.GetStatusCode()) == _Code_FederationData)
-                    {
-                        OnBackendAuthorized();
-                    }
-                }
-                break;
-            case ELogin.Facebook:
-                if (!FB.IsLoggedIn)
-                {
-                    Debug.LogError("페이스북 로그인 불가");
-                    return;
-                }
-
-                var fbBro = Backend.BMember.CheckUserInBackend(GetTokens(), FederationType.Facebook);
-                if (fbBro.IsSuccess())
-                {
-                    if (int.Parse(fbBro.GetStatusCode()) == _Code_NotFederationData)
-                    {
-                        _LoginUI.ShowPrivacyUI();
-                    }
-                    else if (int.Parse(fbBro.GetStatusCode()) == _Code_FederationData)
-                    {
-                        OnBackendAuthorized();
-                    }
-                }
-                break;
-            case ELogin.Guest:
-                _LoginUI.ShowPrivacyUI();
-                break;
-        }
-    }
-
     public void OnBackendAuthorized()
     {
-        _LoginUI.CloseAll();
-
         GetUserInfo();  // 유저정보 가져오기 후 변수에 저장
         GetData_Time();
         GetGMData();
@@ -398,31 +350,28 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         {
             var bro = Backend.BMember.AuthorizeFederation(GetTokens(), FederationType.Google, "gpgs");
             OnBackendAuthorized();
-            isProgressLogin = false;
+            Debug.Log("접속됨");
         }
         else
         {
             Social.localUser.Authenticate((bool success) => 
             {
-                if(success)
+                Debug.Log("접속됨? : " + success);
+                if (success)
                 {
                     var bro = Backend.BMember.AuthorizeFederation(GetTokens(), FederationType.Google, "gpgs");
                     if (bro.IsSuccess())
-                    {   
-                        var googleBro = Backend.BMember.CheckUserInBackend(GetTokens(), FederationType.Google);
-                        if (googleBro.IsSuccess())
+                    {
+                        if (int.Parse(bro.GetStatusCode()) == _Code_SignUp)
                         {
-                            Debug.Log(int.Parse(googleBro.GetStatusCode()));
-                            if (int.Parse(googleBro.GetStatusCode()) == _Code_NotFederationData)
-                            {   // 처음 로그인
-                                _LoginUI.ShowPrivacyUI();
-                                isProgressLogin = false;
-                            }
-                            else if (int.Parse(googleBro.GetStatusCode()) == _Code_FederationData)
-                            {
-                                OnBackendAuthorized();
-                                isProgressLogin = false;
-                            }
+                            // 회원가입
+                            _LoginUI.ShowPrivacyUI();
+                            isProgressLogin = false;
+                        }
+                        else if (int.Parse(bro.GetStatusCode()) == _Code_Login)
+                        {
+                            // 로그인
+                            OnBackendAuthorized();
                         }
                     }
                 }
@@ -479,15 +428,15 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     public void FacebookLogin()
     {
+        if (isProgressLogin)
+            return;
+
         var perms = new List<string>() { "public_profile", "email" };
         FB.LogInWithReadPermissions(perms, AuthCallback);
     }
 
     private void AuthCallback(ILoginResult result)
     {
-        if (isProgressLogin)
-            return;
-
         if (FB.IsLoggedIn)
         {
             // 뒤끝 서버로 가입요청
@@ -496,31 +445,29 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             if (Social.localUser.authenticated)
             {
                 var bro = Backend.BMember.AuthorizeFederation(GetTokens(), FederationType.Facebook);
+                Debug.Log("접속됨");
                 OnBackendAuthorized();
-                isProgressLogin = false;
             }
             else
             {
                 Social.localUser.Authenticate((bool success) =>
                 {
+                    Debug.Log("접속됨? : " + success);
                     if (success)
                     {
                         var bro = Backend.BMember.AuthorizeFederation(GetTokens(), FederationType.Facebook);
                         if (bro.IsSuccess())
-                        {   // 처음 로그인
-                            var fbBro = Backend.BMember.CheckUserInBackend(GetTokens(), FederationType.Facebook);
-                            if (fbBro.IsSuccess())
+                        {
+                            if (int.Parse(bro.GetStatusCode()) == _Code_SignUp)
                             {
-                                if (int.Parse(fbBro.GetStatusCode()) == _Code_NotFederationData)
-                                {
-                                    _LoginUI.ShowPrivacyUI();
-                                    isProgressLogin = true;
-                                }
-                                else if (int.Parse(fbBro.GetStatusCode()) == _Code_FederationData)
-                                {
-                                    OnBackendAuthorized();
-                                    isProgressLogin = false;
-                                }
+                                // 회원가입
+                                _LoginUI.ShowPrivacyUI();
+                                isProgressLogin = false;
+                            }
+                            else if (int.Parse(bro.GetStatusCode()) == _Code_Login)
+                            {
+                                // 로그인
+                                OnBackendAuthorized();
                             }
                         }
                     }
@@ -559,7 +506,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 // 로그인
                 OnBackendAuthorized();
                 Debug.Log("게스트 로그인 성공");
-                isProgressLogin = false;
             }
         }
         else
@@ -577,7 +523,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
 #endregion 회원가입
 
-#region 닉네임
+    #region 닉네임
 
     public void GetUserInfo()
     {
@@ -610,6 +556,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                     gamerID = Userdata["gamerId"].ToString();
 
                     DispatcherAction(_LoginUI.CloseAll);
+                    isProgressLogin = false;
 
                     // Debug.Log("Move Scene");
                     // GameSceneManager.Instance.SceneChange(GameSceneManager.EScene.InGame);
@@ -677,7 +624,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         recvItems.Clear();
     }
 
-#region 게임 데이터 관리
+    #region 게임 데이터 관리
 
     /* 데이터 사용 시 ["N"] ["S"] 등의 값에 대해
      BOOL	bool	        boolean 형태의 데이터가 이에 해당됩니다.
@@ -750,12 +697,13 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         var rows = bro.FlattenRows();
 
         profileIcon = int.Parse(rows[0][IconColumnName].ToString());
-        language = (ELanguage)Enum.Parse(typeof(ELanguage), rows[0][LanguageColumnName].ToString());
 
         userInDate_Profile = rows[0]["inDate"].ToString();
         canSerial = rows[0][UnlockSerialColumnName].ToString() == "True";
         buyWeekly = rows[0][BuyWeeklyColumnName].ToString() == "True";
         isAlarm = rows[0][PushAlarmColumnName].ToString() == "True";
+
+        language = (ELanguage)Enum.Parse(typeof(ELanguage), rows[0][LanguageColumnName].ToString());
 
         --loadCount;
         Debug.Log($"Profile : {bro}");
@@ -765,7 +713,15 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     {
         Param param = new Param();
         param.Add(IconColumnName, 0);
-        param.Add(LanguageColumnName, "English");
+        switch (Application.systemLanguage)
+        {
+            case SystemLanguage.Korean:
+                param.Add(LanguageColumnName, "Korean");
+                break;
+            default:
+                param.Add(LanguageColumnName, "English");
+                break;
+        }
         param.Add(UnlockSerialColumnName, false);
         param.Add(BuyWeeklyColumnName, false);
         param.Add(PushAlarmColumnName, isAlarm);                // *알람은 그 앞단계에서 이미 정해짐
@@ -785,6 +741,11 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
             --loadCount;
         });
+    }
+
+    private void Insert_Country()
+    {
+
     }
 
     public void Update_ProfileIcon(int value)
@@ -812,6 +773,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     /// </summary>
     public void ChangeLanguage()
     {
+
         if (language == ELanguage.English)
             language = ELanguage.Korean;
         else
@@ -1380,9 +1342,10 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 return;
 
             _GameManager.AccumulateScore += score;
-            if (!canSerial 
-            && loginType != ELogin.Guest                                                 // 게스트 제외
-            && _GameManager.AccumulateScore >= Values.UnlockSerialScore)
+            if (!canSerial
+                && loginType != ELogin.Guest                                                 // 게스트 제외
+                && GameApplication.Instance.IsTestMode                                  // **p2e 사용시 제거
+                && _GameManager.AccumulateScore >= Values.UnlockSerialScore)
             {
                 // canSerial = true;
                 UnlockSerial();
@@ -1855,7 +1818,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
 #endregion
 
-#region 차트
+    #region 차트
 
     /*
      * 아이템 (********Save안해놓음! : 수정 필요)
@@ -1890,7 +1853,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 name = chart["chartName"].ToString();
                 fileId = chart["selectedChartFileId"].ToString();
 
-                Debug.Log($"차트 탐색 : {name} / {fileId}");
+                // Debug.Log($"차트 탐색 : {name} / {fileId}");
 
                 if (name == EChart.Item.ToString())
                 {
@@ -2224,7 +2187,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
 #endregion 차트
 
-#region 확률
+    #region 확률
 
     /// <summary>
     /// 개수가 2개 이상이 필요하면 서버 데이터를 변경해야함
@@ -2269,7 +2232,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
 #endregion 확률
 
-#region 메일
+    #region 메일
 
     public List<FPostInfo> GetPostList()
     {
@@ -2629,9 +2592,9 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             case EItem.AddMaxTime:
             case EItem.PermBombPower:
             case EItem.MaxItem:
+            case EItem.PermShield:
             case EItem.SuperFeverStart:
             case EItem.BonusScore:
-            case EItem.PermShield:
                 //GameManager.ItemsCount[(ELobbyItem)((int)item - Values.StartNum_LobbyItem)]++;
                 _GameManager.ItemsCount[(int)item - Values.StartNum_LobbyItem] += value;
                 break;
@@ -2667,9 +2630,9 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             case EItem.AddMaxTime:
             case EItem.PermBombPower:
             case EItem.MaxItem:
+            case EItem.PermShield:
             case EItem.SuperFeverStart:
             case EItem.BonusScore:
-            case EItem.PermShield:
                 return LevelData.Instance.LobbyItemDatas[(int)item - Values.StartNum_LobbyItem].sprite;
             case EItem.BonusCharacter:      // 배열 [4]
             case EItem.TempBombPower:

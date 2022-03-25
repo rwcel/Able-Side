@@ -10,6 +10,8 @@ public class GachaItem : ShopItem
     [SerializeField] TextMeshProUGUI adCountText;
     [SerializeField] TextMeshProUGUI delayText;
 
+    private bool isOpen;
+
     GameManager _GameManager;
 
     public override void SetData(ShopData shopData)

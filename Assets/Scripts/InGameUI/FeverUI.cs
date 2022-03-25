@@ -49,7 +49,6 @@ public class FeverUI : MonoBehaviour
         int arr = 0;
         foreach (Transform child in feverVfxParent)
         {
-            Debug.Log(arr + "," + value);
             child.gameObject.SetActive(arr++ < value);
         }
 

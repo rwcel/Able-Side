@@ -35,9 +35,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 23456fabcaad8374f9e1ef34f453df50, type: 2}
   - {fileID: 11400000, guid: 79163e25603af3f4a9b6602029d7cf73, type: 2}
   - {fileID: 11400000, guid: 3c456786901718440971a5c94aacf2f2, type: 2}
+  - {fileID: 11400000, guid: 15568e3802bc08d45ba9f031b46e48c0, type: 2}
   - {fileID: 11400000, guid: 9b9ed6e42a10002479307eb1c2335a52, type: 2}
   - {fileID: 11400000, guid: f58e2818878a82047856358173eecc20, type: 2}
-  - {fileID: 11400000, guid: 15568e3802bc08d45ba9f031b46e48c0, type: 2}
   InGameItemDatas:
   - {fileID: 11400000, guid: a27ffbc6e060f7d4f8e6125bedb82cd6, type: 2}
   - {fileID: 11400000, guid: 0e2bc1aaceffba04c8dcf8ef132360ff, type: 2}

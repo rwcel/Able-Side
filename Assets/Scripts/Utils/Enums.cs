@@ -67,9 +67,9 @@ public enum EItem
     AddMaxTime = 111,            // 로비 아이템
     PermBombPower,
     MaxItem,
+    PermShield,             // Permanent 확률
     SuperFeverStart,
     BonusScore,
-    PermShield,             // Permanent 확률
 
     BonusCharacter = 121,        // 인게임 아이템
     TempBombPower,
@@ -100,9 +100,9 @@ public enum ELobbyItem
     AddMaxTime,
     AddBombPower,
     MaxItem,
+    Shield,                     // = PermShield
     SuperFeverStart,
     AddScore,
-    Shield,                     // = PermShield
 }
 
 public enum EInGameItem

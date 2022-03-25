@@ -44,7 +44,7 @@ public class GameApplication : Singleton<GameApplication>
         clickStream
             .Buffer(clickStream.Throttle(System.TimeSpan.FromSeconds(1)))
             .Where(x => x.Count >= 2)
-            .Subscribe(_ => Quit());
+            .Subscribe(_ => QuitMessage());
     }
 
     private void Update()
@@ -67,6 +67,11 @@ public class GameApplication : Singleton<GameApplication>
         float fps = 1.0f / deltaTime;
         string text = string.Format("{0:0.0}ms({1:0.}fps)", msec, fps);
         GUI.Label(rect, text, style);
+    }
+
+    public void QuitMessage()
+    {
+        SystemPopupUI.Instance.OpenTwoButton(84, 83, 53, 22, Quit, null);
     }
 
     public void Quit()

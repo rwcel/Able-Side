@@ -76,5 +76,12 @@
 78 : Success
 79 : Fail
 80 : Okay
+81 : Create Nickname
+82 : Rename Nickname
+83 : Can you exit the game?
+84 : Message
+85 : Can Logout?
+86 : Account will be deleted 7 days after.<br>If you connect cancel this.
+87 : Can you go to lobby?<br>Used item does not gaven back.
 200 : Would you buy item using the diamond {0}
 400 : Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic

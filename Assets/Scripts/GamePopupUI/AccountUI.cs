@@ -22,8 +22,10 @@ public class AccountUI : PopupUI
 
         googleButton.onClick.AddListener(() => _BackEndServerManager.ChangeFederation(ELogin.Google));
         facebookButton.onClick.AddListener(() => _BackEndServerManager.ChangeFederation(ELogin.Facebook));
-        logOutButton.onClick.AddListener(_BackEndServerManager.LogOut);
-        signOutButton.onClick.AddListener(_BackEndServerManager.SignOut);
+        logOutButton.onClick.AddListener(LogOut);
+        signOutButton.onClick.AddListener(SignOut);
+
+        closeButton.onClick.AddListener(_GamePopup.ClosePopup);
     }
 
     protected override void UpdateData()
@@ -57,5 +59,15 @@ public class AccountUI : PopupUI
                 }
                 break;
         }
+    }
+
+    private void LogOut()
+    {
+        SystemPopupUI.Instance.OpenTwoButton(84, 85, 53, 22, _BackEndServerManager.LogOut, null);
+    }
+
+    private void SignOut()
+    {
+        SystemPopupUI.Instance.OpenTwoButton(84, 86, 53, 22, _BackEndServerManager.SignOut, null);
     }
 }

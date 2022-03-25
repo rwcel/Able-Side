@@ -40,7 +40,7 @@ public class SystemPopupUI : Singleton<SystemPopupUI>
 
     public void OpenTwoButton(int _titleNum, string _contentsText, int _leftButtonNum, int _rightButtonNum,
                                     System.Action _leftButtonAction = null, System.Action _rightButtonAction = null)
-=> twoButtonUI.SetData(_titleNum, _contentsText, _leftButtonNum, _rightButtonNum, _leftButtonAction, _rightButtonAction);
+    => twoButtonUI.SetData(_titleNum, _contentsText, _leftButtonNum, _rightButtonNum, _leftButtonAction, _rightButtonAction);
 
 
     public void OpenNoneTouch(string _contentsText)
@@ -48,4 +48,5 @@ public class SystemPopupUI : Singleton<SystemPopupUI>
 
     public void OpenNoneTouch(int _contentsNum)
     => noneTouchUI.SetData(_contentsNum);
+
 }

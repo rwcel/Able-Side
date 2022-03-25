@@ -42,14 +42,14 @@ public static class Values
     public static readonly int MaxItem_Value = _LevelData.LobbyItemDatas[(int)ELobbyItem.MaxItem].value;
     public static readonly int MaxItem_Price = _LevelData.LobbyItemDatas[(int)ELobbyItem.MaxItem].price;
 
+    public static readonly int Shield_Value = _LevelData.LobbyItemDatas[(int)ELobbyItem.Shield].value;
+    public static readonly int Shield_Price = _LevelData.LobbyItemDatas[(int)ELobbyItem.Shield].price;
+
     public static readonly int SuperFeverStart_Value = _LevelData.LobbyItemDatas[(int)ELobbyItem.SuperFeverStart].value;
     public static readonly int SuperFeverStart_Price = _LevelData.LobbyItemDatas[(int)ELobbyItem.SuperFeverStart].price;
 
     public static readonly int AddScore_Value = _LevelData.LobbyItemDatas[(int)ELobbyItem.AddScore].value;
     public static readonly int AddScore_Price = _LevelData.LobbyItemDatas[(int)ELobbyItem.AddScore].price;
-
-    public static readonly int Shield_Value = _LevelData.LobbyItemDatas[(int)ELobbyItem.Shield].value;
-    public static readonly int Shield_Price = _LevelData.LobbyItemDatas[(int)ELobbyItem.Shield].price;
 
     // TicketItem - LobbyItemData
     public static readonly int Ticket_Price = _LevelData.TicketData.price;

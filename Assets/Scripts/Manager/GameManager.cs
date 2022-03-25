@@ -163,6 +163,7 @@ public class GameManager : Singleton<GameManager>
             || !PlayerPrefs.HasKey(_Key_TicketTime))
         {
             TicketTime = Values.TicketTime;
+            UpdateTicket(Ticket);
             return;
         }
 
