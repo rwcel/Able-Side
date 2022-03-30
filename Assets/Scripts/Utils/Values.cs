@@ -112,6 +112,7 @@ public static class Values
     public static readonly string Key_ShieldEffect = "Shield";
 
     public static readonly WaitForSeconds BombDelay = new WaitForSeconds(0.05f);
+    public static readonly WaitForSeconds Delay05 = new WaitForSeconds(0.5f);
     public static readonly WaitForSeconds Delay1 = new WaitForSeconds(1f);
     //public static readonly WaitForSeconds Delay005 = new WaitForSeconds(0.05f);
 
@@ -121,18 +122,30 @@ public static class Values
 
     public static readonly int BaseSum = 10;
 
-    public static readonly int StartNum_Goods = 101;
-    public static readonly int StartNum_LobbyItem = 111;
-    public static readonly int StartNum_InGameItem = 117;      // **Dia 제외하고 121 - 117 = 4가 되어야함
+    public static readonly int StartID_Goods = 101;
+    public static readonly int StartID_LobbyItem = 111;
+    public static readonly int StartID_InGameItem = 117;
+    public static readonly int StartID_DailyGift = 10001;
 
-    public static readonly int UnlockSerialScore = 500000;     // 천만
-    public static readonly int DailySerialScore = 100000;       // 4백만
+    public static readonly int UnlockSerialScore = 5000000;
+    public static readonly int DailySerialScore = 1000000;
+
+    public static readonly int PlayRewardScore = 250000;            // 게임 보상
+    public static readonly int PlayRewardCount = 5;
+
+    public static readonly int TimeRewardMaxTime = 14400;       // 4시간
+    public static readonly int TimeRewardAdTime = 30;          // 30분
+    public static readonly int TimeRewardAdCount = 4;             // 1회 4번 가능
+
 
     public static readonly int SerialRemainDay = 7;
 
     public static readonly float WarningTime = 2f;
 
     public static readonly int Max_Reward_Items = 5;
+
+    public static readonly int Input_Limit_Coupon = 18;
+    public static readonly int Input_Limit_Nickname = 12;
 
     // public static readonly int Infinity = 999;
 

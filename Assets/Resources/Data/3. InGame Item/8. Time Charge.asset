@@ -15,9 +15,9 @@ MonoBehaviour:
   type: 7
   sprite: {fileID: 21300000, guid: 50089ebfccda3d54db0ca7e114d7d8d7, type: 3}
   itemName: "\uC2DC\uAC04 \uCDA9\uC804"
-  languageNum: 45
+  languageNum: 354
   value: 99
   valueTime: 3
-  normalPercent: 8
-  rarePercent: 11
+  normalPercent: 12
+  rarePercent: 13
   startPercent: 20

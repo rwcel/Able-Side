@@ -15,9 +15,9 @@ MonoBehaviour:
   type: 5
   sprite: {fileID: 21300000, guid: 7dbd0251aaa70004dade4425ff70a0e5, type: 3}
   itemName: "\uBA38\uC26C\uB8F8"
-  nameLanguageNum: 57
+  nameLanguageNum: 305
   description: '{0}% InCorrect Shield'
-  descLanguageNum: 40
+  descLanguageNum: 325
   value: 3
   price: 78
   isFree: 1

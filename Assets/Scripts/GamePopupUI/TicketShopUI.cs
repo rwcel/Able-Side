@@ -17,15 +17,17 @@ public class TicketShopUI : PopupUI
     [SerializeField] Button exitButton;
 
 
-    protected override void UpdateData()
-    {
-        base.UpdateData();
+    //protected override void UpdateData()
+    //{
+    //    base.UpdateData();
 
-        adCountText.text = GameManager.Instance.TicketAdCount.ToString();
-    }
+    //    adCountText.text = GameManager.Instance.TicketAdCount.ToString();
+    //}
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         priceText.text = Values.Ticket_Price.ToString();
 
         AddListeners();
@@ -41,8 +43,8 @@ public class TicketShopUI : PopupUI
 
     private void OnBuy()
     {
-        SystemPopupUI.Instance.OpenTwoButton(23, string.Format(200.Localization(), Values.Ticket_Price), 80, 22,
-    BuyAction,
+        SystemPopupUI.Instance.OpenTwoButton(7, string.Format(214.Localization(), Values.Ticket_Price), 0, 1,
+            BuyAction,
             _GamePopup.ClosePopup);
     }
 
@@ -50,24 +52,14 @@ public class TicketShopUI : PopupUI
     {
         if(!GameManager.Instance.BuyTicket(Values.Ticket_Price))
         {
-            SystemPopupUI.Instance.OpenNoneTouch(79);
+            SystemPopupUI.Instance.OpenNoneTouch(52);
         }
         _GamePopup.ClosePopup();
     }
 
     private void OnAd()
     {
-        if (_GameManager.CanUseTicket)
-        {   // ¹«·á
-            AddTicket(Values.Ticket_AdValue);
-        }
-        else if (_GameManager.ChargeTicket)
-        {
-            // ±¤°í
-            UnityAdsManager.Instance.ShowRewardAD(() => AddTicket(Values.Ticket_AdValue)
-                                                                      ,  null //_GameManager.Timer_Ticket
-                                                                      , EDailyGift.Ticket);
-        }
+        _GameManager.UseDailyGift(EDailyGift.Ticket, () => AddTicket(Values.Ticket_AdValue));
     }
 
     private void AddTicket(int value)

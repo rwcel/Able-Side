@@ -30,6 +30,9 @@ public class ItemSelectUI : PopupUI
         [HideInInspector] public GameObject[] stateObjs;
     }
 
+    [Header("Texts")]
+    [SerializeField] TextMeshProUGUI subTitleText;
+
     [Header("Item")]
     [SerializeField] FItemUI[] itemsUI;
 
@@ -71,8 +74,10 @@ public class ItemSelectUI : PopupUI
         ClearItems();
     }
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         AddListeners();
 
         AddActions();
@@ -117,6 +122,11 @@ public class ItemSelectUI : PopupUI
             this.ObserveEveryValueChanged(_ => itemsUI[num].state)            // item.Value
                 .Subscribe(value => UpdateItemState(num, value))
                 .AddTo(this.gameObject);
+
+
+            _GameManager.ObserveEveryValueChanged(_ => _GameManager.LobbyItemFreeCount)
+                .Subscribe(value => subTitleText.text = string.Format(211.Localization(), value))
+                .AddTo(this.gameObject);
         }
     }
 
@@ -155,6 +165,8 @@ public class ItemSelectUI : PopupUI
             return;
         }
 
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+
         // *itemInfo로 적용이 안됨 : 값에 의한 참조
         if (itemInfo.state == EItemState.Select)
         {
@@ -179,7 +191,7 @@ public class ItemSelectUI : PopupUI
     /// </summary>
     public void OnGameStart()
     {
-        if(!_GameManager.CanGameStart)
+        if (!_GameManager.CanGameStart)
         {
             _GamePopup.OpenPopup(EGamePopup.TicketShop);
             return;

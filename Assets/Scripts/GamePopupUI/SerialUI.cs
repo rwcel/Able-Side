@@ -13,8 +13,10 @@ public class SerialUI : PopupUI
 
     private string serialCode;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         helpButton.onClick.AddListener(OnHelp);
         copyButton.onClick.AddListener(OnCopy);
         cancelButton.onClick.AddListener(_GamePopup.ClosePopup);
@@ -28,12 +30,12 @@ public class SerialUI : PopupUI
 
     void OnHelp()
     {
-        GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/ablegames/23");
+        GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/MemoList.nhn?search.clubid=30546852&search.menuid=20&viewType=pc");
     }
 
     void OnCopy()
     {
-        SystemPopupUI.Instance.OpenNoneTouch(72);
+        SystemPopupUI.Instance.OpenNoneTouch(16);
         serialCode.CopyToClipboard();
     }
 }

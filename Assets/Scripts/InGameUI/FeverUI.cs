@@ -31,7 +31,7 @@ public class FeverUI : MonoBehaviour
         gameController.OnFever += ActiveFever;
 
         gameController.ObserveEveryValueChanged(_ => gameController.IsFever)
-            .Subscribe(value => OnOffFever(value, gameController.Fever))
+            .Subscribe(value => OnOffFever(value, gameController.IsStartFever, gameController.Fever))
             .AddTo(this.gameObject);
 
         gameController.ObserveEveryValueChanged(_ => gameController.Fever)
@@ -39,11 +39,16 @@ public class FeverUI : MonoBehaviour
             .AddTo(this.gameObject);
     }
 
-    private void OnOffFever(bool onoff, int value = 0)
+    private void OnOffFever(bool onoff, bool isStartFever, int value = 0)
     {
         foreach (var feverObject in onoffObjs)
         {
             feverObject.SetActive(onoff);
+        }
+
+        if (isStartFever)
+        {
+            value = 1;
         }
 
         int arr = 0;
@@ -93,7 +98,7 @@ public class FeverUI : MonoBehaviour
         {
             time -= Time.deltaTime;
             yield return null;
-            sliderText.text = $"{Mathf.CeilToInt(time)}s";
+            sliderText.text = $"{Mathf.CeilToInt(time)}";
             sliderImg.fillAmount = time / maxTime;
             // Text?
         }
@@ -111,7 +116,7 @@ public class FeverUI : MonoBehaviour
 
     public void ClearData()
     {
-        OnOffFever(false);
+        OnOffFever(false, false);
 
         // Slider √ ±‚»≠
     }

@@ -15,4 +15,5 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: eb55c0df90a191243859b038d399661b, type: 3}
   missionScore: 1000000
   missionCombo: 0
-  nameNum: 61
+  nameNum: 404
+  descNum: 454

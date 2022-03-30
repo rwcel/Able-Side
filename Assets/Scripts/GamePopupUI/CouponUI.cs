@@ -12,8 +12,10 @@ public class CouponUI : PopupUI
 
     private string couponText;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         applyButton.onClick.AddListener(CheckCoupon);
         cancelButton.onClick.AddListener(_GamePopup.ClosePopup);
 
@@ -40,11 +42,11 @@ public class CouponUI : PopupUI
         if (BackEndServerManager.Instance.IsValidCoupon(couponText))
         {
             _GamePopup.OpenPopup(EGamePopup.Reward, null, () => _GamePopup.AllClosePopup(null));
-            SystemPopupUI.Instance.OpenNoneTouch(72);
+            SystemPopupUI.Instance.OpenNoneTouch(16);
         }
         else
         {
-            SystemPopupUI.Instance.OpenNoneTouch(79);
+            SystemPopupUI.Instance.OpenNoneTouch(16);
             inputField.text = "";
         }
     }

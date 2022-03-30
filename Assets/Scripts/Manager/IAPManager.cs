@@ -168,6 +168,8 @@ public class IAPManager : Singleton<IAPManager>, IStoreListener
     {
         Debug.Log($"구매한 상품의 정보를 볼 수 있다. ID : {purchaseEvent.purchasedProduct.definition.id}");
 
+        BackEndServerManager.Instance.PurchaseReceipt(purchaseEvent.purchasedProduct);
+
         if (onSuccess != null)
             onSuccess();
 

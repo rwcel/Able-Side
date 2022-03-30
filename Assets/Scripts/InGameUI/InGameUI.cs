@@ -32,6 +32,7 @@ public class InGameUI : MonoBehaviour
     [SerializeField] FeverUI feverUI;
 
     [Header("========== Ready ==========")]
+    [SerializeField] GameObject readyObj;
     [SerializeField] AnimEvent readyAnimEvent;
 
     [Header("========== Item ==========")]
@@ -112,11 +113,13 @@ public class InGameUI : MonoBehaviour
                 {
                     --GameManager.Instance.InputValue;
                     Time.timeScale = 0;
+                    AudioManager.Instance.PauseBGM(true);
                 }
                 , () =>
                 {
                     ++GameManager.Instance.InputValue;
                     Time.timeScale = 1;
+                    AudioManager.Instance.PauseBGM(false);
                 });
         });
     }
@@ -129,6 +132,10 @@ public class InGameUI : MonoBehaviour
             {
                 ClearData();
             }
+            else
+            {
+                readyObj.SetActive(true);
+            }
         };
 
         readyAnimEvent.SetAnimEvent(() => 
@@ -136,6 +143,7 @@ public class InGameUI : MonoBehaviour
             BackEndServerManager.Instance.GameStartTime = System.DateTime.Now;
             GameManager.Instance.InputValue = 1;
             GameManager.Instance.GameController.StartTime();
+            readyObj.SetActive(false);
         });
     }
 
@@ -220,6 +228,8 @@ public class InGameUI : MonoBehaviour
 
         feverUI.ClearData();
 
+        UpdateTimer(false);
+
         itemCount = 0;
     }
 
@@ -274,6 +284,7 @@ public class InGameUI : MonoBehaviour
             return;
 
         comboText.text = $"{value}";
+        comboText.color = value.ComboColor();
         comboAnim.SetTrigger(_Anim_Combo);
     }
 
@@ -281,6 +292,7 @@ public class InGameUI : MonoBehaviour
     {
         //timeSlider.maxValue = value;
         maxTime = value;
+        UpdateTime(GameManager.Instance.GameController.Time);
     }
 
     public void UpdateTime(float value)

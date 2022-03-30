@@ -127,6 +127,7 @@ public class OptionUI : DockUI
     //**씬변경 조금 더 생각해야함. 
     public void SwitchLanguage()
     {
+        _AudioManager.PlaySFX(ESFX.Touch);
         BackEndServerManager.Instance.ChangeLanguage();
         // GameSceneManager.Instance.ReloadScene();
     }
@@ -136,17 +137,14 @@ public class OptionUI : DockUI
     /// </summary>
     public void OnPolicy()
     {
-        _AudioManager.PlaySFX(ESFX.Touch);
         GameApplication.Instance.ShowWebView("AbleX", "http://ablegames.co.kr/terms-of-service");
     }
 
     /// <summary>
-    /// 공지사항 : 뒤끝?
+    /// 공식카페 공지사항
     /// </summary>
     public void OnNotice()
     {
-        _AudioManager.PlaySFX(ESFX.Touch);
-        //Application.OpenURL("https://cafe.naver.com/ArticleList.nhn?search.clubid=30546852&search.menuid=1&search.boardtype=L");
         GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/ArticleList.nhn?search.clubid=30546852&search.menuid=1&search.boardtype=L");
     }
 
@@ -155,8 +153,7 @@ public class OptionUI : DockUI
     /// </summary>
     public void OnCS()
     {
-        _AudioManager.PlaySFX(ESFX.Touch);
-        GameApplication.Instance.ShowWebView("AbleX", "http://ablegames.co.kr/#contact");
+        GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/MemoList.nhn?search.clubid=30546852&search.menuid=20&viewType=pc");
     }
 
     /// <summary>
@@ -164,7 +161,6 @@ public class OptionUI : DockUI
     /// </summary>
     public void OnInfo()
     {
-        _AudioManager.PlaySFX(ESFX.Touch);
         _GamePopup.OpenPopup(EGamePopup.Notice);
     }
 
@@ -173,8 +169,22 @@ public class OptionUI : DockUI
     /// </summary>
     public void OnCoupon()
     {
-        _AudioManager.PlaySFX(ESFX.Touch);
-        _GamePopup.OpenPopup(EGamePopup.Coupon);
+        //_GamePopup.OpenPopup(EGamePopup.Coupon);
+
+        SystemPopupUI.Instance.OpenInputTwoButton(Values.Input_Limit_Coupon, 181, 188, CheckCoupon, null);
+    }
+
+    private void CheckCoupon(string _text)
+    {
+        if (BackEndServerManager.Instance.IsValidCoupon(_text))
+        {
+            _GamePopup.OpenPopup(EGamePopup.Reward, null, () => _GamePopup.AllClosePopup(null));
+            SystemPopupUI.Instance.OpenNoneTouch(6);
+        }
+        else
+        {
+            SystemPopupUI.Instance.OpenNoneTouch(4);
+        }
     }
 
     /// <summary>
@@ -182,20 +192,20 @@ public class OptionUI : DockUI
     /// </summary>
     public void OnGuide()
     {
-        _AudioManager.PlaySFX(ESFX.Touch);
+        // SystemPopupUI.Instance.OpenNoneTouch(41);
+        GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/ablegames/68");
     }
 
     public void OnCopy()
     {
         _AudioManager.PlaySFX(ESFX.Touch);
-        SystemPopupUI.Instance.OpenNoneTouch(72);
+        SystemPopupUI.Instance.OpenNoneTouch(16);
 
         uuidText.text.CopyToClipboard();
     }
 
     public void OnAccount()
     {
-        _AudioManager.PlaySFX(ESFX.Touch);
         _GamePopup.OpenPopup(EGamePopup.Account);
     }
 }

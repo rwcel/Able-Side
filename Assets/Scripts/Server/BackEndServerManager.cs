@@ -18,23 +18,21 @@ public class DailyGift
 {
     public int freeCount;
     public int adCount;
-    public int chargeValue;
     public int adDelay;
 
     public DailyGift() { }
 
-    public DailyGift(int freeCount, int adCount, int chargeValue, int adDelay)
+    public DailyGift(int freeCount, int adCount)
     {
         this.freeCount = freeCount;
         this.adCount = adCount;
-        this.chargeValue = chargeValue;
-        this.adDelay = adDelay;
+        this.adDelay = 0;           // 접속 시 계산 처리
     }
 
     public bool CanUse() => freeCount > 0;
     public bool CanCharge() => adCount > 0;
 
-    public bool UseGift()
+    public bool UseFreeCount()
     {
         if (!CanUse())
             return false;
@@ -44,23 +42,23 @@ public class DailyGift
         return true;
     }
 
-    public bool Charge()
+    public bool UseAdCount()
     {
         if (!CanCharge())
             return false;
 
         --adCount;
 
-        freeCount += chargeValue;
+        // FreeCount += ChargeValue
 
         return true;
     }
 
     public bool ChargeAndUse()
     {
-        if (Charge())
+        if (UseAdCount())
         {
-            if(UseGift())
+            if(UseFreeCount())
             {
                 return true;
             }
@@ -91,7 +89,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     private static readonly int _Code_SignUp = 201;
     private static readonly int _Code_Login = 200;
-    private static readonly int _Code_Refresh = 401;
 
     #region 게임 데이터
 
@@ -128,62 +125,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     #endregion 게임 데이터
 
-    #region 테이블 
-
-    private string LobbyItemTableName = "LobbyItems";           // column은 enum값으로 search
-
-    private string TicketTableName = "Ticket";
-    private string TicketColumnName = "ticket", TicketTimeColumnName = "ticketTime";
-
-    private string DiaTableName = "Dia";
-    private string CashDiaColumnName = "cashDia", FreeDiaColumnName = "freeDia";
-
-    private string FeverTableName = "Fever";
-    private string FeverColumnName = "fever";
-
-    private string DailyGiftTableName = "DailyGift";
-    private string FreeCountColumnName = "freeCount", AdCountColumnName = "adCount";
-    private string ChargeValueColumnName = "chargeValue", AdDelayColumnName = "adDelay";
-
-    private string ResultTableName = "Result";
-    private string ScoreColumnName = "score", ComboColumnName = "maxCombo", AccumulateScoreColumnName = "acScore";
-    // **누적점수 초기화 하면 안됨. -> 프로필 조건으로 사용할 예정
-
-    private string TimeTableName = "Time";
-    private string LastLoginColumnName = "lastLoginTime";
-
-    private string ProfileTableName = "Profile";
-    private string IconColumnName = "SelectIcon";
-    private string LanguageColumnName = "Language";
-    private string UnlockSerialColumnName = "unlockSerial";
-    private string BuyWeeklyColumnName = "buyWeekly";
-    private string PushAlarmColumnName = "pushAlarm";
-
-    private string SerialTableName = "Serial";
-    private string SerialScoreColumnName = "serialScore";
-    private string SerialCodeColumnName = "serialCode";
-
-    private string SerialChartTableName = "SerialChart";
-    private string SerialChartColumnName = "num";
-    private string key_SerialChart = "";
-
-    //private static readonly string scoreRankUUID = "783e9680-8ee7-11ec-b0f8-11d63a08d6e5";          // 월간
-    //private static readonly string comboRankUUID = "f5fc83e0-943f-11ec-a8f8-13e7955bbb97";       // 일일
-    private static readonly string resultRankUUID = "12e8c840-a405-11ec-afae-c5cd66ba001b";                   // 통합 월간 랭킹
-
-    private static readonly string key_ItemGachaProbability = "4392";
-    private static readonly string key_DailyGiftChart = "DailyGiftChart";
-
-    private bool isAlarm;           // 푸시알림
-    public bool IsAlarm => isAlarm;
-
-    private string userInDate_Result;                // 유저 데이터
-    private string userInDate_Profile;
-
-    private bool isUpdatedRank;
-
-    #endregion
-
     #region GM Data
 
     private static readonly string gm_nickname = "player";          // *GM지울경우 꼭 설정을 다시 해야함
@@ -209,6 +150,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     private void Start()
     {
+        // 인터넷 문제
         if(Application.internetReachability == NetworkReachability.NotReachable)
         {
             _LoginUI.ShowUpdateUI();
@@ -240,6 +182,17 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         }
 #endif
 
+        // *처음시작단계에서 profile을 못가져 오기때문에 시스템 언어 사용
+        switch (Application.systemLanguage)
+        {
+            case SystemLanguage.Korean:
+                language = ELanguage.Korean;
+                break;
+            default:
+                language = ELanguage.English;
+                break;
+        }
+
         currentVersion = Application.version;
 
         var bro = Backend.Initialize(true);
@@ -261,7 +214,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         else
         {
             Debug.Log("초기화 실패 - " + bro);               // 인터넷 연결 등의 문제이므로 게임 종료
-            SystemPopupUI.Instance.OpenOneButton(6, 13, 22, GameApplication.Instance.Quit);
+            SystemPopupUI.Instance.OpenOneButton(14, 53, 2, GameApplication.Instance.Quit);
         }
     }
 
@@ -279,6 +232,8 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     {
         Dispatcher.Instance.Invoke(action);
     }
+
+    #region 접속
 
     private void CheckApplicationVersion()
     {
@@ -312,28 +267,87 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             _LoginUI = FindObjectOfType<LoginUI>();
         }
 
-        Enqueue(Backend.BMember.LoginWithTheBackendToken, loginBro =>
+        var bro = Backend.BMember.LoginWithTheBackendToken();
+        if (bro.IsServerError())
         {
-            if (loginBro.IsSuccess())
-            {
-                OnBackendAuthorized();
-            }
-            else
-            {
-                Debug.Log("로그인 실패 - " + loginBro.ToString());
-                DispatcherAction(_LoginUI.ShowLoginUI);
-            }
-        });
+            Debug.LogWarning("서버 상태 불안정");
+        }
+
+        if (bro.IsSuccess())
+        {
+            OnBackendAuthorized();
+        }
+        else
+        {
+            Debug.Log("로그인 실패 - " + bro.ToString());
+            DispatcherAction(_LoginUI.ShowLoginUI);
+        }
     }
 
     public void OnBackendAuthorized()
     {
         GetUserInfo();  // 유저정보 가져오기 후 변수에 저장
+    }
+
+    public void GetIntroDatas()
+    {
+        GetChartLists();            // Time Reset보다 빨리 불러와야함
         GetData_Time();
         GetGMData();
 
         DispatcherAction(_LoginUI.AnimStart);
     }
+
+    public void GetUserInfo()
+    {
+        Backend.BMember.GetUserInfo(userInfoBro =>
+        {
+            if (userInfoBro.IsSuccess())
+            {
+                JsonData Userdata = userInfoBro.GetReturnValuetoJSON()["row"];
+
+                var subscriptionType = Userdata["subscriptionType"].ToString();
+                if (subscriptionType == "google")
+                {
+                    loginType = ELogin.Google;
+                }
+                else if (subscriptionType == "facebook")
+                {
+                    loginType = ELogin.Facebook;
+                }
+                else if (subscriptionType == "customSignUp")
+                {
+                    loginType = ELogin.Guest;
+                }
+
+                Debug.Log("LoginType : " + loginType);
+
+                JsonData nicknameJson = Userdata["nickname"];
+                if (nicknameJson != null)
+                {
+                    nickName = nicknameJson.ToString();
+                    gamerID = Userdata["gamerId"].ToString();
+
+                    DispatcherAction(_LoginUI.CloseAll);
+                    isProgressLogin = false;
+
+                    GetIntroDatas();
+                    // GameSceneManager.Instance.SceneChange(GameSceneManager.EScene.InGame);
+                }
+                else
+                {
+                    Debug.Log("Not Nickname");
+                    DispatcherAction(_LoginUI.ShowPrivacyUI);           // 약관동의부터 다시 시작하게
+                }
+            }
+            else
+            {
+                Debug.Log("[X]유저 정보 가져오기 실패 - " + userInfoBro);
+            }
+        });
+    }
+
+    #endregion 접속
 
     #region 회원가입
 
@@ -510,70 +524,20 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         }
         else
         {
+            // **로그 남기기 불가능 : 로그인을 해야 그 뒤에 InsertLog가 가능
+
             Debug.LogError("게스트 로그인 실패 : " + bro);
-            Param param = new Param();
-            param.Add("실패사유" + bro);
-            InsertLog("게스트로그인 실패", param);
+
             // 정보 삭제
             Backend.BMember.DeleteGuestInfo();
 
-            SystemPopupUI.Instance.OpenOneButton(19, 28, 53, GameApplication.Instance.Quit);
+            SystemPopupUI.Instance.OpenOneButton(14, 114, 2, GameApplication.Instance.Quit);
         }
     }
 
 #endregion 회원가입
 
     #region 닉네임
-
-    public void GetUserInfo()
-    {
-        Backend.BMember.GetUserInfo(userInfoBro =>
-        {
-            if (userInfoBro.IsSuccess())
-            {
-                JsonData Userdata = userInfoBro.GetReturnValuetoJSON()["row"];
-
-                var subscriptionType = Userdata["subscriptionType"].ToString();
-                if (subscriptionType == "google")
-                {
-                    loginType = ELogin.Google;
-                }
-                else if (subscriptionType == "facebook")
-                {
-                    loginType = ELogin.Facebook;
-                }
-                else if (subscriptionType == "customSignUp")
-                {
-                    loginType = ELogin.Guest;
-                }
-
-                Debug.Log("LoginType : " + loginType);
-
-                JsonData nicknameJson = Userdata["nickname"];
-                if (nicknameJson != null)
-                {
-                    nickName = nicknameJson.ToString();
-                    gamerID = Userdata["gamerId"].ToString();
-
-                    DispatcherAction(_LoginUI.CloseAll);
-                    isProgressLogin = false;
-
-                    // Debug.Log("Move Scene");
-                    // GameSceneManager.Instance.SceneChange(GameSceneManager.EScene.InGame);
-                }
-                else
-                {
-                    Debug.Log("Not Nickname");
-                    //DispatcherAction(() => _LoginUI.ShowNickNameUI(false));
-                    DispatcherAction(_LoginUI.ShowNickNameUI);
-                }
-            }
-            else
-            {
-                Debug.Log("[X]유저 정보 가져오기 실패 - " + userInfoBro);
-            }
-        });
-    }
 
     public string GetNickName()
     {
@@ -618,13 +582,70 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
 #endregion 닉네임
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void ClearRecvItems()
-    {
-        recvItems.Clear();
-    }
+    #region 테이블 
 
-    #region 게임 데이터 관리
+    private string LobbyItemTableName = "LobbyItems";           // column은 enum값으로 search
+
+    private string TicketTableName = "Ticket";
+    private string TicketColumnName = "ticket", TicketTimeColumnName = "ticketTime";
+
+    private string DiaTableName = "Dia";
+    private string CashDiaColumnName = "cashDia", FreeDiaColumnName = "freeDia";
+
+    private string FeverTableName = "Fever";
+    private string FeverColumnName = "fever";
+
+    private string DailyGiftTableName = "DailyGift";
+    private string FreeCountColumnName = "freeCount", AdCountColumnName = "adCount";
+    private string ChargeValueColumnName = "chargeValue", AdDelayColumnName = "adDelay";
+
+    private string ResultTableName = "Result";
+    private string ScoreColumnName = "score", ComboColumnName = "maxCombo", AccumulateScoreColumnName = "acScore";
+    // **누적점수 초기화 하면 안됨. -> 프로필 조건으로 사용할 예정
+
+    private string TimeTableName = "Time";
+    private string LastLoginColumnName = "lastLoginTime";
+
+    private string ProfileTableName = "Profile";
+    private string IconColumnName = "SelectIcon";
+    private string LanguageColumnName = "Language";
+    private string UnlockSerialColumnName = "unlockSerial";
+    private string BuyWeeklyColumnName = "buyWeekly";
+    private string PushAlarmColumnName = "pushAlarm";
+
+    private string SerialTableName = "Serial";
+    private string SerialScoreColumnName = "serialScore";
+    private string SerialCodeColumnName = "serialCode";
+
+    private string SerialChartTableName = "SerialChart";
+    private string SerialChartColumnName = "num";
+    private string key_SerialChart = "";
+
+    private string RewardTableName = "Reward";
+    private string PlayRewardColumnName = "playReward";
+    private string EndTimeRewardColumnName = "endTimeReward";                    // 받을 수 있는 시간
+
+    //private static readonly string scoreRankUUID = "783e9680-8ee7-11ec-b0f8-11d63a08d6e5";          // 월간
+    //private static readonly string comboRankUUID = "f5fc83e0-943f-11ec-a8f8-13e7955bbb97";       // 일일
+    private static readonly string resultRankUUID = "12e8c840-a405-11ec-afae-c5cd66ba001b";                   // 통합 월간 랭킹
+
+    private static readonly string key_ItemGacha_Probability = "4392";
+    private static readonly string key_PlayReward_Probability = "4472";
+    private static readonly string key_TimeReward_Probability = "4469";
+
+    private bool isAlarm;           // 푸시알림
+    public bool IsAlarm => isAlarm;
+
+    private string userInDate_Result;                // 유저 데이터
+    private string userInDate_Profile;
+
+    private bool isUpdatedRank;
+
+    #endregion
+
+    #region 게임 데이터 세팅
 
     /* 데이터 사용 시 ["N"] ["S"] 등의 값에 대해
      BOOL	bool	        boolean 형태의 데이터가 이에 해당됩니다.
@@ -656,6 +677,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         GetData_Result();
         GetData_Serial();
         GetData_SerialChart();
+        GetData_Reward();
 
         StartCoroutine(nameof(CoGetDatas));
         // GameSceneManager.Instance.SceneChange(GameSceneManager.EScene.InGame, GameManager.Instance.OnStart);
@@ -673,7 +695,89 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         _GameManager.OnLoaded();
     }
 
-#region 프로필
+    #region 시간
+
+    public void GetData_Time()
+    {
+        var bro = Backend.GameData.GetMyData(TimeTableName, new Where());
+
+        if (!bro.IsSuccess())
+            return;
+
+        if (bro.GetReturnValuetoJSON()["rows"].Count <= 0)
+        {
+            Insert_Time();
+            return;
+        }
+
+        var rows = bro.FlattenRows();
+
+        var lastLoginTime = DateTime.Parse(rows[0][LastLoginColumnName].ToString()).ToString("yyyy-MM-dd");
+        //"2022-02-16";
+        Debug.Log($"{serverDate} != {lastLoginTime} ?");
+        if (lastLoginTime != serverDate)
+        {
+            isDailyReset = true;
+            // 시간 업데이트
+            Param param = new Param();
+            param.Add(LastLoginColumnName, serverDate);
+
+            Enqueue(Backend.GameData.Update, TimeTableName, new Where(), param, updateTimeBro =>
+            {
+                Debug.Log("UpdateTimeBro : " + updateTimeBro);
+            });
+
+            GiftReset();
+
+            // Serial받기  --> GetData_Serial쪽에서 진행       **serialList가 깨지기 때문
+
+            // weeklyGift 초기화
+            if (serverDateTime.DayOfWeek == DayOfWeek.Monday)
+            {
+                ResetWeeklyPackage();
+            }
+        }
+    }
+
+    private void Insert_Time()
+    {
+        Param param = new Param();
+        param.Add(LastLoginColumnName, serverDate);
+
+        Backend.GameData.Insert(TimeTableName, param, bro =>
+        {
+            if (!bro.IsSuccess())
+                return;
+        });
+    }
+
+    #endregion 시간
+
+    private void GetGMData()
+    {
+        Backend.Social.GetUserInfoByNickName(gm_nickname, bro =>
+        {
+            if (!bro.IsSuccess())
+            {
+                Debug.LogWarning("Not GM!!");
+                return;
+            }
+
+            gm_ownerInDate = bro.GetReturnValuetoJSON()["row"]["inDate"].ToString();
+
+            Where where = new Where();
+            where.Equal("owner_inDate", gm_ownerInDate);
+
+            var gmBro = Backend.GameData.Get(SerialChartTableName, where);
+            if (!gmBro.IsSuccess())
+                return;
+
+            gm_inDate = gmBro.FlattenRows()[0]["inDate"].ToString();
+            //Debug.Log($"{gm_inDate} / {gm_ownerInDate}");
+        });
+    }
+
+    #region 프로필
 
     /// <summary>
     /// CanSerial로 인해 동기
@@ -717,9 +821,11 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         {
             case SystemLanguage.Korean:
                 param.Add(LanguageColumnName, "Korean");
+                language = ELanguage.Korean;
                 break;
             default:
                 param.Add(LanguageColumnName, "English");
+                language = ELanguage.English;
                 break;
         }
         param.Add(UnlockSerialColumnName, false);
@@ -735,17 +841,11 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             // Debug.Log(userInDate_Profile);
 
             profileIcon = 0;
-            language = ELanguage.English;
             canSerial = false;
             buyWeekly = false;
 
             --loadCount;
         });
-    }
-
-    private void Insert_Country()
-    {
-
     }
 
     public void Update_ProfileIcon(int value)
@@ -773,7 +873,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     /// </summary>
     public void ChangeLanguage()
     {
-
         if (language == ELanguage.English)
             language = ELanguage.Korean;
         else
@@ -836,7 +935,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
 #endregion 프로필
 
-#region 티켓
+    #region 티켓
 
     public void GetData_Ticket()
     {
@@ -860,7 +959,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
             // Debug.Log($"{_GameManager.Ticket}");
 
-            _GameManager.CheckDateOfExitTime();
+            _GameManager.CheckTicketExitTime();
 
             --loadCount;
             Debug.Log($"Ticket : {bro}");
@@ -883,7 +982,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             _GameManager.TicketTime = Values.TicketTime;
             _GameManager.Ticket = Values.MaxTicket;
 
-            _GameManager.CheckDateOfExitTime();
+            _GameManager.CheckTicketExitTime();
 
             --loadCount;
         });
@@ -919,9 +1018,10 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         }
     }
 
-#endregion 티켓
+    #endregion 티켓
 
-    // 다이아
+    #region 다이아
+
     public void GetData_Dia()
     {
         loadCount++;
@@ -991,7 +1091,10 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         });
     }
 
-    // 피버
+    #endregion 다이아
+
+    #region 피버
+
     public void GetData_Fever()
     {
         loadCount++;
@@ -1039,10 +1142,15 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         {
             if (!bro.IsSuccess())
                 return;
+
+            Debug.Log("피버 개수 업데이트.. : " + value);
         });
     }
 
-    // 로비 아이템
+    #endregion 피버
+
+    #region 로비 아이템
+
     public void GetData_LobbyItem()
     {
         ++loadCount;
@@ -1052,7 +1160,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             if (!bro.IsSuccess())
                 return;
 
-            // row가 하나도 없는 경우 -> 스키마 미정의?
             if (bro.GetReturnValuetoJSON()["rows"].Count <= 0)
             {
                 Insert_LobbyItem();
@@ -1066,47 +1173,13 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 _GameManager.ItemsCount[i] = int.Parse(rows[0][((ELobbyItem)i).ToString()].ToString());
             }
 
-            //foreach (JsonData row in rows)
-            //{
-            //    _GameManager.ItemsCount[(int)ELobbyItem.AddMaxTime] = int.Parse(row[ELobbyItem.AddMaxTime.ToString()].ToString());
-            //    _GameManager.ItemsCount[(int)ELobbyItem.AddBombPower] = int.Parse(row[ELobbyItem.AddBombPower.ToString()].ToString());
-            //    _GameManager.ItemsCount[(int)ELobbyItem.MaxItem] = int.Parse(row[ELobbyItem.MaxItem.ToString()].ToString());
-            //    _GameManager.ItemsCount[(int)ELobbyItem.SuperFeverStart] = int.Parse(row[ELobbyItem.SuperFeverStart.ToString()].ToString());
-            //    _GameManager.ItemsCount[(int)ELobbyItem.AddScore] = int.Parse(row[ELobbyItem.AddScore.ToString()].ToString());
-            //    _GameManager.ItemsCount[(int)ELobbyItem.Shield] = int.Parse(row[ELobbyItem.Shield.ToString()].ToString());
-            //}
-
             --loadCount;
             Debug.Log($"LobbyItem : {bro}");
-
-            //var rows = BackendReturnObject.Flatten(bro.Rows());
-            //foreach (var key in rows.Keys)
-            //{
-            //    Debug.Log($"{rows.Keys}");
-            //    GameManager.ItemsCount.Add((ELobbyItem)Enum.Parse(typeof(ELobbyItem), key)
-            //                                                , int.Parse(rows[key].ToString()));
-            //}
         });
     }
 
     public void Insert_LobbyItem()
     {
-        //Param param = new Param();
-
-        //foreach (ELobbyItem item in Enum.GetValues(typeof(ELobbyItem)))
-        //{
-        //    GameManager.ItemsCount.Add(item, 0);
-        //}
-        //param.Add("LobbyItem", GameManager.ItemsCount);
-
-        //Backend.GameData.Insert(LobbyItemTableName, param, bro =>
-        //{
-        //    if (!bro.IsSuccess())
-        //        return;
-
-        //    Debug.Log("로비 아이템 갱신");
-        //});
-
         var items = _GameManager.ItemsCount;
         Param param = new Param();
 
@@ -1114,14 +1187,12 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         {
             param.Add(((ELobbyItem)i).ToString(), items[i]);
         }
-        //param.Add(ELobbyItem.AddMaxTime.ToString(), items[0]);
 
         Backend.GameData.Insert(LobbyItemTableName, param, bro =>
         {
             if (!bro.IsSuccess())
                 return;
 
-            // userInDate_LobbyItem = bro.GetInDate();
             --loadCount;
         });
     }
@@ -1142,7 +1213,13 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         });
     }
 
-    // 광고 -> Struct or Class
+    #endregion 로비아이템
+
+    #region 일일 제공
+
+    /// <summary>
+    /// GameManger AddListener보다 빨리 해야하기에 동기처리
+    /// </summary>
     public void GetData_DailyGift()
     {
         ++loadCount;
@@ -1160,20 +1237,28 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
         var rows = bro.FlattenRows();
 
+        // *3/24 TimeReward 추가. CurDelay 추가
+        if (rows[0].Keys.Contains(EDailyGift.TimeReward.ToString()) == false)
+        {
+            Debug.Log("Null Data");
+            Insert_DailyGift();
+            return;
+        }
+
         foreach (EDailyGift item in Enum.GetValues(typeof(EDailyGift)))
         {
             _GameManager.DailyGifts[item] = new DailyGift
                 (
                     int.Parse(rows[0][item.ToString()][FreeCountColumnName].ToString()),
-                    int.Parse(rows[0][item.ToString()][AdCountColumnName].ToString()),
-                    int.Parse(rows[0][item.ToString()][ChargeValueColumnName].ToString()),
-                    int.Parse(rows[0][item.ToString()][AdDelayColumnName].ToString())
+                    int.Parse(rows[0][item.ToString()][AdCountColumnName].ToString())
+                // int.Parse(rows[0][item.ToString()][AdDelayColumnName].ToString())
                 );
+
+            _GameManager.CheckDailyGiftAdExitTime(item);
         }
 
         --loadCount;
-        Debug.Log($"DailyGift : {bro}");
-        // Debug.Log("개수 : " +_GameManager.DailyGifts.Count);
+        // Debug.Log($"DailyGift : {bro}");
     }
 
     /// <summary>
@@ -1181,66 +1266,67 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     /// </summary>
     private void Insert_DailyGift()
     {
-        if (!PlayerPrefs.HasKey(key_DailyGiftChart))     // 초기 1회 실행 시
-            return;
-
-        var data = Backend.Chart.GetLocalChartData(PlayerPrefs.GetString(key_DailyGiftChart));
-        if (data == "")
-        {
-            Debug.Log("DailyGift 차트 없음");
-            return;
-        }
-
-        var bro = JsonMapper.ToObject(data);
-        var rows = bro["rows"];
-
         Param param = new Param();
-        int freeCount, adCount, chargeValue, adDelay;
-        for (int i = 0, length = rows.Count; i < length; i++)
+
+        foreach (var dailyGiftData in LevelData.Instance.DailyGiftDatas)
         {
-            freeCount = int.Parse(rows[i][FreeCountColumnName]["S"].ToString());
-            adCount = int.Parse(rows[i][AdCountColumnName]["S"].ToString());
-            chargeValue = int.Parse(rows[i][ChargeValueColumnName]["S"].ToString());
-            adDelay = int.Parse(rows[i][AdDelayColumnName]["S"].ToString());
+            var dailyGift = new DailyGift(dailyGiftData.freeCount, dailyGiftData.adCount);
+            param.Add(dailyGiftData.type.ToString(), dailyGift);
 
-            param.Add(((EDailyGift)i).ToString(), new DailyGift
-                (
-                freeCount, adCount, chargeValue, adDelay
-                ));
-
-            _GameManager.DailyGifts[(EDailyGift)i] = new DailyGift
-                (
-                    freeCount, adCount, chargeValue, adDelay
-                );
+            _GameManager.DailyGifts[dailyGiftData.type] = dailyGift;
         }
 
-        // Debug.Log(_GameManager.DailyGifts);
-
-        Backend.GameData.Insert(DailyGiftTableName, param, insertBro =>
+        var bro = Backend.GameData.Insert(DailyGiftTableName, param);
+        if (!bro.IsSuccess())
         {
-            if (!insertBro.IsSuccess())
-            {
-                Debug.Log("Insert False");
-                return;
-            }
+            Debug.Log("Insert False");
+            return;
+        }
 
-            --loadCount;
-        });
         --loadCount;
     }
 
-    public void Update_DailyGift(EDailyGift name, DailyGift value)
+    public void Update_DailyGift(EDailyGift type, DailyGift value)
     {
         Param param = new Param();
         // name활용
-        param.Add(name.ToString(), value);
+        param.Add(type.ToString(), value);
 
         var bro = Backend.GameData.Update(DailyGiftTableName, new Where(), param);
         if (!bro.IsSuccess())
             return;
     }
 
-    // 게임 결과
+    /// <summary>
+    /// 일일 초기화 작업
+    /// </summary>
+    private void GiftReset()
+    {
+        Param param = new Param();
+        foreach (var dailyGiftData in LevelData.Instance.DailyGiftDatas)
+        {
+            param.Add(dailyGiftData.type.ToString(), new DailyGift
+            (
+                dailyGiftData.freeCount, dailyGiftData.adCount
+            ));
+        }
+
+        var giftBro = Backend.GameData.Update(DailyGiftTableName, new Where(), param);
+        if (!giftBro.IsSuccess())
+        {
+            Debug.Log("Update Fail");
+            return;
+        }
+        else
+        {
+            Debug.Log("Gift Reset");
+        }
+    }
+
+    #endregion 일일 제공
+
+    #region 게임 결과
+
     public void GetData_Result()
     {
         ++loadCount;
@@ -1274,6 +1360,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         param.Add(ScoreColumnName, 0);
         param.Add(ComboColumnName, 0);
         param.Add(AccumulateScoreColumnName, 0);
+        param.Add(PlayRewardColumnName, 0);
 
         Backend.GameData.Insert(ResultTableName, param, bro =>
         {
@@ -1281,16 +1368,11 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 return;
 
             userInDate_Result = bro.GetInDate();
-            // Debug.Log(userInDate_Result);
 
             --loadCount;
-            //Enqueue(Backend.URank.User.UpdateUserScore, rankUuid, ResultTableName, userInDate_Score, param, updateScoreBro => 
-            //{
-            //});
         });
     }
 
-    
     public void Update_Result(int score, int maxCombo)
     {
         if(string.IsNullOrEmpty(userInDate_Result))
@@ -1342,6 +1424,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 return;
 
             _GameManager.AccumulateScore += score;
+
             if (!canSerial
                 && loginType != ELogin.Guest                                                 // 게스트 제외
                 && GameApplication.Instance.IsTestMode                                  // **p2e 사용시 제거
@@ -1351,8 +1434,43 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 UnlockSerial();
             }
         });
-        
-        if(canSerial)
+
+        //var accuBro = Backend.GameData.UpdateWithCalculation(ResultTableName, new Where(), updateParam);
+        //if (!accuBro.IsSuccess())
+        //{
+        //    Debug.LogWarning(accuBro);
+        //    return;
+        //}
+
+        //_GameManager.AccumulateScore += score;
+
+        //if (!canSerial
+        //    && loginType != ELogin.Guest                                                 // 게스트 제외
+        //    && GameApplication.Instance.IsTestMode                                  // **p2e 사용시 제거
+        //    && _GameManager.AccumulateScore >= Values.UnlockSerialScore)
+        //{
+        //    // canSerial = true;
+        //    UnlockSerial();
+        //}
+
+        if (score >= Values.PlayRewardScore)
+        {
+            var addPlayReward = 1;
+            
+            Param rewardParam = new Param();
+            rewardParam.AddCalculation(PlayRewardColumnName, GameInfoOperator.addition, addPlayReward);
+
+            Enqueue(Backend.GameData.UpdateWithCalculation, RewardTableName, new Where(), rewardParam, rewardBro =>
+            {
+                // 시리얼 갱신
+                if (!rewardBro.IsSuccess())
+                    return;
+
+                _GameManager.PlayRewardCount += addPlayReward;
+            });
+        }
+
+        if (canSerial)
         {
             if (serialScoreList[serverDate] >= Values.DailySerialScore)
                 return;
@@ -1372,158 +1490,15 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             });
         }
 
-        //if (score >= _GameManager.BestScore)
-        //{
-        //    UpdateScoreToRank(score);
-        //}
-        //if(combo >= _GameManager.BestMaxCombo)
-        //{
-        //    UpdateComboToRank(combo);
-        //}
         UpdateResultToRank(score, combo);
 
         isUpdatedRank = false;
     }
 
+    #endregion 게임 결과
 
-    // 시간 확인
-    public void GetData_Time()
-    {
-        var bro = Backend.GameData.GetMyData(TimeTableName, new Where());
+    #region 시리얼
 
-        if (!bro.IsSuccess())
-            return;
-
-        if (bro.GetReturnValuetoJSON()["rows"].Count <= 0)
-        {
-            Insert_Time();
-            return;
-        }
-
-        var rows = bro.FlattenRows();
-
-        var lastLoginTime = DateTime.Parse(rows[0][LastLoginColumnName].ToString()).ToString("yyyy-MM-dd");
-        //"2022-02-16";
-        Debug.Log($"{serverDate} != {lastLoginTime} ?");
-        if (lastLoginTime != serverDate)
-        {
-            isDailyReset = true;
-            // 시간 업데이트
-            Param param = new Param();
-            param.Add(LastLoginColumnName, serverDate);
-
-            Enqueue(Backend.GameData.Update, TimeTableName, new Where(), param, updateTimeBro =>
-            {
-                Debug.Log("UpdateTimeBro : " + updateTimeBro);
-            });
-
-            GiftReset();
-
-            // Serial받기  --> GetData_Serial쪽에서 진행       **serialList가 깨지기 때문
-
-            // weeklyGift 초기화
-            if(serverDateTime.DayOfWeek == DayOfWeek.Monday)
-            {
-                ResetWeeklyPackage();
-            }
-        }
-    }
-
-    private void Insert_Time()
-    {
-        Param param = new Param();
-        param.Add(LastLoginColumnName, serverDate);
-
-        Backend.GameData.Insert(TimeTableName, param, bro =>
-        {
-            if (!bro.IsSuccess())
-                return;
-        });
-    }
-
-    private void GetGMData()
-    {
-        //Backend.Social.GetGamerIndateByNickname()     **사용제함
-        Backend.Social.GetUserInfoByNickName(gm_nickname, bro => 
-        {
-            if (!bro.IsSuccess())
-            {
-                Debug.LogWarning("Not GM!!");
-                return;
-            }
-
-            gm_ownerInDate = bro.GetReturnValuetoJSON()["row"]["inDate"].ToString();
-
-            Where where = new Where();
-            where.Equal("owner_inDate", gm_ownerInDate);
-
-            var gmBro = Backend.GameData.Get(SerialChartTableName, where);
-            if (!gmBro.IsSuccess())
-                return;
-
-            gm_inDate = gmBro.FlattenRows()[0]["inDate"].ToString();
-            //Debug.Log($"{gm_inDate} / {gm_ownerInDate}");
-        });
-    }
-
-    private void GiftReset()
-    {
-        // 차트 불러오기
-        if(!PlayerPrefs.HasKey(key_DailyGiftChart))     // 초기 1회 실행 시
-            return;
-
-        var data = Backend.Chart.GetLocalChartData(PlayerPrefs.GetString(key_DailyGiftChart));
-        if (data == "")
-        {
-            Debug.Log("차트가 없어서 불가능");
-            return;
-        }
-
-        var bro = JsonMapper.ToObject(data);
-        var rows = bro["rows"];
-
-        Param param = new Param();
-        for (int i = 0, length = rows.Count; i < length; i++)
-        {
-            param.Add(((EDailyGift)i).ToString(), new DailyGift
-                (
-                int.Parse(rows[i][FreeCountColumnName]["S"].ToString()),
-                int.Parse(rows[i][AdCountColumnName]["S"].ToString()),
-                int.Parse(rows[i][ChargeValueColumnName]["S"].ToString()),
-                int.Parse(rows[i][AdDelayColumnName]["S"].ToString())
-                ));
-        }
-
-        var giftBro = Backend.GameData.Update(DailyGiftTableName, new Where(), param);
-        if (!giftBro.IsSuccess())
-        {
-            Debug.Log("Update Fail");
-            return;
-        }
-    }
-
-    /// <summary>
-    /// *사용안함
-    /// </summary>
-    private void ScoreReset()
-    {
-        _GameManager.AccumulateScore = 0;
-
-        Param param = new Param();
-        param.Add(AccumulateScoreColumnName, 0);
-
-        Enqueue(Backend.GameData.Update, ResultTableName, new Where(), param, bro =>
-        {
-            // 시리얼 갱신
-            if (!bro.IsSuccess())
-                return;
-
-            Debug.Log("누적점수 초기화");
-        });
-    }
-
-
-    // 시리얼
     public void GetData_Serial()
     {
         ++loadCount;
@@ -1581,21 +1556,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             if(isDailyReset && canSerial)
             {
                 RecvSerialPost();
-
-                // CanSerial을 알아야 할 수 있기때문에 Enqueue로 데이터 먼저 확인하기
-                //Enqueue(Backend.GameData.GetMyData, ProfileTableName, new Where(), profileBro =>
-                //{
-                //    if (!profileBro.IsSuccess())
-                //        return;
-                //    if (profileBro.GetReturnValuetoJSON()["rows"].Count <= 0)       // 신규 유저
-                //        return;
-
-                //    var profileRows = profileBro.FlattenRows();
-                //    if (profileRows[0][UnlockSerialColumnName].ToString() == "True")            // CanSerial
-                //    {
-                //        RecvSerialPost();
-                //    }
-                //});
             }
 
             --loadCount;
@@ -1620,27 +1580,10 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         });
     }
 
-    //public void Update_Serial(int score)
-    //{
-    //    // 더이상 적용할 필요가 없음 : 채움
-    //    if (serialList[serverDateTime] >= Values.DailySerialScore)
-    //        return;
+    #endregion 시리얼
 
-    //    serialList[serverDateTime] += score;
+    #region 시리얼 차트 (GM전용)
 
-    //    Param param = new Param();
-    //    param.Add(SerialListColumnName, serialList);
-
-    //    Backend.GameData.Update(SerialTableName, new Where(), param, bro =>
-    //    {
-    //        if (!bro.IsSuccess())
-    //            return;
-
-    //        Debug.Log("미션");
-    //    });
-    //}
-
-    // 시리얼차트 - 트랜잭션 : GM값만?
     public void GetData_SerialChart()
     {
         if (nickName != gm_nickname)
@@ -1684,7 +1627,108 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         });
     }
 
-    #endregion
+    #endregion 시리얼 차트 (GM전용)
+
+    #region 게임 유도 보상
+
+    /// <summary>
+    /// HomeUI 적용해야하기에 동기
+    /// </summary>
+    public void GetData_Reward()
+    {
+        loadCount++;
+
+        var bro = Backend.GameData.GetMyData(RewardTableName, new Where());
+
+        if (!bro.IsSuccess())
+            return;
+
+        if (bro.GetReturnValuetoJSON()["rows"].Count <= 0)
+        {
+            Insert_Reward();
+            return;
+        }
+
+        var rows = bro.FlattenRows();
+
+        _GameManager.PlayRewardCount = int.Parse(rows[0][PlayRewardColumnName].ToString());
+        _GameManager.TimeRewardTime = DateTime.Parse(rows[0][EndTimeRewardColumnName].ToString());
+
+        --loadCount;
+        Debug.Log($"Reward : {bro}");
+    }
+
+    private void Insert_Reward()
+    {
+        var recvTime = DateTime.Now.AddHours(4);
+        Param param = new Param();
+        param.Add(PlayRewardColumnName, 0);
+        param.Add(EndTimeRewardColumnName, recvTime);
+
+        Backend.GameData.Insert(RewardTableName, param, bro =>
+        {
+            if (!bro.IsSuccess())
+                return;
+
+            _GameManager.PlayRewardCount = 0;
+            _GameManager.TimeRewardTime = recvTime;
+
+            --loadCount;
+        });
+    }
+
+    /// <summary>
+    /// 5개 지불해서 사용
+    /// </summary>
+    private void Use_PlayReward()
+    {
+        Param updateParam = new Param();
+        updateParam.AddCalculation(PlayRewardColumnName, GameInfoOperator.subtraction, Values.PlayRewardCount);
+
+        Enqueue(Backend.GameData.UpdateWithCalculation, RewardTableName, new Where(), updateParam, accuBro =>
+        {
+            // 시리얼 갱신
+            if (!accuBro.IsSuccess())
+                return;
+
+            _GameManager.PlayRewardCount -= Values.PlayRewardCount;
+        });
+    }
+
+    public void Ad_TimeReward()
+    {
+        var time = _GameManager.TimeRewardTime.AddMinutes(-Values.TimeRewardAdTime);
+
+        Param param = new Param();
+        param.Add(EndTimeRewardColumnName, time);
+
+        var bro = Backend.GameData.Update(RewardTableName, new Where(), param);
+        if (!bro.IsSuccess())
+            return;
+
+        _GameManager.TimeRewardTime = time;
+    }
+
+    public void Reset_TimeReward()
+    {
+        var recvTime = DateTime.Now.AddHours(4);
+        Param param = new Param();
+        param.Add(EndTimeRewardColumnName, recvTime);
+
+        Backend.GameData.Update(RewardTableName, new Where(), param, bro =>
+        {
+            if (!bro.IsSuccess())
+                return;
+
+            _GameManager.TimeRewardTime = recvTime;
+
+            // 보상?
+        });
+    }
+
+    #endregion 게임 유도 보상
+
+    #endregion 게임 데이터 세팅
 
     #region 랭킹 
 
@@ -1820,98 +1864,55 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     #region 차트
 
-    /*
-     * 아이템 (********Save안해놓음! : 수정 필요)
-     * 로비 아이템
-     * 인게임 아이템
-     */
-
+    /// <summary>
+    /// GetTime (안에있는 GiftReset) 
+    /// 보다 빨리해야해서 동기처리
+    /// </summary>
     public void GetChartLists()
     {
-        // 키 값 불러오기
-        //keyCharts = new Dictionary<string, string>();
+        var bro = Backend.Chart.GetChartList();
 
-        //foreach (string chartKey in Enum.GetValues(typeof(EChart)))
-        //{
-        //    if(PlayerPrefs.HasKey(chartKey))
-        //    {
-        //        keyCharts.Add(chartKey, PlayerPrefs.GetString(chartKey));
-        //    }
-        //}
+        if (!bro.IsSuccess())
+            return;
 
-        Backend.Chart.GetChartList(bro => 
+        JsonData json = bro.FlattenRows();
+
+        string name = "";
+        string fileId = "";
+        foreach (JsonData chart in json)
         {
-            if (!bro.IsSuccess())
-                return;
+            name = chart["chartName"].ToString();
+            fileId = chart["selectedChartFileId"].ToString();
 
-            JsonData json = bro.FlattenRows();
+            // Debug.Log($"차트 탐색 : {name} / {fileId}");
 
-            string name = "";
-            string fileId = "";
-            foreach (JsonData chart in json)
+            if (name == EChart.Item.ToString())
             {
-                name = chart["chartName"].ToString();
-                fileId = chart["selectedChartFileId"].ToString();
-
-                // Debug.Log($"차트 탐색 : {name} / {fileId}");
-
-                if (name == EChart.Item.ToString())
-                {
-                    // GetChart_Item(outNum.ToString());
-                }
-                else if (name == EChart.LobbyItem.ToString())
-                {
-                    GetChart_LobbyItem(fileId);
-                }
-                else if (name == EChart.InGameItem.ToString())
-                {
-                    GetChart_InGameItem(fileId);
-                }
-                else if (name == EChart.DailyGift.ToString())
-                {
-                    GetChart_DailyGift(fileId);
-                }
-                else if (name == EChart.Shop.ToString())
-                {
-                    GetChart_ShopItem(fileId);
-                }
-                else if (name == EChart.Serial.ToString())
-                {
-                    key_SerialChart = fileId;
-                    // * SerialChart는 퍼블릭으로 가져오기때문에 저장할 필요가 없다
-                    // : 그때그때 불러서 확인하는 편이 맞음 (트랜잭션이기에)
-                }
-
-                //if (Int32.TryParse(chart["selectedChartFileId"].ToString(), out outNum) == false)             // 차트 적용이 안된경우에 대한 문제
-                //{
-                //    Debug.Log($"==== Chart 갱신필요 {name} ====");
-
-                //    // *foreach?
-                //    if(name == EChart.Item.ToString())
-                //    {                    
-                //        // **아이템 차트는 우편용 : jsonData를 까서 적용시키면 되기에 필요 없음
-                //        //GetChart_ItemToServer(outNum.ToString());
-                //    }
-                //    else if(name == EChart.LobbyItem.ToString())
-                //    {
-                //        GetChart_LobbyItemToServer(outNum.ToString());
-                //    }
-                //    else if (name == EChart.InGameItem.ToString())
-                //    {
-                //        GetChart_InGameItemToServer(outNum.ToString());
-                //    }
-                //    else if(name == EChart.DailyGift.ToString())
-                //    {
-                //        GetChart_DailyGiftToServer(outNum.ToString());
-                //    }
-                //    else if (name == EChart.Shop.ToString())
-                //    {
-                //        GetChart_ShopItemToServer(outNum.ToString());
-                //    }
-                //}
+                // GetChart_Item(outNum.ToString());                // Item은 다른 곳에서 적용인 것을 불러오기에 상관없음 (ex. 우편)
             }
-            
-        });
+            else if (name == EChart.LobbyItem.ToString())
+            {
+                GetChart_LobbyItem(fileId);
+            }
+            else if (name == EChart.InGameItem.ToString())
+            {
+                GetChart_InGameItem(fileId);
+            }
+            else if (name == EChart.DailyGift.ToString())
+            {
+                GetChart_DailyGift(fileId);
+            }
+            else if (name == EChart.Shop.ToString())
+            {
+                GetChart_ShopItem(fileId);
+            }
+            else if (name == EChart.Serial.ToString())
+            {
+                key_SerialChart = fileId;
+                // * SerialChart는 퍼블릭으로 가져오기때문에 저장할 필요가 없다
+                // : 그때그때 불러서 확인하는 편이 맞음 (트랜잭션이기에)
+            }
+        }
     }
 
 
@@ -1931,11 +1932,9 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             Debug.Log("데이터 갱신 - InGameItem");
 
             JsonData rows = bro.FlattenRows();                      // *사용안하면  rows[i]["itemName"][0].ToString(); 가 되어야함
-            var inGameItemDatas = LevelData.Instance.InGameItemDatas;
             for (int i = 0, length = rows.Count; i < length; i++)
             {
                 // **아이템 개수가 고정이라고 가정
-                //inGameItemDatas[i].itemName = rows[i]["itemName"][0].ToString();
                 LevelData.Instance.InGameItemDatas[i].value = int.Parse(rows[i]["value"].ToString());
                 LevelData.Instance.InGameItemDatas[i].valueTime = float.Parse(rows[i]["valueTime"].ToString());
                 LevelData.Instance.InGameItemDatas[i].normalPercent = float.Parse(rows[i]["normalPercent"].ToString());
@@ -1960,7 +1959,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         // 이미 저장된 데이터 -> SO
         var bro = JsonMapper.ToObject(data);
         var rows = bro["rows"];
-        var inGameItemDatas = LevelData.Instance.InGameItemDatas;
         for (int i = 0, length = rows.Count; i < length; i++)
         {
             LevelData.Instance.InGameItemDatas[i].value = int.Parse(rows[i]["value"]["S"].ToString());
@@ -1982,7 +1980,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
             JsonData rows = bro.GetReturnValuetoJSON()["rows"];
 
-            var inGameItemDatas = LevelData.Instance.InGameItemDatas;
             for (int i = 0, length = rows.Count; i < length; i++)
             {
                 // **아이템 개수가 고정이라고 가정
@@ -2034,6 +2031,14 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         }
 
         // SO
+        var bro = JsonMapper.ToObject(data);
+        var rows = bro["rows"];
+        for (int i = 0, length = rows.Count; i < length; i++)
+        {
+            LevelData.Instance.LobbyItemDatas[i].value = int.Parse(rows[i]["value"]["S"].ToString());
+            LevelData.Instance.LobbyItemDatas[i].price = int.Parse(rows[i]["price"]["S"].ToString());
+            LevelData.Instance.LobbyItemDatas[i].isFree = rows[i]["isFree"]["S"].ToString() == "Y";
+        }
     }
 
     /// <summary>
@@ -2058,6 +2063,29 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         });
     }
 
+    public void SaveChart_DailyGift(string key)
+    {
+        Backend.Chart.GetOneChartAndSave(key, bro =>
+        {
+            if (!bro.IsSuccess())
+            {
+                GetChart_DailyGiftToServer(key);
+                return;
+            }
+
+            JsonData rows = bro.FlattenRows();
+            for (int i = 0, length = rows.Count; i < length; i++)
+            {
+                LevelData.Instance.DailyGiftDatas[i].type =
+                    (EDailyGift)(int.Parse(rows[i]["itemID"].ToString()) - Values.StartID_DailyGift);
+                LevelData.Instance.DailyGiftDatas[i].freeCount = int.Parse(rows[i]["freeCount"].ToString());
+                LevelData.Instance.DailyGiftDatas[i].adCount = int.Parse(rows[i]["adCount"].ToString());
+                LevelData.Instance.DailyGiftDatas[i].chargeValue = int.Parse(rows[i]["chargeValue"].ToString());
+                LevelData.Instance.DailyGiftDatas[i].adDelay = int.Parse(rows[i]["adDelay"].ToString());
+            }
+        });
+    }
+
     public void GetChart_DailyGift(string key)
     {
         var data = Backend.Chart.GetLocalChartData(key);
@@ -2066,6 +2094,19 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             Debug.Log("일일 제공 항목 차트 저장");
             SaveChart_DailyGift(key);
             return;
+        }
+
+        // SO
+        var bro = JsonMapper.ToObject(data);
+        var rows = bro["rows"];
+        for (int i = 0, length = rows.Count; i < length; i++)
+        {
+            LevelData.Instance.DailyGiftDatas[i].type = 
+                                (EDailyGift)(int.Parse(rows[i]["itemID"]["S"].ToString()) - Values.StartID_DailyGift);
+            LevelData.Instance.DailyGiftDatas[i].freeCount = int.Parse(rows[i]["freeCount"]["S"].ToString());
+            LevelData.Instance.DailyGiftDatas[i].adCount = int.Parse(rows[i]["adCount"]["S"].ToString());
+            LevelData.Instance.DailyGiftDatas[i].chargeValue = int.Parse(rows[i]["chargeValue"]["S"].ToString());
+            LevelData.Instance.DailyGiftDatas[i].adDelay = int.Parse(rows[i]["adDelay"]["S"].ToString());
         }
     }
 
@@ -2080,22 +2121,18 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         {
             if (!bro.IsSuccess())
                 return;
-        });
-    }
 
-    public void SaveChart_DailyGift(string key)
-    {
-        Backend.Chart.GetOneChartAndSave(key, bro =>
-        {
-            if (!bro.IsSuccess())
+            JsonData rows = bro.GetReturnValuetoJSON()["rows"];
+
+            for (int i = 0, length = rows.Count; i < length; i++)
             {
-                GetChart_DailyGiftToServer(key);
-                return;
+                LevelData.Instance.DailyGiftDatas[i].type =
+                                    (EDailyGift)(int.Parse(rows[i]["itemID"][0].ToString()) - Values.StartID_DailyGift);
+                LevelData.Instance.DailyGiftDatas[i].freeCount = int.Parse(rows[i]["freeCount"][0].ToString());
+                LevelData.Instance.DailyGiftDatas[i].adCount = int.Parse(rows[i]["adCount"][0].ToString());
+                LevelData.Instance.DailyGiftDatas[i].chargeValue = int.Parse(rows[i]["chargeValue"][0].ToString());
+                LevelData.Instance.DailyGiftDatas[i].adDelay = int.Parse(rows[i]["adDelay"][0].ToString());
             }
-
-            PlayerPrefs.SetString(key_DailyGiftChart, key);
-
-            GetData_DailyGift();
         });
     }
 
@@ -2189,14 +2226,45 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     #region 확률
 
+    /// <param name="type">가챠 종류</param>
+    public void Gacha(EGacha type)
+    {
+        string key = "";
+        switch (type)
+        {
+            case EGacha.ShopItem:
+                key = key_ItemGacha_Probability;
+                break;
+            case EGacha.PlayReward:
+                key = key_PlayReward_Probability;
+                Use_PlayReward();
+                break;
+            case EGacha.TimeReward:
+                key = key_TimeReward_Probability;
+                Reset_TimeReward();
+                break;
+        }
+
+        // 로그용 코드 추가
+        var gachaItem = Probability_Gacha(key);
+
+        Debug.Log($"가챠 아이템 획득 : {type} : {gachaItem.item} - {gachaItem.count}");
+        Param param = new Param();
+        // param.Add("가챠 종류", type.ToString());
+        param.Add("획득 아이템", gachaItem.item);
+        InsertLog($"{type} : 가챠 아이템 획득", param);
+
+        GamePopup.Instance.OpenPopup(EGamePopup.Gacha);
+    }
+
     /// <summary>
-    /// 개수가 2개 이상이 필요하면 서버 데이터를 변경해야함
+    /// *한번에 2개 이상 불가..?
     /// </summary>
-    public FItemInfo Probability_NormalGacha()
+    public FItemInfo Probability_Gacha(string key)
     {
         FItemInfo result;
-        var bro = Backend.Probability.GetProbability(key_ItemGachaProbability);
 
+        var bro = Backend.Probability.GetProbability(key);
         if (!bro.IsSuccess())
         {
             Debug.LogError(bro.ToString());
@@ -2208,14 +2276,9 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
         JsonData json = bro.GetFlattenJSON();
 
-        //var item = (EItem)Enum.Parse(typeof(EItem), json["elements"]["type"].ToString());
         var item = (EItem)int.Parse(json["elements"]["itemID"].ToString());
         int value = int.Parse(json["elements"]["value"].ToString());
 
-        Debug.Log($"일일 가챠 아이템 획득 : {item} - {value}");
-        Param param = new Param();
-        param.Add("획득 아이템", item);
-        InsertLog("가챠 아이템 획득", param);
         //InsertLog("가챠 아이템 획득", string.Format("{0} - {1}", item, value));
 
         AddItem(item, value);
@@ -2230,7 +2293,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     }
 
 
-#endregion 확률
+    #endregion 확률
 
     #region 메일
 
@@ -2323,7 +2386,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     }
 
     #endregion 메일
-
 
     #region 시리얼
 
@@ -2459,7 +2521,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     #endregion
 
-
     #region 로그 기록
 
     /* 로그 리스트
@@ -2569,7 +2630,22 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         });
     }
 
-#endregion 로그 기록
+    #endregion 로그 기록
+
+
+    #region 영수증 검증
+
+    public void PurchaseReceipt(UnityEngine.Purchasing.Product product)
+    {
+        var validation = Backend.Receipt.IsValidateGooglePurchase(product.receipt, nickName, false);
+        if(!validation.IsSuccess())
+        {
+            Debug.Log(string.Format("ProcessPurchase: FAIL. Unrecognized product: '{0}'", product.definition.id));
+            return;
+        }
+    }
+
+    #endregion
 
     /// <summary>
     /// count -> value랑 통합
@@ -2596,7 +2672,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             case EItem.SuperFeverStart:
             case EItem.BonusScore:
                 //GameManager.ItemsCount[(ELobbyItem)((int)item - Values.StartNum_LobbyItem)]++;
-                _GameManager.ItemsCount[(int)item - Values.StartNum_LobbyItem] += value;
+                _GameManager.ItemsCount[(int)item - Values.StartID_LobbyItem] += value;
                 break;
             case EItem.SuperFever:
                 GameManager.Instance.GameController.AddFever(value);
@@ -2626,14 +2702,14 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             case EItem.CashDia:
             case EItem.FreeDia:
             case EItem.Ticket:
-                return LevelData.Instance.GoodsSprites[(int)item - Values.StartNum_Goods];
+                return LevelData.Instance.GoodsSprites[(int)item - Values.StartID_Goods];
             case EItem.AddMaxTime:
             case EItem.PermBombPower:
             case EItem.MaxItem:
             case EItem.PermShield:
             case EItem.SuperFeverStart:
             case EItem.BonusScore:
-                return LevelData.Instance.LobbyItemDatas[(int)item - Values.StartNum_LobbyItem].sprite;
+                return LevelData.Instance.LobbyItemDatas[(int)item - Values.StartID_LobbyItem].sprite;
             case EItem.BonusCharacter:      // 배열 [4]
             case EItem.TempBombPower:
             case EItem.BombFullGauge:
@@ -2641,7 +2717,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             case EItem.PreventInterrupt:
             case EItem.TempShield:
             case EItem.SuperFever:
-                return LevelData.Instance.InGameItemDatas[(int)item - Values.StartNum_InGameItem].sprite;
+                return LevelData.Instance.InGameItemDatas[(int)item - Values.StartID_InGameItem].sprite;
         }
 
         return null;
@@ -2671,10 +2747,37 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         return true;
     }
 
+    /// <summary>
+    /// 로그인에서 알람 설정
+    /// *GetData를 하지 않았기때문에 따로 처리 필요
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetPushNotification(bool value)
+    {
+        isAlarm = value;
+
+#if !UNITY_EDITOR
+            var text = Backend.Android.GetDeviceToken();
+            Debug.Log("푸시알림 : " + text);
+            if(isAlarm)
+            {
+                Backend.Android.PutDeviceToken();
+            }
+            else
+            {
+                Backend.Android.DeleteDeviceToken();
+            }
+#endif
+    }
+
+    /// <summary>
+    /// 옵션에서 푸시알람 설정
+    /// </summary>
+    /// <returns></returns>
     public bool SwitchDeviceToken()
     {
         Param param = new Param();
-        param.Add(PushAlarmColumnName, isAlarm);
+        param.Add(PushAlarmColumnName, !isAlarm);
 
         var bro = Backend.GameData.Update(ProfileTableName, new Where(), param);
         if (!bro.IsSuccess())
@@ -2729,9 +2832,15 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         if (bro.IsSuccess())
         {
             Debug.Log("탈퇴완료");
+
             GameSceneManager.Instance.Restart();
         }
     }
 
-#endregion
+    public void ClearRecvItems()
+    {
+        recvItems.Clear();
+    }
+
+    #endregion
 }

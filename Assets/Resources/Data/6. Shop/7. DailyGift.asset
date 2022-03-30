@@ -16,4 +16,5 @@ MonoBehaviour:
   items: []
   price: 0
   sprite: {fileID: 21300000, guid: 3512342ea2d9fdd4a9ca3d45bd25dda5, type: 3}
-  nameNum: 71
+  nameNum: 146
+  productID: 

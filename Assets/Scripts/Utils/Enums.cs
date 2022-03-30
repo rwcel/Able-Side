@@ -30,6 +30,7 @@ public enum EMode
 
 public enum EGamePopup
 {
+    TimeReward,
     ItemSelect,
     ItemBuy,
     Result,
@@ -37,21 +38,20 @@ public enum EGamePopup
     ProfileInfo,
     ProfileEdit,
     SerialCode,
-    DailyGacha,
+    Gacha,
     TicketShop,
-    Coupon,
     Notice,
     Account,
     Reward,                 // 위에 올라오는 경우 많아서 맨 밑
 }
 
-public enum ESystemPopup
-{
-    //BuyItemTwoButton,
-    OneButton,
-    TwoButton,
-    NoneTouch,
-}
+//public enum ESystemPopup
+//{
+//    //BuyItemTwoButton,
+//    OneButton,
+//    TwoButton,
+//    NoneTouch,
+//}
 
 // ItemData테이블
 public enum EItem
@@ -133,6 +133,7 @@ public enum EDailyGift
     LobbyItem,
     Revive,                 // 0, 4
     DoubleReward,       // 0, 4
+    TimeReward,
 }
 
 public enum EDock
@@ -218,4 +219,11 @@ public enum ESFX
     Countdown,
     GameOver,
     Result,
+}
+
+public enum EGacha
+{
+    ShopItem,
+    PlayReward,
+    TimeReward,
 }

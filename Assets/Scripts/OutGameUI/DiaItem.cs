@@ -28,10 +28,10 @@ public class DiaItem : ShopItem
     {
         base.UpdateData();
 
-        nameText.text = string.Format(65.Localization(), shopData.items[0].value);
+        nameText.text = string.Format(144.Localization(), shopData.items[0].value);
         if(shopData.items.Length > 1)
         {
-            bonusText.text = string.Format(66.Localization(), shopData.items[1].value);
+            bonusText.text = string.Format(145.Localization(), shopData.items[1].value);
         }
     }
 

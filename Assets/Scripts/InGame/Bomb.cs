@@ -8,13 +8,13 @@ public class Bomb : MonoBehaviour
     [SerializeField] GameObject normalBomb;
     [SerializeField] GameObject enhanceBomb;
 
-    private CharacterController normalController;
-    private CharacterController enhanceController;
+    private BombController normalController;
+    private BombController enhanceController;
 
     private void Awake()
     {
-        normalController = normalBomb.GetComponent<CharacterController>();
-        enhanceController = enhanceBomb.GetComponent<CharacterController>();
+        normalController = normalBomb.GetComponent<BombController>();
+        enhanceController = enhanceBomb.GetComponent<BombController>();
 
         // Debug.Log($"{normalController.gameObject.name} {enhanceController.gameObject.name}");
     }
@@ -29,15 +29,9 @@ public class Bomb : MonoBehaviour
                 {
                     normalBomb.SetActive(true);
                     enhanceBomb.SetActive(false);
-
-                    normalController.SetSortingGroup(enhanceController.SortOrder);
                 }
                 else
                 {
-                    // 이미 강화상태라면 sortOrder를 건드리지 않기     **다시 건드리면 최상단으로 올라가게 됨
-                    if (!enhanceBomb.activeSelf)        
-                        enhanceController.SetSortingGroup(normalController.SortOrder);
-
                     normalBomb.SetActive(false);
                     enhanceBomb.SetActive(true);
                 }
@@ -61,6 +55,12 @@ public class Bomb : MonoBehaviour
     public CharacterController GetController()
     {
         return normalBomb.activeSelf ? normalController : enhanceController;
+    }
+
+    public void SetSortingGroup(int layer = -1)
+    {
+        normalController.BombSortingGroup(layer);
+        enhanceController.BombSortingGroup(layer);
     }
 
 }

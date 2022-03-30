@@ -49,14 +49,14 @@ public class LocalizationManager : Singleton<LocalizationManager>
         foreach (var row in englishLines)
         {
             string[] texts = row.Split(':');
-            englishs.Add(int.Parse(texts[0]), texts[1]);
+            englishs.Add(int.Parse(texts[0]), texts[1].Replace(';', ':').Trim());
         }
 
         var koreanLines = koreanText.text.Split(new string[] { "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
         foreach (var row in koreanLines)
         {
             string[] texts = row.Split(':');
-            koreans.Add(int.Parse(texts[0]), texts[1]);
+            koreans.Add(int.Parse(texts[0]), texts[1].Replace(';', ':').Trim());
         }
     }
 

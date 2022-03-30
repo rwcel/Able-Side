@@ -20,8 +20,10 @@ public class RewardUI : PopupUI
 
     [SerializeField] FRewardItem[] rewardItems;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         recvButton.onClick.AddListener(OnReceive);
     }
 

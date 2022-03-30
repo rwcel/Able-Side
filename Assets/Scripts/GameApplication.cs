@@ -19,6 +19,14 @@ public class GameApplication : Singleton<GameApplication>
         //GarbageCollector.GCMode = GarbageCollector.Mode.Enabled;
 
         // 디바이스 로그 표시?
+#if UNITY_EDITOR
+        Debug.unityLogger.logEnabled = true;
+#else
+        if(!IsTestMode)
+        {
+            Debug.unityLogger.logEnabled = false;
+        }
+#endif
 
         var obj = FindObjectsOfType<GameApplication>();
         if (obj.Length == 1)
@@ -33,45 +41,60 @@ public class GameApplication : Singleton<GameApplication>
 
     private void Start()
     {
+#if UNITY_EDITOR
+        Application.runInBackground = true;
+#endif
+
         Caching.compressionEnabled = false;
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
         // Time.fixedDeltaTime = 
 
-        var clickStream = this.UpdateAsObservable().Where(_ => Input.GetKeyDown(KeyCode.Escape));
+        //var clickStream = this.UpdateAsObservable().Where(_ => Input.GetKeyDown(KeyCode.Escape));
 
-        clickStream
-            .Buffer(clickStream.Throttle(System.TimeSpan.FromSeconds(1)))
-            .Where(x => x.Count >= 2)
-            .Subscribe(_ => QuitMessage());
+        //clickStream
+        //    .Buffer(clickStream.Throttle(System.TimeSpan.FromSeconds(1)))
+        //    .Where(x => x.Count >= 2)
+        //    .Subscribe(_ => QuitMessage());
     }
 
     private void Update()
     {
-        deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
+        if (IsTestMode)
+        {
+            deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            QuitMessage();
+        }
     }
 
     private void OnGUI()
     {
-        var w = Screen.width;
-        var h = Screen.height;
-        var style = new GUIStyle();
+        if(IsTestMode)
+        {
+            var w = Screen.width;
+            var h = Screen.height;
+            var style = new GUIStyle();
 
-        var rect = new Rect(0, 0, w, h * 2 / 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = 36;
-        style.normal.textColor = Color.black;
+            var rect = new Rect(0, 0, w, h * 2 / 100);
+            style.alignment = TextAnchor.UpperLeft;
+            style.fontSize = 36;
+            style.normal.textColor = Color.black;
 
-        float msec = deltaTime * 1000.0f;
-        float fps = 1.0f / deltaTime;
-        string text = string.Format("{0:0.0}ms({1:0.}fps)", msec, fps);
-        GUI.Label(rect, text, style);
+            float msec = deltaTime * 1000.0f;
+            float fps = 1.0f / deltaTime;
+            string text = string.Format("{0:0.0}ms({1:0.}fps)", msec, fps);
+            GUI.Label(rect, text, style);
+        }
     }
 
     public void QuitMessage()
     {
-        SystemPopupUI.Instance.OpenTwoButton(84, 83, 53, 22, Quit, null);
+        SystemPopupUI.Instance.OpenTwoButton(15, 115, 2, 1, Quit, null);
     }
 
     public void Quit()
@@ -95,6 +118,8 @@ public class GameApplication : Singleton<GameApplication>
 
     public void ShowWebView(string titleName, string url)
     {
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+
         GpmWebView.ShowUrl(url,
             new GpmWebViewRequest.Configuration()
             {

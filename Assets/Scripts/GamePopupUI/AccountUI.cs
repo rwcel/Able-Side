@@ -16,16 +16,16 @@ public class AccountUI : PopupUI
 
     BackEndServerManager _BackEndServerManager;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         BackEndServerManager _BackEndServerManager = BackEndServerManager.Instance;
 
         googleButton.onClick.AddListener(() => _BackEndServerManager.ChangeFederation(ELogin.Google));
         facebookButton.onClick.AddListener(() => _BackEndServerManager.ChangeFederation(ELogin.Facebook));
         logOutButton.onClick.AddListener(LogOut);
         signOutButton.onClick.AddListener(SignOut);
-
-        closeButton.onClick.AddListener(_GamePopup.ClosePopup);
     }
 
     protected override void UpdateData()
@@ -63,11 +63,11 @@ public class AccountUI : PopupUI
 
     private void LogOut()
     {
-        SystemPopupUI.Instance.OpenTwoButton(84, 85, 53, 22, _BackEndServerManager.LogOut, null);
+        SystemPopupUI.Instance.OpenTwoButton(15, 186, 0, 1, _BackEndServerManager.LogOut, null);
     }
 
     private void SignOut()
     {
-        SystemPopupUI.Instance.OpenTwoButton(84, 86, 53, 22, _BackEndServerManager.SignOut, null);
+        SystemPopupUI.Instance.OpenTwoButton(15, 187, 0, 1, _BackEndServerManager.SignOut, null);
     }
 }

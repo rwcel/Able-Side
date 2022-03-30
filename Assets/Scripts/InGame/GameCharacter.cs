@@ -125,6 +125,9 @@ public class GameCharacter : MonoBehaviour
             .Skip(System.TimeSpan.Zero)
             .Subscribe(value =>
             {
+                if (value == -1)
+                    return;
+
                 var nextSide = GetNextSide(value - 1);
                 if(value == 2)
                 {
@@ -206,6 +209,8 @@ public class GameCharacter : MonoBehaviour
             StopCoroutine(bonusCharacterCo);
         bonusCharacters.Clear();
         bonusCharacterCount = 0;
+
+        ShowCharacterNum = -1;
     }
 
     /// <summary>

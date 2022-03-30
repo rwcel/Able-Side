@@ -36,6 +36,8 @@ public class GamePopup : Singleton<GamePopup>
 
     public void OpenPopup(EGamePopup type, Action openAction = null, Action closeAction = null)
     {
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+
         popupStack.Push(new Popup(popups[(int)type], closeAction));
         popups[(int)type].gameObject.SetActive(true);
 
@@ -46,6 +48,7 @@ public class GamePopup : Singleton<GamePopup>
 
     public void ClosePopupNotAction()
     {
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
         var offPopup = popupStack.Pop();
 
         offPopup.ui.PlayCloseAnim(null);
@@ -56,6 +59,11 @@ public class GamePopup : Singleton<GamePopup>
     /// </summary>
     public void ClosePopup()
     {
+        if (popupStack.Count <= 0)
+            return;
+
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+
         var offPopup = popupStack.Pop();
 
         //offPopup.obj.SetActive(false);

@@ -19,40 +19,73 @@ public static class Utils
     {
         // 순위권 밖
         if (value == 0 || value > 100)
-            return "UnRanked";
-        else if ((value % 10 == 1) && (value != 11))
-            return $"{value}st";
-        else if ((value % 10 == 2) && (value != 12))
-            return $"{value}nd";
-        else if ((value % 10 == 3) && (value != 13))
-            return $"{value}rd";
-        else
-            return $"{value}th";
+            return 233.Localization();
+
+        if (BackEndServerManager.Instance.Language == ELanguage.English)
+        {
+            if ((value % 10 == 1) && (value != 11))
+                return $"{value}st";
+            else if ((value % 10 == 2) && (value != 12))
+                return $"{value}nd";
+            else if ((value % 10 == 3) && (value != 13))
+                return $"{value}rd";
+            else
+                return $"{value}th";
+        }
+
+        return $"{value}등";
     }
 
-    public static string RemainTime(this System.TimeSpan time)
+    /// <summary>
+    /// 시간 단위 남은 시간
+    /// </summary>
+    public static string HourRemainTime(this System.TimeSpan time)
     {
         if(time.Days > 0)
         {
-            return $"{time.Days}Days";
+            return string.Format("{0}{1}", time.Days, time.Days > 1 ? "Days" : "Day");
         }
-        else if(time.Hours > 0)
+        else if(time.Hours > 1)
         {
-            return $"{time.Hours}Hours";
+            return string.Format("{0}{1}", time.Hours,  "Hours");
         }
         else
         {
-            return $"Under 1Hour";
+            return "1Hour";
         }
-        //else if(time.Minutes > 0)
+
+        //else if(time.Hours > 1)
         //{
-        //    return $"{time.Minutes}Minites";
+        //    return $"{time.Hours}Hours";
         //}
-        //else
-        //{
-        //    // *초 계속 갱신해줘야 함     -> 열어놨을때 계속 불러오게 할지
-        //    return $"Under 1Minites";
-        //}
+    }
+
+    public static string MinRemainTime(this System.TimeSpan time)
+    {
+        int result = 0;
+        if (time.Hours > 0)
+        {   // 30분 이상이면 반올림
+            result = time.Minutes >= 30 ? time.Hours + 1 : time.Hours;
+            return $"{result}{18.Localization()}";
+        }
+        else if(time.Minutes > 0)
+        {
+            result = time.Minutes + 1;
+            return $"{result}{19.Localization()}";
+            //result = time.Seconds >= 30 ? time.Minutes + 1 : time.Minutes;
+            //return $"{result}{19.Localization()}";
+        }
+        else
+        {   // 0일때만..?
+            if(time.Seconds > 0)
+            {
+                return $"{1}{19.Localization()}";
+            }
+            else
+            {
+                return 151.Localization();
+            }
+        }
     }
 
     // 현재 언어 알아야함
@@ -68,5 +101,43 @@ public static class Utils
         string result = Regex.Replace(serial, @"[^a-zA-Z0-9]", "").ToUpper();
         result = Regex.Replace(result, @"(\w{4})(\w{4})(\w{4})(\w{4})", "$1-$2-$3-$4");
         return result;
+    }
+
+    public static Color ComboColor(this int combo)
+    {
+        int idx = 0;
+        var scoreComboInfos = LevelData.Instance.ScoreComboInfos;
+        Color result = scoreComboInfos[idx].color;
+
+        while (combo >= scoreComboInfos[idx].combo)
+        {
+            result = scoreComboInfos[idx++].color;
+        } 
+
+        return result;
+    }
+
+    public static string NumberFormat(this int num)
+    {
+        if (BackEndServerManager.Instance.Language == ELanguage.English)
+        {
+            if (num >= 1000)
+            {
+                return $"{num / 1000} thousand";
+            }
+            else if(num >= 1000000)
+            {
+                return $"{num / 1000} million";
+            }
+        }
+        else
+        {
+            if(num >= 10000)
+            {
+                return $"{num / 10000}만";
+            }
+        }
+
+        return num.ToString();
     }
 }

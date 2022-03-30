@@ -15,6 +15,9 @@ public class SendQueueMgr : MonoBehaviour
         // 아래 DontDestroyOnLoad 함수를 통해 SendQueue 객체를 파괴되지 않는 오브젝트로 만듭니다.
         // 자세한 설명은 아래 유니티 개발자문서를 참고해주세요.
         // https://docs.unity3d.com/kr/current/ScriptReference/Object.DontDestroyOnLoad.html
+
+        // DontDestroyOnLoad(this);
+
         var obj = FindObjectsOfType<SendQueueMgr>();
         if (obj.Length == 1)
             DontDestroyOnLoad(gameObject);

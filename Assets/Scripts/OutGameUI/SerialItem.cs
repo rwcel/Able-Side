@@ -55,8 +55,6 @@ public class SerialItem : MailItem
     /// </summary>
     protected override void RecvMail()
     {
-        AudioManager.Instance.PlaySFX(ESFX.Touch);
-
         //base.RecvMail();
         //BackEndServerManager.Instance.ReceivePostItem(postInfo.serverType, postInfo.inDate);
 

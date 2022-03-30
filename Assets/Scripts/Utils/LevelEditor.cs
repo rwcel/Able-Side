@@ -270,7 +270,7 @@ public class LevelEditor : EditorWindow
         GUILayout.BeginHorizontal();
         GUILayout.Label(" [콤보 & 아이템 정보]", GUILayout.Width(150));
         GUILayout.Space(70);
-        GUILayout.Label("기준 콤보", GUILayout.Width(110));
+        GUILayout.Label("해당 콤보 미만", GUILayout.Width(110));
         GUILayout.Space(10);
         GUILayout.Label("일반 상자 개수", GUILayout.Width(110));
         GUILayout.Space(10);
@@ -497,6 +497,13 @@ public class LevelEditor : EditorWindow
 
         // InGame Item
         GUILayout.Space(50);
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("  - 아이템 획득을 위한 콤보", GUILayout.Width(180));
+        GUILayout.Space(30);
+        levelData.ItemComboUnit = EditorGUILayout.IntField("", levelData.ItemComboUnit, GUILayout.Width(50));
+        GUILayout.EndHorizontal();
+        
+        GUILayout.Space(10);
         GUILayout.BeginHorizontal();
         GUILayout.Label("[인게임 아이템]", GUILayout.Width(135));
         GUILayout.Space(50);

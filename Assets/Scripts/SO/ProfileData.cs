@@ -11,4 +11,5 @@ public class ProfileData : ScriptableObject
     public int missionCombo = 0;
 
     public int nameNum;
+    public int descNum;
 }

@@ -16,11 +16,11 @@ MonoBehaviour:
   items:
   - id: 127
     value: 2
-  - id: 115
+  - id: 116
     value: 2
   - id: 112
     value: 2
   price: 5500
   sprite: {fileID: 21300000, guid: 72fe7c1d4541e2047996958b8f426861, type: 3}
-  nameNum: 70
+  nameNum: 141
   productID: com.ablegames.sidetab.weeklypackage

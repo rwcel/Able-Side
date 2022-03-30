@@ -47,7 +47,7 @@ public class MailItem : MonoBehaviour
         iconImage.sprite = postInfo.sprite;
         titleText.text = postInfo.title;
         contentsText.text = postInfo.contents;
-        remainText.text = postInfo.remainTime.RemainTime();
+        remainText.text = postInfo.remainTime.HourRemainTime();
     }
 
     public virtual void UpdateData()
@@ -55,15 +55,13 @@ public class MailItem : MonoBehaviour
         UpdateRemainText();
     }
 
-    public void UpdateRemainText() => remainText.text = PostInfo.remainTime.RemainTime();
+    public void UpdateRemainText() => remainText.text = PostInfo.remainTime.HourRemainTime();
 
     /// <summary>
     /// 데이터 읽어오기
     /// </summary>
     protected virtual void RecvMail()
     {
-        AudioManager.Instance.PlaySFX(ESFX.Touch);
-
         // Debug.Log($"아이템 획득 : {postInfo.itemType} - {postInfo.count}");
         GameManager.Instance.SelectPostInfo = PostInfo;
 

@@ -16,13 +16,18 @@ public class OneButtonUI : MonoBehaviour
     private Animator anim;
     private AnimEvent animEvent;
 
-    public static readonly int _Anim_Close = Animator.StringToHash("ClosePopup");
+    public static readonly int _Anim_Close = Animator.StringToHash("Close");
     
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
         animEvent = GetComponent<AnimEvent>();
+    }
+
+    private void OnEnable()
+    {
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
     }
 
     private void Start()
@@ -54,6 +59,8 @@ public class OneButtonUI : MonoBehaviour
 
     void OnConfirm(System.Action buttonAction)
     {
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+
         buttonAction?.Invoke();
 
         button.onClick.RemoveAllListeners();

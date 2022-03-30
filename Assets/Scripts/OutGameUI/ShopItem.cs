@@ -56,7 +56,7 @@ public class ShopItem : MonoBehaviour
     public virtual void OnPurchaseComplete()
     {
         _AudioManager.PlaySFX(ESFX.BuyItem);
-        SystemPopupUI.Instance.OpenNoneTouch(78);
+        // SystemPopupUI.Instance.OpenNoneTouch(3);
 
         GamePopup.Instance.OpenPopup(EGamePopup.Reward,
             null,
@@ -65,6 +65,6 @@ public class ShopItem : MonoBehaviour
 
     public virtual void OnPurchaseFail()
     {
-        SystemPopupUI.Instance.OpenNoneTouch(79);
+        SystemPopupUI.Instance.OpenNoneTouch(50);
     }
 }

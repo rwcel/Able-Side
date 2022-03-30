@@ -59,6 +59,7 @@ namespace Obstacle
                 if (IsSuccessObstacle(curInfo.percent))
                 {
                     tweenAnimation.delay = curInfo.time;        // 딜레이 적용
+                    Debug.Log("딜레이 : " + tweenAnimation.delay);
 
                     // obstacle.time 시간 동안 적용
                     StartCoroutine(nameof(CoApply));
@@ -68,13 +69,14 @@ namespace Obstacle
 
         protected override IEnumerator CoApply() 
         {
-            WaitForSeconds applyTime = new WaitForSeconds(curInfo.time);
+            applyTime = curInfo.time;
+            WaitForSeconds applyDelay = new WaitForSeconds(curInfo.time);
 
             BeginApply();
             yield return pauseDelay;
 
             // Apply();     -> AnimEvent
-            yield return applyTime;
+            yield return applyDelay;
 
             EndApply();
         }

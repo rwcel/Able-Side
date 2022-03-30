@@ -12,6 +12,10 @@ public class LoginUI : MonoBehaviour
 
     [SerializeField] Button startButton;
 
+    [SerializeField] Button googleButton;
+    [SerializeField] Button facebookButton;
+    [SerializeField] Button guestButton;
+
     protected Stack<GameObject> openObjects;
 
     private Animator animator;
@@ -28,11 +32,17 @@ public class LoginUI : MonoBehaviour
     {
         openObjects = new Stack<GameObject>();
 
+        BackEndServerManager backEndServerManager = BackEndServerManager.Instance;
+
         startButton.onClick.AddListener(() =>
-        { 
-            BackEndServerManager.Instance.LoginWithTheBackendToken();
+        {
+            backEndServerManager.LoginWithTheBackendToken();
             startButton.enabled = false;            // 연속 클릭 못하게
         });
+
+        googleButton.onClick.AddListener(backEndServerManager.GoogleLogin);
+        facebookButton.onClick.AddListener(backEndServerManager.FacebookLogin);
+        guestButton.onClick.AddListener(backEndServerManager.GuestLogin);
     }
 
     private void ShowUI(GameObject uiObject)

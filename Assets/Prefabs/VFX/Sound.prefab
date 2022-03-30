@@ -850,11 +850,11 @@ MonoBehaviour:
   lobbyBgmClips:
   - {fileID: 8300000, guid: 991442d00ca033a4c9c7691d908c0131, type: 3}
   ingameBgmClips:
-  - {fileID: 8300000, guid: 929ebea85860ddb4186ebb603beaccab, type: 3}
+  - {fileID: 8300000, guid: 27020b0eeb461a347be2a51038cecac5, type: 3}
   bgmSource: {fileID: 4786291093532595487}
   bgmGroup: {fileID: -5386281472973612524, guid: f42013293e2299e4b80698e2901a98a7, type: 2}
   lobbyVolume: 0.2
-  ingameVolume: 0.63
+  ingameVolume: 0.3
   sfxClips:
   - {fileID: 8300000, guid: 197781a6a7298ce4d9328e8249ffb190, type: 3}
   - {fileID: 8300000, guid: 04dea0e0c2861d44096bfd3fce9093f7, type: 3}

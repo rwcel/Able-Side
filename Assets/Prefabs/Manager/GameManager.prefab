@@ -1,5 +1,108 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &800721062
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 800721063}
+  - component: {fileID: 800721064}
+  m_Layer: 0
+  m_Name: UIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &800721063
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800721062}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1349305020324626389}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &800721064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800721062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55d5a92c82702db4091c3e92075135a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outGameUI: {fileID: 0}
+  inGameUI: {fileID: 0}
+--- !u!1 &977566340
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 977566341}
+  - component: {fileID: 977566342}
+  m_Layer: 0
+  m_Name: PoolingManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &977566341
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977566340}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1349305020324626389}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &977566342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977566340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caac5e136db743b48bc3770ce83b8b75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolParent: {fileID: 977566341}
+  pools:
+  - _Count: 5
+    _Obj: {fileID: 8803972498796884777, guid: 5d7aa4f4635637e4fb8b831861a7aa5a, type: 3}
+    parent: {fileID: 0}
+  - _Count: 25
+    _Obj: {fileID: 3615878062512247952, guid: 3a4694c6f6d06ba43a780e1410b5a639, type: 3}
+    parent: {fileID: 0}
+  - _Count: 5
+    _Obj: {fileID: 6232515331159570974, guid: 48205bdd53688154faa67f2ab16c9e92, type: 3}
+    parent: {fileID: 0}
+  charPoolInfo:
+    _Count: 25
+    _Obj: {fileID: 0}
+    parent: {fileID: 0}
 --- !u!1 &1349305020324626391
 GameObject:
   m_ObjectHideFlags: 0
@@ -29,7 +132,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 977566341}
+  - {fileID: 800721063}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -54,12 +159,12 @@ MonoBehaviour:
   AccumulateScore: 0
   Ticket: 0
   TicketTime: 0
+  PlayRewardCount: 0
   FreeDia: 0
   CashDia: 0
   ItemsCount: 
   SelectLobbyItem: 0
-  _ItemGachaTimerReactiveProperty:
-    value: 0
+  SelectSerialCode: 
 --- !u!114 &1349305020324626387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,6 +211,7 @@ MonoBehaviour:
   IsStartFever: 0
   IsInvincible: 0
   IsBonus: 0
+  IsBomb: 0
   IsReverse: 0
   IsShield: 0
   AddDia: 0

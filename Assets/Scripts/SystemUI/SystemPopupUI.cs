@@ -9,6 +9,9 @@ public class SystemPopupUI : Singleton<SystemPopupUI>
     [SerializeField] TwoButtonUI twoButtonUI;
     [SerializeField] NoneTouchUI noneTouchUI;
 
+    [SerializeField] InputFieldTwoButtonUI inputTwoButtonUI;
+    [SerializeField] AdvertiseUI advertiseUI;
+
 
     protected override void AwakeInstance()
     {
@@ -34,14 +37,13 @@ public class SystemPopupUI : Singleton<SystemPopupUI>
                                         System.Action _leftButtonAction = null, System.Action _rightButtonAction = null)
     => twoButtonUI.SetData(_titleText, _contentsText, _leftButtonText, _rightButtonText, _leftButtonAction, _rightButtonAction);
 
-    public void OpenTwoButton(int _titleNum, int _contentsNum, int _leftButtonNum, int _rightButtonNum,
+    public void OpenTwoButton(int _titleNum, int _contentsNum, int _leftButtonNum = 0, int _rightButtonNum = 1,
                                         System.Action _leftButtonAction = null, System.Action _rightButtonAction = null)
     => twoButtonUI.SetData(_titleNum, _contentsNum, _leftButtonNum, _rightButtonNum, _leftButtonAction, _rightButtonAction);
 
-    public void OpenTwoButton(int _titleNum, string _contentsText, int _leftButtonNum, int _rightButtonNum,
+    public void OpenTwoButton(int _titleNum, string _contentsText, int _leftButtonNum = 0, int _rightButtonNum = 1,
                                     System.Action _leftButtonAction = null, System.Action _rightButtonAction = null)
     => twoButtonUI.SetData(_titleNum, _contentsText, _leftButtonNum, _rightButtonNum, _leftButtonAction, _rightButtonAction);
-
 
     public void OpenNoneTouch(string _contentsText)
     => noneTouchUI.SetData(_contentsText);
@@ -49,4 +51,10 @@ public class SystemPopupUI : Singleton<SystemPopupUI>
     public void OpenNoneTouch(int _contentsNum)
     => noneTouchUI.SetData(_contentsNum);
 
+    public void OpenInputTwoButton(int _charLimit, int _titleNum, int _contentsNum,
+                                        System.Action<string> _leftButtonAction = null, System.Action<string> _rightButtonAction = null)
+    => inputTwoButtonUI.SetData(_charLimit, _titleNum, _contentsNum,  _leftButtonAction, _rightButtonAction);
+
+    public void OpenAdvertise(EDailyGift _type, int _titleNum, System.Action _adRewardAction = null)
+    => advertiseUI.SetData(_type, _titleNum, _adRewardAction);
 }

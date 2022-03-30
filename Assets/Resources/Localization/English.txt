@@ -1,87 +1,162 @@
-0 : Game Setting
-1 : BGM
-2 : SFX
-3 : Alarm
-4 : Language
-5 : English
-6 : Term & Services
-7 : Policy
-8 : Notice
-9 : C/S Team
-10 : Info
-11 : Coupon
-12 : How To Play
-13 : Account Setting
-14 : Copy
-15 : Switch Account
-16 : Setting
-17 : Game Start
-18 : High Score
-19 : Rank
-20 : UnRanked
-21 : Start
-22 : Cancel
-23 : Buy
-24 : Free
-25 : Charge
-26 : Get Item
-27 : Ad
-28 : Mail
-29 : Add Max Time
-30 : Add PlayTime {0}
-31 : Add Bomb Power
-32 : + Add{0} Bomb
-33 : Max Item
-34 : Add InGame Item {0}
-35 : Super Fever Start
-36 : Super Fever Start : {0} Time
-37 : Add Score
-38 : +{0}% Bonus Score
-39 : Parm Shield
-40 : {0}% InCorrect Shield
-41 : Add Dia +{0}
-42 : Tmp Add Bomb Power
-43 : Bonus Character
-44 : Bomb Full Gauge
-45 : Time Charge
-46 : Prevent Obstacle
-47 : Tmp Shield
-48 : Super Fever
-49 : Shop
-50 : Home
-51 : Combo
-52 : Save
-53 : Exit
-54 : Edit Profile
-55 : Over Accumulate Score - {0}
-56 : {0}% Bonus
-57 : Wood
-58 : Bronze
-59 : Silver
-60 : Gold
-61 : Sapphire
-62 : Rose
-63 : Platinum
-64 : Ruby
-65 : Diamond {0}
-66 : Bonus {0}
-70 : Weekly Package
-71 : Item Gacha
-72 : Copy Completed.
-73 : Recv
-74 : View
-75 : Ban Word
-76 : Nickname Duplicate
-77 : Short Nickname
-78 : Success
-79 : Fail
-80 : Okay
-81 : Create Nickname
-82 : Rename Nickname
-83 : Can you exit the game?
-84 : Message
-85 : Can Logout?
-86 : Account will be deleted 7 days after.<br>If you connect cancel this.
-87 : Can you go to lobby?<br>Used item does not gaven back.
-200 : Would you buy item using the diamond {0}
-400 : Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic
+0 : Confirm
+1 : Cancel
+2 : Exit
+3 : Success
+4 : Fail
+5 : Save
+6 : Receive
+7 : Buy
+8 : Charge
+9 : Ad
+10 : Free
+11 : Details
+12 : Agree
+13 : All Agree
+14 : Warning
+15 : Messsage
+16 : Copy
+17 : View
+18 : hour
+19 : min
+20 : s
+21 : Shop
+22 : Rank
+23 : Home
+24 : Post
+25 : Option
+26 : Score
+27 : High score
+28 : Cumulative score
+29 : Combo
+30 : Start
+31 : Collect Gem
+32 : Bonus
+33 : Pause
+34 : Continue
+35 : Achieve
+50 : Failed!<br>Please try again later.
+51 : Coming soon..
+52 : Be short of Gems.
+53 : Please check the Internet status.
+100 : Tap to Play!
+101 : <#ffda6b>C/S</color>; ablegames_help@ablex.co.kr
+102 : Terms of Service & Policy
+103 : [Essential] Terms of Service
+104 : [Essential] Privacy Policy
+105 : [Option] Push Notification
+106 : Create Nickname
+107 : Change Nickname
+108 : Included prohibit words
+109 : Duplicate Nickname
+110 : Enter at least two characters.
+111 : Please update this game to store.<br>Details can be found on the official community.
+112 : Update
+113 : Official Community
+114 : Not account registered.<br>Please create a new account<br>after the game is completely over!
+115 : Close the game?
+120 : Would you view ad to get a reword?
+121 : Remaining ad count
+122 : Preparing a ad!
+123 : Please wait a moment.
+124 : Would you view ad to revive?
+125 : Would you view ad to shorten time?
+140 : You can get free rewards and buy a variety of products full of luck everyday!
+141 : Weekly Items
+142 : This is a package product that can only be purchased once a week (*Initialized every Monday)
+143 : Gem Items
+144 : Gem {0}
+145 : Bonus {0}
+146 : Daily Free Reward
+147 : Get a free gift full of luck every day!
+148 : 
+150 : If you play more than {0} score in 5 rounds, you will get a chance to get a reward!
+151 : Arrive
+160 : There is no Post..
+170 : Game Setting
+171 : BGM
+172 : SFX
+173 : Push Notification
+174 : Language
+175 : English
+176 : Game Infos
+177 : Policy
+178 : Notice
+179 : C/S Team
+180 : Notification
+181 : Coupon
+182 : How To Play
+183 : Account Setting
+184 : Swich Account
+185 : Sign Out
+186 : Proceed to logout.<br>Return to the title screen.
+187 : After 7 days, the account will be deleted.<br>Please note that the deletion of the account<br>will be canceled if you re-access the account.
+188 : Character Limit {0}
+189 : Game License
+190 : Sound source - BGMFactory (https;//bgmfactory.com)<br>Used Music - There he goes again.
+200 : Offline Reward
+201 : If bus would arrived, you can get a reward.
+202 : Reduce {0}m
+210 : Set up Items
+211 : Free to buy ; {0}
+212 : Get Items<br>({0}/{1})
+213 : Charge {0}
+214 : Would you like to buy using {0} gems?
+220 : Revive
+221 : 2x Gem
+222 : Go back Lobby?<br>Used item won't be restored.
+230 : Edit Profile
+231 : Higher {0} Cumulative score
+232 : If all of profile unlock, you can get {0}% bonus.
+233 : UnRanked
+240 : Serial Code
+250 : Magic Mushroom Shop
+251 : You can buy special magic mushrooms for playing games!
+260 : You can view the notification board again in the settings.
+300 : Increase Max Time
+301 : Add Bomb Power
+302 : Magic Box
+303 : Magic Shield
+304 : Super Fever Start
+305 : Bonus Score
+320 : Increase max time by {0}s.
+321 : Increase {0} animals to send, if you used bomb.
+322 : Start with {0} random items.
+323 : Protected against mistake {0}%
+324 : Start the game in super fever state for {0} seconds.
+325 : Get an additional {0}% score.
+350 : Gem +{0}
+351 : Add Bomb Power
+352 : Bonus Character
+353 : Bomc
+354 : Max Time
+355 : Debuff Clean
+356 : Magic Shield
+357 : Super Fever
+358 : Ultra Fever
+359 : Hyper Fever
+370 : Get a {0} gems.
+371 : Only once increase {0} animals to send, if you used bomb.
+372 : You get more score when you send the animal.
+373 : Use this item, immediately effect bomb.
+374 : Invincible time for 3s, time is charged to the maximum.
+375 : Disengage interrupt.
+376 : Protected two mistakes in 5s
+377 : You can get 1.2 times at extra score in 5.5s, and only one animal comes out.
+378 : If it is two super fever items overlapped.<br>You can get 1.5 times at extra score in 5.5s, and only one animal comes out.
+379 : If it is three super fever items overlapped.<br>You can get 2 times at extra score in 5.5s, and only one animal comes out.
+400 : Wood
+401 : Bronze
+402 : Silver
+403 : Gold
+404 : Sapphire
+405 : Rose
+406 : Platinum
+407 : Ruby
+450 : Badge for freshmen<br>It is strong because, made of birch
+451 : Badge for beginners who just stepped on
+452 : 99.9% pure silver badge
+453 : 99.9% pure gold badge
+454 : Stylish badge made of blue sapphire
+455 : Badge made by outstanding neighbor country craftsman
+456 : Badge made of very rare jewelry<br>It's priceless
+457 : The Legendary Badge Only for SideTab Heroes

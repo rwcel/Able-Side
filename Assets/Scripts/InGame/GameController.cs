@@ -303,7 +303,7 @@ public class GameController : MonoBehaviour
 
         if (MaxCombo >= Values.ScoreComboInfos[nextMaxComboNum].combo)
         {
-            // Score += scoreComboInfo.rewardScore;
+            Score += scoreComboInfo.rewardScore;
             nextMaxComboNum++;
 
             // Debug.Log("Add Score : " + scoreComboInfo.rewardScore);
@@ -346,7 +346,6 @@ public class GameController : MonoBehaviour
         GamePopup.Instance.OpenPopup(EGamePopup.Result, 
             () => 
             {
-                _AudioManager.PlaySFX(ESFX.Result);
                 _AudioManager.PauseBGM(true);
             }, 
             () =>
@@ -368,19 +367,13 @@ public class GameController : MonoBehaviour
 
         itemAddCount++;
 
-        int rand = Random.Range(0, 100);
-
-        //Debug.Log($"{rand} - {Values.ItemComboInfos[0].normalBoxPercent} == {itemComboInfo.normalBoxPercent}, {itemComboInfo}");
-        //Debug.Log($"{itemComboInfo.normalBoxCount} + {itemComboInfo.rareBoxCount}, ");
-
         InGameItemData data;
 
-        if (rand < itemComboInfo.normalBoxPercent)
+        for (int i = 0, length = itemComboInfo.normalBoxCount; i < length; i++)
         {
-            for (int i = 0, length = itemComboInfo.normalBoxCount; i < length; i++)
+            if (Random.Range(0, 100) < itemComboInfo.normalBoxPercent)
             {
                 //AddItem(NormalGacha());
-
                 data = NormalGacha();
                 AddItem(data);
 
@@ -388,9 +381,10 @@ public class GameController : MonoBehaviour
                 normalItems[data.type]++;
             }
         }
-        else if (rand < itemComboInfo.rareBoxPercent)
+
+        for (int i = 0, length = itemComboInfo.rareBoxCount; i < length; i++)
         {
-            for (int i = 0, length = itemComboInfo.rareBoxCount; i < length; i++)
+            if (Random.Range(0, 100) < itemComboInfo.rareBoxPercent)
             {
                 //AddItem(RareGacha());
 
@@ -416,12 +410,11 @@ public class GameController : MonoBehaviour
         {
             if(itemGachas[idx].normalPercent > 0)
             {
-                if (rand < itemGachas[idx].normalPercent)
+                if (rand <= itemGachas[idx].normalPercent)
                 {
                     return itemGachas[idx];
                 }
             }
-
             rand -= (int)itemGachas[idx++].normalPercent;
         }
 
@@ -436,12 +429,11 @@ public class GameController : MonoBehaviour
         {
             if (itemGachas[idx].rarePercent > 0)
             {
-                if (rand < itemGachas[idx].rarePercent)
+                if (rand <= itemGachas[idx].rarePercent)
                 {
                     return itemGachas[idx];
                 }
             }
-
             rand -= (int)itemGachas[idx++].rarePercent;
         }
 
@@ -601,12 +593,11 @@ public class GameController : MonoBehaviour
 
     public void AddFever(int count = 1)
     {
-        if(Fever != Values.MaxFever)
-        {   // 이미 Max라면 저장할 필요 없음
-            BackEndServerManager.Instance.Update_Fever(Fever);
-        }
+        if (Fever == Values.MaxFever)
+            return;
 
         Fever = (Fever + count) > Values.MaxFever ? Values.MaxFever : Fever + count;
+        BackEndServerManager.Instance.Update_Fever(Fever);
     }
 
     IEnumerator CoApplyFever()
@@ -698,6 +689,7 @@ public class GameController : MonoBehaviour
         IsReverse = false;
         IsShield = false;
         IsBomb = false;
+        IsInvincible = false;
 
         Items.Clear();
         itemShields.Clear();

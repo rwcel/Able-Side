@@ -62,13 +62,12 @@ namespace Obstacle
         /// </summary>
         protected override IEnumerator CoApply()
         {
+            applyTime = 0f;
+
             BeginApply();
             yield return pauseDelay;
 
             // Apply();     -> AnimEvent
-
-            yield return pauseDelay;
-            EndApply();
         }
 
         public override void BeginApply()
@@ -82,7 +81,21 @@ namespace Obstacle
         {
             base.Apply();
             _GameManager.GameCharacter.Jumble();
+
+            StartCoroutine(nameof(CoParticleDelay));
+
+            EndApply();
         }
         public override void EndApply() => base.EndApply();
+
+        /// <summary>
+        /// 파티클 시간동안 시간 안지나게 처리
+        /// </summary>
+        IEnumerator CoParticleDelay()
+        {
+            --_GameManager.InputValue;
+            yield return Values.Delay05;
+            ++_GameManager.InputValue;
+        }
     }
 }

@@ -27,6 +27,11 @@ public class TwoButtonUI : MonoBehaviour
         animEvent = GetComponent<AnimEvent>();
     }
 
+    private void OnEnable()
+    {
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+    }
+
     private void Start()
     {
         animEvent.SetAnimEvent(ClosePopup);
@@ -76,6 +81,8 @@ public class TwoButtonUI : MonoBehaviour
 
     void OnConfirm(System.Action buttonAction)
     {
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+
         buttonAction?.Invoke();
 
         leftButton.onClick.RemoveAllListeners();

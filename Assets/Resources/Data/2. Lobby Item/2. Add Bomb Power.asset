@@ -15,9 +15,9 @@ MonoBehaviour:
   type: 1
   sprite: {fileID: 21300000, guid: 3da3ae997c7876b49a15bada8b8f8e0a, type: 3}
   itemName: "\uD3ED\uD0C4 \uD6A8\uACFC \uC99D\uAC00"
-  nameLanguageNum: 31
+  nameLanguageNum: 301
   description: + Add{0} Bomb
-  descLanguageNum: 32
+  descLanguageNum: 321
   value: 3
   price: 40
   isFree: 1

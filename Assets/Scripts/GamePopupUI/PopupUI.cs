@@ -20,6 +20,12 @@ public class PopupUI : MonoBehaviour
         animEvent = GetComponent<AnimEvent>();
     }
 
+    protected virtual void Start()
+    {
+        if(closeButton != null)
+            closeButton.onClick.AddListener(_GamePopup.ClosePopup);
+    }
+
     protected void OnEnable()
     {
         if(_GameManager == null)

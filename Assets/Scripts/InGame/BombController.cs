@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class BombController : CharacterController
 {
+    Bomb bomb;          // Parent
+
     public override void DownMove(Vector3 movePos, float duration, Ease ease)
     {
         //base.DownMove(movePos, duration, ease);
@@ -37,5 +39,26 @@ public class BombController : CharacterController
                 //transform.localPosition = Vector3.zero;
                 PlayRun(false);
             });
+    }
+
+    public override void SetSortingGroup(int layer = -1)
+    {
+        if(bomb == null)
+        {
+            bomb = transform.parent.GetComponent<Bomb>();
+        }
+        // base.SetSortingGroup(layer);
+        bomb.SetSortingGroup(layer);
+    }
+
+    public void BombSortingGroup(int layer = -1)
+    {
+        if (layer == -1)
+        {
+            ++sortingGroup.sortingOrder;
+            // PlayRun(true);
+        }
+        else
+            sortingGroup.sortingOrder = layer;
     }
 }

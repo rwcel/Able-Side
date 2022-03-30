@@ -15,8 +15,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("========== Model ==========")]
     [SerializeField] GameObject shieldObj;
-
-    private Animator anim;
+    [SerializeField] Animator playerAnim;
 
     private GameManager _GameManager;
     private GameCharacter gameCharacter;
@@ -26,12 +25,6 @@ public class PlayerController : MonoBehaviour
     private static readonly int _Anim_Fever = Animator.StringToHash("IsFever");
     private static readonly int _Anim_Obstacle = Animator.StringToHash("IsObstacle");
     private static readonly int _Anim_Clear = Animator.StringToHash("Clear");
-
-    private void Awake()
-    {
-        // **getchild대신 Model Serialized하기
-        anim = transform.GetChild(0).GetComponent<Animator>();
-    }
 
     private void Start()
     {
@@ -65,7 +58,7 @@ public class PlayerController : MonoBehaviour
         var gameController = _GameManager.GameController;
 
         gameController.ObserveEveryValueChanged(_ => gameController.IsFever)
-            .Subscribe(value => anim.SetBool(_Anim_Fever, value))
+            .Subscribe(value => playerAnim.SetBool(_Anim_Fever, value))
             .AddTo(this.gameObject);
 
         gameController.ObserveEveryValueChanged(_ => gameController.CanShield)
@@ -74,7 +67,7 @@ public class PlayerController : MonoBehaviour
 
         this.ObserveEveryValueChanged(_ => Obstacle.Obstacle.IsApply)
             .Subscribe(value => {
-                anim.SetBool(_Anim_Obstacle, value);
+                playerAnim.SetBool(_Anim_Obstacle, value);
             })
             .AddTo(this.gameObject);
 
@@ -84,7 +77,7 @@ public class PlayerController : MonoBehaviour
             if(Obstacle.Obstacle.IsApply)
             //if(anim.GetCurrentAnimatorStateInfo(0).IsName("Obstacle"))
             {
-                anim.SetTrigger(_Anim_Clear);
+                playerAnim.SetTrigger(_Anim_Clear);
             }
         };
     }
@@ -123,7 +116,7 @@ public class PlayerController : MonoBehaviour
 
         gameCharacter.DetectCharacter(ESide.Left);
 
-        anim.SetTrigger(_Anim_Left);
+        playerAnim.SetTrigger(_Anim_Left);
     }
 
     public void OnRight()
@@ -133,7 +126,7 @@ public class PlayerController : MonoBehaviour
 
         gameCharacter.DetectCharacter(ESide.Right);
 
-        anim.SetTrigger(_Anim_Right);
+        playerAnim.SetTrigger(_Anim_Right);
     }
 
     public void OnFever()

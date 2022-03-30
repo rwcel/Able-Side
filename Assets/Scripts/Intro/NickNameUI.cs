@@ -67,7 +67,7 @@ public class NickNameUI : MonoBehaviour
 
         if (tmp.Length <= 1)
         {
-            _SystemPopupUI.OpenNoneTouch(77);
+            _SystemPopupUI.OpenNoneTouch(110);
             return false;
         }
         
@@ -75,7 +75,7 @@ public class NickNameUI : MonoBehaviour
         // 금칙어 확인
         if (!badWords.CheckFilter(tmp))
         {
-            _SystemPopupUI.OpenNoneTouch(75);
+            _SystemPopupUI.OpenNoneTouch(108);
             return false;
         }
 
@@ -91,7 +91,7 @@ public class NickNameUI : MonoBehaviour
             return true;
         }
 
-        _SystemPopupUI.OpenNoneTouch(76);
+        _SystemPopupUI.OpenNoneTouch(109);
         return false;
     }
 

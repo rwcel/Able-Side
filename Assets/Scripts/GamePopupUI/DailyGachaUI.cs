@@ -16,8 +16,10 @@ public class DailyGachaUI : PopupUI
     bool isOpen;
 
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         boxButton.onClick.AddListener(OnReceive);
         //recvButton.onClick.AddListener(OnReceive);
     }
@@ -30,14 +32,8 @@ public class DailyGachaUI : PopupUI
 
     private void OnOpen()
     {
-        // 두번이상 클릭 못하게
-        if (isOpen)
-            return;
-
-        isOpen = true;
         // 확률 계산
-
-        var itemInfo = BackEndServerManager.Instance.Probability_NormalGacha();
+        var itemInfo = BackEndServerManager.Instance.RecvItems[0];
         if(itemInfo.icon != null)
         {
             iconImage.sprite = itemInfo.icon;
@@ -46,6 +42,10 @@ public class DailyGachaUI : PopupUI
 
     void OnReceive()
     {
-        _GamePopup.OpenPopup(EGamePopup.Reward, null, () => _GamePopup.AllClosePopup(null));
+        // 두번이상 클릭 못하게
+        if (isOpen)
+            return;
+
+        _GamePopup.OpenPopup(EGamePopup.Reward, () => isOpen = true, () => _GamePopup.AllClosePopup(null));
     }
 }

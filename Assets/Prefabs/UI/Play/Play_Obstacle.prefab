@@ -50,6 +50,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animEvent: {fileID: 5380769353724333959}
+  eventObjs:
+  - {fileID: 5380769353724333957}
+  - {fileID: 0}
   applyParticles:
   - {fileID: 0}
   - {fileID: 0}
@@ -57,6 +60,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  timeImage: {fileID: 0}
   score: 0
 --- !u!1 &5380769351890511494
 GameObject:
@@ -492,9 +496,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animEvent: {fileID: 5380769351890511496}
+  eventObjs:
+  - {fileID: 5380769351890511494}
+  - {fileID: 5380769352909871471}
+  - {fileID: 0}
   applyParticles:
   - {fileID: 0}
   - {fileID: 0}
+  timeImage: {fileID: 0}
   score: 0
   tweenAnimation: {fileID: 5380769352861137548}
 --- !u!1 &5380769352629390565
@@ -1267,6 +1276,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animEvent: {fileID: 5380769352515044450}
+  eventObjs:
+  - {fileID: 5380769352515044448}
+  - {fileID: 0}
   applyParticles:
   - {fileID: 0}
   - {fileID: 0}
@@ -1274,6 +1286,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  timeImage: {fileID: 0}
   score: 0
 --- !u!1 &5380769353724333957
 GameObject:
@@ -1311,7 +1324,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -120}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -39.999878, y: 607.9696}
+  m_AnchoredPosition: {x: -40, y: 607.9696}
   m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 1, y: 0.25}
 --- !u!95 &5380769353724333958

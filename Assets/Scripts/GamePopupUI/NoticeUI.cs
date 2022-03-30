@@ -14,8 +14,10 @@ public class NoticeUI : PopupUI
 
     GameApplication _GameApplication;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         _GameApplication = GameApplication.Instance;
         exitButton.onClick.AddListener(_GamePopup.ClosePopup);
     }
@@ -52,7 +54,7 @@ public class NoticeUI : PopupUI
 
     public void OnGuide()
     {
-        _GameApplication.ShowWebView("Guide", "https://cafe.naver.com/ablegames/18");
+        _GameApplication.ShowWebView("Cafe", "https://cafe.naver.com/ablegames/68");
     }
 
     public void OnCommunity()

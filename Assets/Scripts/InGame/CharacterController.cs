@@ -32,7 +32,7 @@ public class CharacterController : MonoBehaviour
     //    moveSequence.Kill();
     //}
 
-    public void SetSortingGroup(int layer = -1)
+    public virtual void SetSortingGroup(int layer = -1)
     {
         if (layer == -1)
         {

@@ -28,6 +28,10 @@ public class HomeUI : DockUI
     [SerializeField] TextMeshProUGUI nickNameText;
     [SerializeField] TextMeshProUGUI bestScoreText;
 
+    [Header("보상")]
+    [SerializeField] TimeReward timeReward;
+    [SerializeField] PlayReward playReward;
+
     [Header("Start")]
     [SerializeField] Button readyButton;
 
@@ -47,7 +51,9 @@ public class HomeUI : DockUI
 
     public override void UpdateDatas()
     {
-
+        // TimeReward 시간 갱신
+        playReward.UpdateLanguage();
+        timeReward.UpdateData();
     }
 
     private void InitSet()
@@ -110,34 +116,23 @@ public class HomeUI : DockUI
             .AddTo(this.gameObject);
     }
 
-    //private void Reload()
-    //{
-    //    UpdateDia(true, _GameManager.CashDia);
-    //    UpdateDia(false, _GameManager.FreeDia);
-    //    UpdateTicket(_GameManager.Ticket);
-    //    UpdateTicketTime(_GameManager.TicketTime);
-    //    UpdateNickName(_GameManager.NickName);
-    //    UpdateBestScore(_GameManager.BestScore);
-    //}
-
 #region OnClick
 
     public void OnTooltip()
     {
-        // Debug.Log($"{!diaTooltipObj.activeSelf}");
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
         diaTooltipObj.SetActive(!diaTooltipObj.activeSelf);
     }
 
     public void OnDia()
     {
-        //Debug.Log($"Click Dia");
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
         GameUIManager.Instance.MoveDock(EDock.Shop);
     }
 
     public void OnTicket()
     {
         GamePopup.Instance.OpenPopup(EGamePopup.TicketShop);
-        // ++GameManager.Instance.Ticket;
     }
 
     public void OnReady()
@@ -147,7 +142,6 @@ public class HomeUI : DockUI
             Debug.Log("다른 데이터?");
         }
 
-        AudioManager.Instance.PlaySFX(ESFX.Touch);
         GamePopup.Instance.OpenPopup(EGamePopup.ItemSelect);
     }
 
@@ -156,7 +150,7 @@ public class HomeUI : DockUI
         GamePopup.Instance.OpenPopup(EGamePopup.ProfileInfo);
     }
 
-#endregion OnClick
+    #endregion OnClick
 
     private void UpdateDia(bool isCash, int value)
     {

@@ -27,8 +27,10 @@ public class ResultUI : PopupUI
     private int diaValue = 0;
     private int scoreValue = 0;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         AddListeners();
         AddObservables();
     }
@@ -38,6 +40,14 @@ public class ResultUI : PopupUI
         reviveButton.onClick.AddListener(OnRevive);
         rewardButton.onClick.AddListener(OnDoubleReward);
         lobbyButton.onClick.AddListener(() => OnLobby());
+
+        _GameManager.OnGameStart += (value) =>
+        {
+            if (!value)
+            {   // Pause해서 나갈 경우 초기화 해줘야함
+                useRevive = false;
+            }
+        };
     }
 
     private void AddObservables()
@@ -58,8 +68,7 @@ public class ResultUI : PopupUI
 
         var gameController = _GameManager.GameController;
 
-        // *Controller에서 보여주는 값이다름
-        // **추가 점수 Text 보여줘야..?
+        // *Controller와 보여주는 값이다름
         scoreValue = (int)(gameController.Score * gameController.ExtraScore);
 
         scoreText.text = $"{scoreValue.CommaThousands()}";
@@ -67,16 +76,14 @@ public class ResultUI : PopupUI
         bonusText.text = $"{(gameController.ExtraScore - 1) * 100}%";               // 1.15 or 1 -> (N-1) * 100
         maxComboText.text = $"{gameController.MaxCombo.CommaThousands()}";
 
-        //bestMaxComboText.text = $"Best MaxCombo : { Utils.ValueThousands(_GameManager.BestMaxCombo)}";
-
-        //bestMaxComboText.color = (_GameManager.GameController.MaxCombo == _GameManager.BestMaxCombo) ?
-        //    updateColor : Color.black;
-
         diaValue = _GameManager.GameController.AddDia;
         addDiaText.text = $"{diaValue}";
 
-        reviveButton.interactable = !useRevive && GameManager.Instance.CanRevive;
-        rewardButton.interactable = GameManager.Instance.CanDoubleReward;
+        reviveButton.interactable = !useRevive;             //  && GameManager.Instance.CanRevive;
+        rewardButton.interactable = diaValue > 0;        //&& GameManager.Instance.CanDoubleReward;       // 0개면 false
+
+        // 끝날때 새로 추가하기때문에 넣어주기
+        animEvent.SetAnimEvent(() => AudioManager.Instance.PlaySFX(ESFX.Result));
     }
 
     void UpdateBestScore(int value)
@@ -85,32 +92,16 @@ public class ResultUI : PopupUI
         updateObj.SetActive(scoreValue == value);
     }
 
-    void UpdateBestMaxCombo(int value)
-    {
-
-    }
-
     /// <summary>
     /// 광고 시청 후 플레이 가능
     /// </summary>
     void OnRevive()
     {
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
         if (useRevive)
             return;
 
-        if (_GameManager.CanUseRevive)      // 없는 곳
-        {   
-            Revive();
-        }
-        else if(_GameManager.ChargeRevive())
-        {
-            // 광고
-            UnityAdsManager.Instance.ShowRewardAD(Revive
-                                                                      , _GameManager.Timer_Revive
-                                                                      , EDailyGift.Revive);
-
-            Debug.Log($"이어하기 남은 횟수 :  {_GameManager.ReviveCount}");
-        }
+        _GameManager.UseDailyGift(EDailyGift.Revive, Revive);
     }
 
     private void Revive()
@@ -125,44 +116,47 @@ public class ResultUI : PopupUI
 
     void OnDoubleReward()
     {
-        if (_GameManager.CanUseDoubleReward)
-        {
-            DoubleReward();
-        }
-        else if (_GameManager.ChargeDoubleReward())
-        {
-            // 광고
-            UnityAdsManager.Instance.ShowRewardAD(DoubleReward
-                                                                      ,  _GameManager.Timer_DoubleReward
-                                                                      , EDailyGift.DoubleReward);
-
-            Debug.Log($"두배보상 남은 횟수 :  {_GameManager.DoubleRewardCount}");
-        }        
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+        _GameManager.UseDailyGift(EDailyGift.DoubleReward, DoubleReward);     
     }
 
+    /// <summary>
+    /// 2배 보상일때는 UI 띄워주기
+    /// </summary>
     private void DoubleReward()
     {
-        _GameManager.FreeDia += (diaValue * 2);
+        BackEndServerManager.Instance.AddItem(EItem.FreeDia, diaValue * 2);
+        // _GameManager.FreeDia += ;
 
-        OnLobby(false);
+        Dispatcher.Instance.Invoke(() => OnLobby(false));
     }
 
     /// <summary>
     /// Double Reward로 들어오면 실행 안함
     /// </summary>
-    void OnLobby(bool isAddValue = true)
+    void OnLobby(bool normalReward = true)
     {
         // 서버에 게임 플레이 로그 보내기
-        BackEndServerManager.Instance.GamePlayLog(scoreValue, diaValue, useRevive , !isAddValue);
+        BackEndServerManager.Instance.GamePlayLog(scoreValue, diaValue, useRevive, !normalReward);
 
         // Data초기화
-        useRevive = false;
+        // useRevive = false;
 
-        if(isAddValue)
-        {
-            _GameManager.FreeDia += diaValue;
-        }
-
+        // **다이아 받는 경우 둘이 같이 꺼져서 안나오기때문에 설정 필요
         _GamePopup.ClosePopup();
+
+        if (normalReward)
+        {
+            AudioManager.Instance.PlaySFX(ESFX.Touch);
+            _GameManager.FreeDia += diaValue;
+            UnityAdsManager.Instance.ShowInterstitialAD();
+
+            GameUIManager.Instance.MoveDock(EDock.Home);
+        }
+        else
+        {
+            GamePopup.Instance.OpenPopup(EGamePopup.Reward, null,
+                () => GameUIManager.Instance.MoveDock(EDock.Home));
+        }
     }
 }

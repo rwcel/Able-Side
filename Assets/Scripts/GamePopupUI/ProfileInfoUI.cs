@@ -14,12 +14,23 @@ public class ProfileInfoUI : PopupUI
     [SerializeField] TextMeshProUGUI nicknameText;
     [SerializeField] TextMeshProUGUI bestScoreText;
     [SerializeField] TextMeshProUGUI comboText;
+    [SerializeField] TextMeshProUGUI accuScoreText;
     [SerializeField] TextMeshProUGUI rankText;
 
     [Header("Buttons")]
     [SerializeField] Button editButton;
     [SerializeField] Button rankButton;
     [SerializeField] Button exitButton;
+
+
+    protected override void Start()
+    {
+        base.Start();
+
+        AddListeners();
+
+        AddObserve();
+    }
 
     protected override void UpdateData()
     {
@@ -30,14 +41,8 @@ public class ProfileInfoUI : PopupUI
         nicknameText.text = _GameManager.NickName;
         bestScoreText.text = _GameManager.BestScore.CommaThousands();
         comboText.text = _GameManager.BestMaxCombo.ToString();
+        accuScoreText.text = _GameManager.AccumulateScore.ToString();
         rankText.text = _GameManager.Rank.Ordinalnumber();
-    }
-
-    private void Start()
-    {
-        AddListeners();
-
-        AddObserve();
     }
 
     void AddListeners()

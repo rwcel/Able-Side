@@ -15,9 +15,9 @@ MonoBehaviour:
   type: 5
   sprite: {fileID: 21300000, guid: 25321642d9314a344a2c8e25c723f900, type: 3}
   itemName: "\uBCF4\uB108\uC2A4 \uC810\uC218"
-  nameLanguageNum: 37
+  nameLanguageNum: 305
   description: +{0}% Bonus Score
-  descLanguageNum: 38
+  descLanguageNum: 325
   value: 15
   price: 156
   isFree: 0

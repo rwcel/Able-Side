@@ -27,6 +27,9 @@ public class GameManager : Singleton<GameManager>
     public int Ticket;
     [HideInInspector] public int TicketTime;
 
+    public int PlayRewardCount;
+    public DateTime TimeRewardTime;              // 분단위 표시 필요
+
     [HideInInspector] public int FreeDia;
     [HideInInspector] public int CashDia;
 
@@ -43,6 +46,16 @@ public class GameManager : Singleton<GameManager>
     // *나갈때 데이터라서 서버 관리로 해결할 수 없다
     private static readonly string _Key_TicketTime = "TicketRemainTime";
     private static readonly string _Key_DateOfExit = "DateOfExit";
+    private static readonly string[] _Key_DailyGifts = 
+    {
+        EDailyGift.ItemGacha.ToString(), 
+        EDailyGift.Ticket.ToString(), 
+        EDailyGift.LobbyItem.ToString(), 
+        EDailyGift.Revive.ToString(), 
+        EDailyGift.DoubleReward.ToString(), 
+        EDailyGift.TimeReward.ToString(), 
+    };
+
 
     // **여기에 다 들어오는게 맞나?
     public ELobbyItem SelectLobbyItem;
@@ -57,8 +70,10 @@ public class GameManager : Singleton<GameManager>
 
         foreach (EDailyGift item in Enum.GetValues(typeof(EDailyGift)))
         {
-            DailyGifts.Add(item, new DailyGift(0, 0, 0, 0));
+            DailyGifts.Add(item, new DailyGift(0, 0));
         }
+
+        disposables = new IDisposable[DailyGifts.Count];
     }
 
     protected override void DestroyInstance() { }
@@ -96,6 +111,7 @@ public class GameManager : Singleton<GameManager>
                     AudioManager.Instance.PlayInGameBGM();
                     //AudioManager.Instance.StopBGM();
                 }
+
                 OnGameStart?.Invoke(isGameStart);
             })
             .AddTo(this.gameObject);
@@ -150,14 +166,12 @@ public class GameManager : Singleton<GameManager>
 
     public void LoadData()
     {
-        BackEndServerManager.Instance.GetChartLists();
-
         BackEndServerManager.Instance.GetGameDatas(this);
 
         // GetProfileDatas();          // 이것도 서버로?
     }
 
-    public void CheckDateOfExitTime()
+    public void CheckTicketExitTime()
     {
         if (!PlayerPrefs.HasKey(_Key_DateOfExit) 
             || !PlayerPrefs.HasKey(_Key_TicketTime))
@@ -200,7 +214,7 @@ public class GameManager : Singleton<GameManager>
                     while (value >= Values.TicketTime)
                     {
                         value -= Values.TicketTime;
-                        if (++Ticket >= Values.MaxTicket)
+                        if (Ticket++ >= Values.MaxTicket)
                             break;
                     }
                     TicketTime = Values.TicketTime - value;
@@ -215,6 +229,31 @@ public class GameManager : Singleton<GameManager>
 
         // **OnStart이후 방식 변경으로 UniRx Skip이 더 빨리 적용되어 TicketTime이 적용되지 않는 문제
         UpdateTicket(Ticket);
+    }
+
+    public void CheckDailyGiftAdExitTime(EDailyGift dailyGift)
+    {
+        if (!PlayerPrefs.HasKey(_Key_DateOfExit)
+            || !PlayerPrefs.HasKey(dailyGift.ToString()))
+        {
+            return;
+        }
+
+        // 계산
+        var dateOfExit = DateTime.Parse(PlayerPrefs.GetString(_Key_DateOfExit));
+
+        double totalSeconds = DateTime.Now.Subtract(dateOfExit).TotalSeconds;
+        DailyGifts[dailyGift].adDelay = PlayerPrefs.GetInt(dailyGift.ToString()) - (int)totalSeconds;      // 남은시간 : 기존남은시간 - 나간시간
+
+        if (DailyGifts[dailyGift].adDelay > 0)
+        {
+            Debug.Log($"타이머 재생 : {dailyGift} => {PlayerPrefs.GetInt(dailyGift.ToString())} - {totalSeconds}");
+            SetAdTimer(dailyGift, DailyGifts[dailyGift].adDelay);
+        }
+        else
+        {
+            DailyGifts[dailyGift].adDelay = 0;
+        }
     }
 
     /// <summary>
@@ -273,89 +312,70 @@ public class GameManager : Singleton<GameManager>
         return true;
     }
 
-    #region DailyGiftData 호출
-
-    public DailyGift LobbyItemGift => DailyGifts[EDailyGift.LobbyItem];
-
-    public int LobbyItemFreeCount => DailyGifts[EDailyGift.LobbyItem].freeCount;
-    public int LobbyItemAdCount => DailyGifts[EDailyGift.LobbyItem].adCount;
-    public int LobbyItemCharge => DailyGifts[EDailyGift.LobbyItem].chargeValue;
-    [HideInInspector] public int LobbyItemAdDelay = 0;
-
     public bool BuyLobbyItem_Free()
     {
-        if (!LobbyItemGift.CanUse())
-            return false;
-
         ItemsCount[(int)SelectLobbyItem]++;
-        OnBuyLobbyItem?.Invoke(SelectLobbyItem);
+        LobbyItemGift.UseFreeCount();        // 감소
 
-        LobbyItemGift.UseGift();
+        OnBuyLobbyItem?.Invoke(SelectLobbyItem);        // Select UI 설정
 
         BackEndServerManager.Instance.LobbyItemFreeLog(SelectLobbyItem);
 
         return true;
     }
 
-    public void ChargeLobbyItem()
-    {
-        if (!LobbyItemGift.CanCharge())
-            return;
+    #region DailyGiftData 호출
 
-        UnityAdsManager.Instance.ShowRewardAD(() => LobbyItemGift.Charge()
-                                                                , Timer_LobbyItem                              // 타이머
-                                                                , EDailyGift.LobbyItem);
+    private IDisposable[] disposables;
+
+    public DailyGift LobbyItemGift => DailyGifts[EDailyGift.LobbyItem];
+
+    public int LobbyItemFreeCount => DailyGifts[EDailyGift.LobbyItem].freeCount;
+
+    public void UseDailyGift(EDailyGift type, Action useAction)
+    {
+        if(DailyGifts[type].CanUse())
+        {   // 무료
+            useAction?.Invoke();
+        }
+        else
+        {   // 광고
+            int titleNum = 0;         // 광고보고 보상?
+            switch (type)
+            {
+                case EDailyGift.TimeReward:
+                    titleNum = 125;
+                    break;
+                case EDailyGift.Revive:
+                    titleNum = 124;
+                    break;
+                case EDailyGift.LobbyItem:
+                case EDailyGift.ItemGacha:
+                case EDailyGift.Ticket:
+                case EDailyGift.DoubleReward:
+                    titleNum = 120;
+                    break;
+            }
+
+            if (type == EDailyGift.LobbyItem)
+            {   // 로비 아이템은 충전만
+                useAction += () => DailyGifts[type].freeCount += LevelData.Instance.DailyGiftDatas[(int)EDailyGift.LobbyItem].chargeValue;
+            }
+            else
+            {   // 로비 아이템은 충전 후 사용
+                useAction += () => DailyGifts[type].UseAdCount();
+            }
+
+            SystemPopupUI.Instance.OpenAdvertise(type, titleNum, useAction);
+
+            // 개수 소모 필요
+        }
     }
 
-    public bool CanUseItemGacha => DailyGifts[EDailyGift.ItemGacha].CanUse();
     public int ItemGachaFreeCount => DailyGifts[EDailyGift.ItemGacha].freeCount;
-    public int ItemGachaAdCount => DailyGifts[EDailyGift.ItemGacha].adCount;
-    public bool UseItemGacha() => DailyGifts[EDailyGift.ItemGacha].UseGift();
-    public bool ChargeItemGacha => DailyGifts[EDailyGift.ItemGacha].Charge();
-    [HideInInspector] public int ItemGachaAdDelay = 0;
-    // [HideInInspector] public ReactiveProperty<int> _ItemGachaTimerReactiveProperty;
-
-    public int ReviveCount => DailyGifts[EDailyGift.Revive].adCount;
-    public int DoubleRewardCount => DailyGifts[EDailyGift.DoubleReward].adCount;
-    public bool CanRevive => DailyGifts[EDailyGift.Revive].CanUse() || DailyGifts[EDailyGift.Revive].CanCharge();
-    public bool CanDoubleReward => DailyGifts[EDailyGift.DoubleReward].CanUse() || DailyGifts[EDailyGift.DoubleReward].CanCharge();
-    public bool CanUseRevive => DailyGifts[EDailyGift.Revive].CanUse();
-    public bool CanUseDoubleReward => DailyGifts[EDailyGift.DoubleReward].CanUse();
-    [HideInInspector] public int ReviveAdDelay = 0; //=> DailyGifts[EDailyGift.Revive].adDelay;
-    [HideInInspector] public int DoubleRewardAdDelay = 0; // => DailyGifts[EDailyGift.DoubleReward].adDelay;
-    public bool ChargeRevive()
-    {
-        if (ReviveAdDelay > 0)
-            return false;
-
-        if (DailyGifts[EDailyGift.Revive].Charge())
-        {
-            DailyGifts[EDailyGift.Revive].UseGift();
-            return true;
-        }
-        return false;
-    }
-    public bool ChargeDoubleReward()
-    {
-        if (DoubleRewardAdDelay > 0)
-            return false;
-
-        if (DailyGifts[EDailyGift.DoubleReward].Charge())
-        {
-            DailyGifts[EDailyGift.DoubleReward].UseGift();
-            return true;
-        }
-        return false;
-    }
-
-    public bool CanUseTicket => DailyGifts[EDailyGift.Ticket].CanUse();
-    public int TicketAdCount => DailyGifts[EDailyGift.Ticket].adCount;
-    public int TicketAdDelay => DailyGifts[EDailyGift.Ticket].adDelay;
-    public bool UseTicket() => DailyGifts[EDailyGift.Ticket].UseGift();
-    public bool ChargeTicket => DailyGifts[EDailyGift.Ticket].ChargeAndUse();
+    public bool UseItemGacha() => DailyGifts[EDailyGift.ItemGacha].UseFreeCount();
 
     #endregion
-
 
 
     private void UpdateTicket(int value)
@@ -463,65 +483,73 @@ public class GameManager : Singleton<GameManager>
         //if (!CanGameStart)
         //    return;
 
+        // Debug.Log("게임시작");
+
         --Ticket;
         IsGameStart = true;
     }
 
+    // **Pause, Focus에서도 진행
+    /// <summary>
+    /// 서버에 보낼 방법이 없어서 PlayerPrefs에 저장
+    /// </summary>
     private void OnApplicationQuit()
     {
-        // 서버에 보낼 방법이 없음. -> Player가 가지고 있어야?
-
         PlayerPrefs.SetString(_Key_DateOfExit, DateTime.Now.ToString());
         PlayerPrefs.SetInt(_Key_TicketTime, TicketTime);
+        foreach (var keyValuePair in DailyGifts)
+        {
+            PlayerPrefs.SetInt(keyValuePair.Key.ToString(), keyValuePair.Value.adDelay > 0 ? keyValuePair.Value.adDelay : 0);
+        }
+
+        PlayerPrefs.Save();
     }
 
-
-    public void Timer_ItemGacha()
+    /// <summary>
+    /// 모바일에서는 홈버튼으로 나가서 삭제하는 경우 Quit을 불러오지 못하기 때문에 Pause가 필요
+    /// </summary>
+    /// <param name="pause"></param>
+    private void OnApplicationPause(bool pause)
     {
-        ItemGachaAdDelay = DailyGifts[EDailyGift.ItemGacha].adDelay;
-        Observable.FromCoroutine<int>(observer => CoTimerObserver(observer, ItemGachaAdDelay))
-            .Subscribe(value => ItemGachaAdDelay = value)
-            .AddTo(gameObject);
+        if(pause)
+        {
+            PlayerPrefs.SetString(_Key_DateOfExit, DateTime.Now.ToString());
+            PlayerPrefs.SetInt(_Key_TicketTime, TicketTime);
+            foreach (var keyValuePair in DailyGifts)
+            {
+                PlayerPrefs.SetInt(keyValuePair.Key.ToString(), keyValuePair.Value.adDelay > 0 ? keyValuePair.Value.adDelay : 0);
+            }
 
-        //_ItemGachaTimerReactiveProperty = new ReactiveProperty<int>(ItemGachaAdDelay);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            CheckTicketExitTime();
 
-        ////_ItemGachaTimerReactiveProperty.Subscribe(value => Debug.Log($"Timer : {value}"));
-
-        //Observable.Interval(TimeSpan.FromSeconds(1))
-        //    .Subscribe(_ => 
-        //    {
-        //        if(_ItemGachaTimerReactiveProperty.Value > 0)
-        //            _ItemGachaTimerReactiveProperty.Value--;
-        //    })
-        //    .AddTo(gameObject);
+            foreach (var keyValuePair in DailyGifts)
+            {
+                CheckDailyGiftAdExitTime(keyValuePair.Key);
+            }
+        }
     }
 
-    public void Timer_LobbyItem()
+    /// <summary>
+    /// **Pause, Focus에서 발생 시 초기화해줘야하기때문에 변수명을 저장할 필요가 있음
+    /// </summary>
+    /// <param name="dailyGift"></param>
+    public void SetAdTimer(EDailyGift dailyGift, int time = -1)
     {
-        LobbyItemAdDelay = DailyGifts[EDailyGift.LobbyItem].adDelay;
-        Observable.FromCoroutine<int>(observer => CoTimerObserver(observer, LobbyItemAdDelay))
-            .Subscribe(value => LobbyItemAdDelay = value)
-            .AddTo(gameObject);
-    }
+        DailyGifts[dailyGift].adDelay = (time == -1) ? LevelData.Instance.DailyGiftDatas[(int)dailyGift].adDelay : time;
 
-    public void Timer_Revive()
-    {
-        ReviveAdDelay = DailyGifts[EDailyGift.Revive].adDelay;
-        Observable.FromCoroutine<int>(observer => CoTimerObserver(observer, ReviveAdDelay))
-            .Subscribe(value => { ReviveAdDelay = value; 
-                //Debug.Log($"ReviveAdDelay : {value}");
-                })
-            .AddTo(gameObject);
-    }
+        if(disposables[(int)dailyGift] != null)
+        {
+            disposables[(int)dailyGift].Dispose();
+        }
 
-    public void Timer_DoubleReward()
-    {
-        DoubleRewardAdDelay = DailyGifts[EDailyGift.Revive].adDelay;
-        Observable.FromCoroutine<int>(observer => CoTimerObserver(observer, DoubleRewardAdDelay))
-            .Subscribe(value => { DoubleRewardAdDelay = value;
-                //Debug.Log($"DoubleRewardAdDelay : {value}");
-            })
-            .AddTo(gameObject);
+        disposables[(int)dailyGift] = 
+            Observable.FromCoroutine<int>(observer => CoTimerObserver(observer, DailyGifts[dailyGift].adDelay))
+                .Subscribe(value => DailyGifts[dailyGift].adDelay = value)
+                .AddTo(gameObject);
     }
 
     IEnumerator CoTimerObserver(IObserver<int> observer, int delay)
@@ -535,4 +563,39 @@ public class GameManager : Singleton<GameManager>
         observer.OnNext(0);
         observer.OnCompleted();
     }
+
+    //public void Timer_ItemGacha()
+    //{
+    //    Observable.FromCoroutine<int>(observer => CoTimerObserver(observer, DailyGifts[EDailyGift.ItemGacha].curDelay))
+    //        .Subscribe(value => DailyGifts[EDailyGift.ItemGacha].curDelay = value)
+    //        .AddTo(gameObject);
+    //}
+
+    //public void Timer_LobbyItem()
+    //{
+    //    LobbyItemAdDelay = DailyGifts[EDailyGift.LobbyItem].adDelay;
+    //    Observable.FromCoroutine<int>(observer => CoTimerObserver(observer, LobbyItemAdDelay))
+    //        .Subscribe(value => LobbyItemAdDelay = value)
+    //        .AddTo(gameObject);
+    //}
+
+    //public void Timer_Revive()
+    //{
+    //    ReviveAdDelay = DailyGifts[EDailyGift.Revive].adDelay;
+    //    Observable.FromCoroutine<int>(observer => CoTimerObserver(observer, ReviveAdDelay))
+    //        .Subscribe(value => { ReviveAdDelay = value; 
+    //            //Debug.Log($"ReviveAdDelay : {value}");
+    //            })
+    //        .AddTo(gameObject);
+    //}
+
+    //public void Timer_DoubleReward()
+    //{
+    //    DoubleRewardAdDelay = DailyGifts[EDailyGift.Revive].adDelay;
+    //    Observable.FromCoroutine<int>(observer => CoTimerObserver(observer, DoubleRewardAdDelay))
+    //        .Subscribe(value => { DoubleRewardAdDelay = value;
+    //            //Debug.Log($"DoubleRewardAdDelay : {value}");
+    //        })
+    //        .AddTo(gameObject);
+    //}
 }

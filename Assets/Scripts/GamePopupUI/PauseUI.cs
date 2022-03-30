@@ -8,21 +8,28 @@ public class PauseUI : PopupUI
     [SerializeField] Button resumeButton;
     [SerializeField] Button exitButton;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         resumeButton.onClick.AddListener(_GamePopup.ClosePopup);
         exitButton.onClick.AddListener(OnExit);
     }
 
     public void OnExit()
     {
-        SystemPopupUI.Instance.OpenTwoButton(84, 87, 80, 22, OnClickToLobby, null);
+        SystemPopupUI.Instance.OpenTwoButton(15, 222, 0, 1, OnClickToLobby, null);
     }
 
-    // **메인메뉴 기능이 있으면 그쪽으로 만들어야..
+    /// <summary>
+    /// *Action보다 IsGameStart가 먼저 적용되어 NotAction 사용
+    /// </summary>
     public void OnClickToLobby()
     {
+        _GamePopup.ClosePopupNotAction();
+        Time.timeScale = 1f;
+        AudioManager.Instance.PauseBGM(false);
+
         GameManager.Instance.IsGameStart = false;
-        _GamePopup.ClosePopup();
     }
 }

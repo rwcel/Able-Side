@@ -60,14 +60,15 @@ namespace Obstacle
 
         protected override IEnumerator CoApply()
         {
-            WaitForSeconds applyTime = new WaitForSeconds(curInfo.time);
+            applyTime = curInfo.time;
+            WaitForSeconds applyDelay = new WaitForSeconds(curInfo.time);
 
             BeginApply();
             yield return pauseDelay;
 
             // Apply();     -> AnimEvent
 
-            yield return applyTime;
+            yield return applyDelay;
 
             EndApply();
         }

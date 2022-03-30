@@ -9,9 +9,8 @@ using UniRx;
 public class ProfileEditUI : PopupUI
 {
     [Header("NickName")]
-    [SerializeField] TMP_InputField nicknameInput;
-    [SerializeField] TextMeshProUGUI currentNickName;
-    [SerializeField] Button duplicateButton;
+    [SerializeField] TextMeshProUGUI nicknameText;
+    [SerializeField] Button editButton;
 
     [System.Serializable]
     private struct FProfileIcon
@@ -25,6 +24,7 @@ public class ProfileEditUI : PopupUI
     [SerializeField] Image profileIconImage;
     [SerializeField] LocalizationText nameLangText;
     [SerializeField] TextMeshProUGUI missionText;
+    [SerializeField] TextMeshProUGUI descText;
 
     [Header("Icon List")]
     [SerializeField] GameObject iconPrefab;
@@ -58,38 +58,55 @@ public class ProfileEditUI : PopupUI
         badWords = GetComponent<BadWords>();
     }
 
+    protected override void Start()
+    {
+        base.Start();
+
+        CreateIcons();
+
+        AddListeners();
+
+        profileIcons[BackEndServerManager.Instance.ProfileIcon].IconToggle.isOn = true;
+        tooltipText.text = string.Format(232.Localization(), Values.Bonus_AllProfile);
+    }
+
     protected override void UpdateData()
     {
         base.UpdateData();
 
         // 리셋
         scrollRect.verticalNormalizedPosition = 1f;
-        nicknameInput.text = "";
         isDuplicateCheck = true;
 
-        currentNickName.text = _GameManager.NickName;
+        nicknameText.text = _GameManager.NickName;
         profileIconImage.sprite = _GameManager.ProfileData.sprite;
 
         // *Unirx 작동 확인
         curData = _GameManager.ProfileData;
 
+
         // 계속 전체를 검사하는게 맞는지
         for (int i = 0, length = profileIcons.Count; i < length; i++)
         {
-            profileIcons[i].UpdateOpen(_GameManager.AccumulateScore >= LevelData.Instance.ProfileDatas[i].missionScore);
+            int idx = i;
+            var profileData = LevelData.Instance.ProfileDatas[idx];
+            bool isOpen = _GameManager.AccumulateScore >= profileData.missionScore;
+            profileIcons[idx].UpdateOpen(isOpen);
+            // **데이터 열때마다 현재 스코어에 따라 isOpen을 연결해줘야함
+            profileIcons[idx].IconToggle.onValueChanged.RemoveAllListeners();
+            profileIcons[idx].IconToggle.onValueChanged.AddListener((value) =>
+            {
+                if (value)
+                {
+                    UpdateProfile(profileData, idx, isOpen);
+                    AudioManager.Instance.PlaySFX(ESFX.Touch);
+                }
+            });
         }
 
-        missionText.text = string.Format(55.Localization(), curData.missionScore);      // 언어 변경 최초 적용 필요
-    }
-
-    private void Start()
-    {
-        CreateIcons();
-
-        AddListeners();
-
-        profileIcons[BackEndServerManager.Instance.ProfileIcon].IconToggle.isOn = true;
-        tooltipText.text = string.Format(56.Localization(), Values.Bonus_AllProfile);
+        //missionText.text = 28.Localization() + " " + string.Format(231.Localization(), curData.missionScore);
+        missionText.text = string.Format(231.Localization(), curData.missionScore);
+        descText.text = curData.descNum.Localization();
     }
 
     private void CreateIcons()
@@ -117,18 +134,14 @@ public class ProfileEditUI : PopupUI
 
     private void AddListeners()
     {
-        duplicateButton.onClick.AddListener(DuplicateNickNameCheck);
+        editButton.onClick.AddListener(() => SystemPopupUI.Instance.OpenInputTwoButton(Values.Input_Limit_Nickname, 107, 188, DuplicateNickNameCheck, null));
 
         saveButton.onClick.AddListener(OnSave);
         exitButton.onClick.AddListener(OnExit);
 
-        nicknameInput.onValueChanged.AddListener(NickNameInput);
-
         this.ObserveEveryValueChanged(_ => curData)
             .Subscribe(value => profileIconImage.sprite = value.sprite)
             .AddTo(this.gameObject);
-
-        nicknameInput.characterLimit = 12;
     }
 
     private void UpdateProfile(ProfileData profileData, int idx, bool isOpen)
@@ -138,39 +151,42 @@ public class ProfileEditUI : PopupUI
         isIconOpen = isOpen;
 
         nameLangText.ChangeText(profileData.nameNum);
-        missionText.text = string.Format(55.Localization(), profileData.missionScore);
+        missionText.text = string.Format(231.Localization(), curData.missionScore);
+        descText.text = curData.descNum.Localization();
 
         //tooltipText.gameObject.SetActive(!isOpen);
         //tooltipText.text = $"UnLock - Score : {profileData.missionScore}, Combo : {profileData.missionCombo}";
 
         UpdateSaveButton();
     }
-
-    private void NickNameInput(string text)
-    {
-        // 텍스트 확인
-        if(text != null)
-        {
-            isDuplicateCheck = false;
-            UpdateSaveButton();
-        }
-    }
  
-    public void DuplicateNickNameCheck()
+    public void DuplicateNickNameCheck(string _text)
     {
-        string tmp = nicknameInput.text;
-        if (!badWords.CheckFilter(tmp))
+        if(_text.Length <= 1)
+        {
+            SystemPopupUI.Instance.OpenNoneTouch(110);
             return;
+        }
 
-        int errCode = BackEndServerManager.Instance.DuplicateNickNameCheck(tmp);
+        if (!badWords.CheckFilter(_text))
+        {
+            SystemPopupUI.Instance.OpenNoneTouch(108);
+            return;
+        }
+
+        int errCode = BackEndServerManager.Instance.DuplicateNickNameCheck(_text);
 
         // 중복이 아닌경우
         if (errCode == 0)
         {
-            currentNickName.text = tmp;
+            nicknameText.text = _text;
             isDuplicateCheck = true;
             changeNickname = true;
             UpdateSaveButton();
+        }
+        else
+        {
+            SystemPopupUI.Instance.OpenNoneTouch(109);
         }
     }
 
@@ -178,7 +194,7 @@ public class ProfileEditUI : PopupUI
     {
         if(changeNickname)
         {
-            BackEndServerManager.Instance.UpdateNickname(nicknameInput.text);
+            BackEndServerManager.Instance.UpdateNickname(nicknameText.text);
         }
 
         BackEndServerManager.Instance.Update_ProfileIcon(selectNum);
@@ -186,10 +202,6 @@ public class ProfileEditUI : PopupUI
         _GamePopup.ClosePopup();
     }
 
-    /// <summary>
-    /// Reset
-    /// **토글이 Acive False 가 되면 isOn이 제대로 적용되지 않음
-    /// </summary>
     private void OnExit()
     {
         profileIcons[BackEndServerManager.Instance.ProfileIcon].IconToggle.isOn = true;

@@ -25,29 +25,12 @@ public class ItemBuyUI : PopupUI
     private LobbyItemData lobbyItemData;
     private int price;
 
-    protected override void UpdateData()
+    protected override void Start()
     {
-        base.UpdateData();
-        // lobbyItemData = ?
+        base.Start();
 
-        lobbyItemData = LevelData.Instance.LobbyItemDatas[(int)_GameManager.SelectLobbyItem];
-        price = lobbyItemData.price;
-
-        nameText.text = lobbyItemData.type.ToString();
-        descText.text = string.Format(lobbyItemData.description, lobbyItemData.value);
-        iconImage.sprite = lobbyItemData.sprite;
-
-        //diaText.text = $"Buy Dia\n{price}";
-        diaText.text = price.ToString();
-
-        UpdateUIs(_GameManager.LobbyItemFreeCount > 0);
-    }
-
-    private void Start()
-    {
         _GameManager = GameManager.Instance;
 
-        // backgroundButton.onClick.AddListener(OnClose);
         buyButton.onClick.AddListener(OnBuy);
         freeButton.onClick.AddListener(OnFree);
         chargeButton.onClick.AddListener(OnCharge);
@@ -56,35 +39,53 @@ public class ItemBuyUI : PopupUI
             .Subscribe(value => UpdateUIs(value > 0))
             .AddTo(this.gameObject);
 
-        //_GameManager.ObserveEveryValueChanged(_ => _GameManager.LobbyItemCharge)
-        //    .Subscribe(value => UpdateTicketTime(value))
-        //    .AddTo(_GameManager.gameObject);
+    }
+
+    protected override void UpdateData()
+    {
+        base.UpdateData();
+        // lobbyItemData = ?
+
+        lobbyItemData = LevelData.Instance.LobbyItemDatas[(int)_GameManager.SelectLobbyItem];
+        price = lobbyItemData.price;
+
+        nameText.text = lobbyItemData.nameLanguageNum.Localization();
+        descText.text = string.Format(lobbyItemData.descLanguageNum.Localization(), lobbyItemData.value);
+
+        //nameText.text = lobbyItemData.type.ToString();
+        //descText.text = string.Format(lobbyItemData.description, lobbyItemData.value);
+        iconImage.sprite = lobbyItemData.sprite;
+
+        //diaText.text = $"Buy Dia\n{price}";
+        diaText.text = price.ToString();
+
+        UpdateUIs(_GameManager.LobbyItemFreeCount > 0);
     }
 
     private void UpdateUIs(bool canFree)
     {
+        buyButton.gameObject.SetActive(true);
         if (!lobbyItemData.isFree)
         {
-            buyButton.gameObject.SetActive(true);
             freeButton.gameObject.SetActive(false);
             chargeButton.gameObject.SetActive(false);
         }
         else
         {
             freeButton.gameObject.SetActive(canFree);
-            buyButton.gameObject.SetActive(!canFree);
             chargeButton.gameObject.SetActive(!canFree);
         }
 
-        //freeText.text = $"Buy Free\n{_GameManager.LobbyItemFreeBuy}/{Values.Free_LobbyItem}";
-        freeCountText.text = _GameManager.LobbyItemFreeCount.ToString();
-        chargeText.text = $"Charge {_GameManager.LobbyItemCharge}";
-        chargeCountText.text = _GameManager.LobbyItemAdCount.ToString();
+        var giftData = LevelData.Instance.DailyGiftDatas[(int)EDailyGift.LobbyItem];
+
+        freeCountText.text = string.Format(212.Localization(), _GameManager.LobbyItemFreeCount,
+                                                                            giftData.freeCount);
+        chargeCountText.text = string.Format(213.Localization(), giftData.adCount.ToString());
     }
 
     public void OnBuy()
     {
-        SystemPopupUI.Instance.OpenTwoButton(23, string.Format(200.Localization(), price), 80, 22,
+        SystemPopupUI.Instance.OpenTwoButton(7, string.Format(214.Localization(), price), 0, 1,
             BuyAction,
             _GamePopup.ClosePopup);
     }
@@ -93,14 +94,15 @@ public class ItemBuyUI : PopupUI
     {
         if (!_GameManager.BuyLobbyItem_Dia(price))
         {
-            SystemPopupUI.Instance.OpenNoneTouch(79);
+            SystemPopupUI.Instance.OpenNoneTouch(52);
         }
         _GamePopup.ClosePopup();
     }
 
     public void OnFree()
     {
-        if(_GameManager.BuyLobbyItem_Free())
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+        if (_GameManager.BuyLobbyItem_Free())
         {
             _GamePopup.ClosePopup();
         }
@@ -108,6 +110,7 @@ public class ItemBuyUI : PopupUI
 
     public void OnCharge()
     {
-        _GameManager.ChargeLobbyItem();
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
+        _GameManager.UseDailyGift(EDailyGift.LobbyItem, null);
     }
 }

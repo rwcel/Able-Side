@@ -33,7 +33,7 @@ RectTransform:
   m_Children:
   - {fileID: 4345362511435720586}
   m_Father: {fileID: 4345362511222805488}
-  m_RootOrder: 6
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -341,6 +341,7 @@ GameObject:
   - component: {fileID: 4345362509689604503}
   - component: {fileID: 4345362509689604497}
   - component: {fileID: 4345362509689604496}
+  - component: {fileID: 1963473011865422325}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -465,6 +466,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1963473011865422325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4345362509689604502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6769eaf3af2ef8b4fa5a47bb826b506a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  languageNum: 2
 --- !u!1 &4345362509691274084
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,7 +624,7 @@ RectTransform:
   m_Children:
   - {fileID: 4345362511156767813}
   m_Father: {fileID: 4345362511222805488}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1022,7 +1036,7 @@ RectTransform:
   m_Children:
   - {fileID: 4345362510384602186}
   m_Father: {fileID: 4345362511222805488}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1222,6 +1236,7 @@ GameObject:
   - component: {fileID: 4345362510483813872}
   - component: {fileID: 4345362510483813874}
   - component: {fileID: 4345362510483813873}
+  - component: {fileID: 5629669294371973614}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -1345,6 +1360,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5629669294371973614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4345362510483813879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6769eaf3af2ef8b4fa5a47bb826b506a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  languageNum: 180
 --- !u!1 &4345362510547466183
 GameObject:
   m_ObjectHideFlags: 0
@@ -1775,6 +1803,7 @@ GameObject:
   - component: {fileID: 2510654122807397190}
   - component: {fileID: 8854607294928359049}
   - component: {fileID: 1963473011865422323}
+  - component: {fileID: 3519164773085625700}
   m_Layer: 5
   m_Name: Notice Board
   m_TagString: Untagged
@@ -1846,6 +1875,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10a56adf2136d7f4c8f838b1a95cd5a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  closeButton: {fileID: 0}
   engObjs:
   - {fileID: 4345362510618671353}
   - {fileID: 4345362510465309868}
@@ -1874,10 +1904,27 @@ Canvas:
   m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: -1427460941
   m_SortingOrder: 15
   m_TargetDisplay: 0
+--- !u!114 &3519164773085625700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4345362511032492956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &4345362511156767812
 GameObject:
   m_ObjectHideFlags: 0
@@ -1964,6 +2011,7 @@ GameObject:
   - component: {fileID: 4345362511203505527}
   - component: {fileID: 4345362511203505521}
   - component: {fileID: 4345362511203505520}
+  - component: {fileID: 1963473011865422327}
   m_Layer: 5
   m_Name: SubText(TMP)
   m_TagString: Untagged
@@ -2087,6 +2135,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1963473011865422327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4345362511203505526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6769eaf3af2ef8b4fa5a47bb826b506a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  languageNum: 260
 --- !u!1 &4345362511222805495
 GameObject:
   m_ObjectHideFlags: 0
@@ -2117,13 +2178,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4345362510618671354}
-  - {fileID: 4345362510465309869}
   - {fileID: 4345362509914164502}
   - {fileID: 4345362511618086512}
-  - {fileID: 4345362511320816190}
-  - {fileID: 4345362511293894583}
+  - {fileID: 4345362510465309869}
   - {fileID: 4345362509541635996}
+  - {fileID: 4345362511293894583}
   - {fileID: 4345362511630468733}
+  - {fileID: 4345362511320816190}
   m_Father: {fileID: 4345362511556352393}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2352,7 +2413,7 @@ RectTransform:
   m_Children:
   - {fileID: 4345362510450725738}
   m_Father: {fileID: 4345362511222805488}
-  m_RootOrder: 4
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3016,7 +3077,7 @@ RectTransform:
   m_Children:
   - {fileID: 4345362511565481289}
   m_Father: {fileID: 4345362511222805488}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3163,7 +3224,7 @@ RectTransform:
   m_Children:
   - {fileID: 4345362509638115894}
   m_Father: {fileID: 4345362511222805488}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

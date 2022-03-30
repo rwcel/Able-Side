@@ -28,16 +28,17 @@ public struct FScoreComboInfo
     public int combo;            // 적용 콤보
     public int score;              // 오르는 점수
     public int rewardScore;     // 최초 1회 달성 시 주는 점수
+    public Color color;             // 콤보 컬러 색상
 }
 
 [System.Serializable]
 public struct FItemComboInfo
 {
     public int combo;                         // 적용 콤보
-    public float normalBoxPercent;       // 일반 상자 %
     public int normalBoxCount;              // 일반 상자 개수
-    public float rareBoxPercent;            // 무지개 상자 %
+    public float normalBoxPercent;       // 일반 상자 %
     public int rareBoxCount;                // 무지개 상자 개수
+    public float rareBoxPercent;            // 무지개 상자 %
 }
 
 #region 난이도 요소
@@ -168,6 +169,7 @@ public class LevelData : ScriptableObject
     public FeverData[] FeverDatas;
     public ProfileData[] ProfileDatas;
     public ShopData[] ShopDatas;
+    public DailyGiftData[] DailyGiftDatas;
     public LobbyItemData TicketData;            // LobbyItemData받아서 쓰기
 
     [Header("[난이도]")]
