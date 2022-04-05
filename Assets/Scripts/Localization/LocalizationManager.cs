@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniRx;
 using TMPro;
 
 public class LocalizationManager : Singleton<LocalizationManager>
@@ -34,12 +33,6 @@ public class LocalizationManager : Singleton<LocalizationManager>
     // Default : ¿µ¾î
     private void Start()
     {
-        var backEndServerManager = BackEndServerManager.Instance;
-
-        this.ObserveEveryValueChanged(_ => backEndServerManager.Language)
-            .Subscribe(value => OnLocalize(value))
-            .AddTo(this.gameObject);
-
         LoadLanguage();
     }
 
@@ -70,7 +63,7 @@ public class LocalizationManager : Singleton<LocalizationManager>
         localizes.Remove(text);
     }
 
-    void OnLocalize(ELanguage language)
+    public void OnLocalize(ELanguage language)
     {
         foreach (var item in localizes)
         {

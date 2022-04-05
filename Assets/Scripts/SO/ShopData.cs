@@ -19,4 +19,5 @@ public class ShopData : ScriptableObject
     public Sprite sprite;
     public int nameNum;         // Language ¹øÈ£
     public string productID;
+    public int salePercent;
 }

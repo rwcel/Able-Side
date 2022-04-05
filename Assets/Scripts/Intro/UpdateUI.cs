@@ -16,13 +16,13 @@ public class UpdateUI : MonoBehaviour
 
     private void OnUpdate()
     {
-        Application.OpenURL("market://details?id=com.ablegames.steamblock");
+        Application.OpenURL("market://details?id=com.ablegames.SideTab");
         GameApplication.Instance.Quit();
     }
 
     private void OnCafe()
     {
         Application.OpenURL("https://cafe.naver.com/ArticleList.nhn?search.clubid=30546852&search.menuid=1&search.boardtype=L");
-        GameApplication.Instance.Quit();
+        // GameApplication.Instance.Quit();
     }
 }

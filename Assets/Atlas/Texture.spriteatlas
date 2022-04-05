@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Texture
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: Android
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 47
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 1add22e0f8f46384199d08453a7c3911, type: 3}
+    - {fileID: 102900000, guid: ea1c9aaa60fb71a4b8e2901cd98fbf65, type: 3}
+    - {fileID: 2800000, guid: 4816e680626e9b94e8beea1833852123, type: 3}
+    - {fileID: 102900000, guid: 6cdf1ef8527d1b54486111368d665c55, type: 3}
+    - {fileID: 102900000, guid: e13efc60441bfc442b67ed2da661faad, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 4816e680626e9b94e8beea1833852123, type: 3}
+  - {fileID: 21300000, guid: 1add22e0f8f46384199d08453a7c3911, type: 3}
+  - {fileID: 21300000, guid: b16f6141efdcfd345bc9858cc3bebd66, type: 3}
+  - {fileID: 21300000, guid: c3c2c57306a898149b42b4986834c245, type: 3}
+  - {fileID: 21300000, guid: d31a9a040afccd7469ecc5f554f24ebf, type: 3}
+  - {fileID: 21300000, guid: 8382bd3588730f241b9adf300660fa34, type: 3}
+  - {fileID: 21300000, guid: 05aa11a6444713248bdd24b4391cc26a, type: 3}
+  - {fileID: 21300000, guid: ebd0bec6345d3b7458e27eb150b9e52e, type: 3}
+  - {fileID: 21300000, guid: 583c075765b31514f8fb0231739d902d, type: 3}
+  - {fileID: 21300000, guid: be6e6377fa7515a45abfafeaffd4801a, type: 3}
+  - {fileID: 21300000, guid: 50271518937873441bf9986d68747a9c, type: 3}
+  - {fileID: 21300000, guid: f64e9d38117a3be4ca757b2a7196a7f3, type: 3}
+  - {fileID: 21300000, guid: 7339de681fabb08499bcbd8ee07c8688, type: 3}
+  - {fileID: 21300000, guid: 18f451d8f6c14234791dd87b891e9aa0, type: 3}
+  - {fileID: 21300000, guid: f692bb495f52eed4290160c1388cd115, type: 3}
+  - {fileID: 21300000, guid: 86cf90591fab3f84193635e503ec7a0d, type: 3}
+  - {fileID: 21300000, guid: 0fca263be479c924ebc15589f0684ea4, type: 3}
+  - {fileID: 21300000, guid: 1db65a1d0a6280747819531f8fd5f9dd, type: 3}
+  - {fileID: 21300000, guid: f0fc5d2de439caa48b3f7774d118656d, type: 3}
+  - {fileID: 21300000, guid: 468e9e9e2e90d104baf1f932bb709fa8, type: 3}
+  - {fileID: 21300000, guid: d80ed2ae7c03c7c45b7d3e4cd0fed077, type: 3}
+  - {fileID: 21300000, guid: eb55c0df90a191243859b038d399661b, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Tile_BG
+  - Tile_BG_2
+  - Icon_Tier_1
+  - SteamBlock_Banner_eng
+  - LogOut
+  - TierIcon_000
+  - Icon_Tier_8
+  - GameGuide_Eng
+  - Official_Community
+  - Icon_Tier_3
+  - Cafe_banner_eng
+  - FacebookSign
+  - AblePangP2E_Banner
+  - GoogleSign
+  - Icon_Tier_2
+  - SteamBlock
+  - Icon_Tier_6
+  - NewbieGuide
+  - AblePang
+  - Icon_Tier_7
+  - Icon_Tier_4
+  - Icon_Tier_5
+  m_RenderDataMap: {}
+  m_Tag: Texture
+  m_IsVariant: 0

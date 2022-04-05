@@ -109,6 +109,11 @@ public static class Utils
         var scoreComboInfos = LevelData.Instance.ScoreComboInfos;
         Color result = scoreComboInfos[idx].color;
 
+        if(combo >= scoreComboInfos[scoreComboInfos.Length - 1].combo)
+        {
+            return scoreComboInfos[scoreComboInfos.Length-1].color;
+        }
+
         while (combo >= scoreComboInfos[idx].combo)
         {
             result = scoreComboInfos[idx++].color;
@@ -121,23 +126,42 @@ public static class Utils
     {
         if (BackEndServerManager.Instance.Language == ELanguage.English)
         {
-            if (num >= 1000)
+            if (num >= 1000000)
             {
-                return $"{num / 1000} thousand";
+                return $"{num / 1000000}M";
             }
-            else if(num >= 1000000)
+            else if (num >= 1000)
             {
-                return $"{num / 1000} million";
+                return $"{num / 1000}K";
             }
         }
         else
         {
-            if(num >= 10000)
+            if(num >= 100000000)
+            {
+                return $"{num / 100000000}억";
+            }
+            else if(num >= 10000)
             {
                 return $"{num / 10000}만";
             }
         }
-
         return num.ToString();
+    }
+
+    /// <summary>
+    /// 두자릿수까지만 적용됨
+    /// </summary>
+    public static int VersionCheck(this string version)
+    {
+        int result = 0;
+
+        var split = version.Split('.');
+
+        result += int.Parse(split[0]) * 10000;
+        result += int.Parse(split[1]) * 100;
+        result += int.Parse(split[2]);
+
+        return result;
     }
 }

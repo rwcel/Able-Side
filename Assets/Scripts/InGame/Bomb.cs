@@ -47,7 +47,7 @@ public class Bomb : MonoBehaviour
         };
     }
 
-    private void ClearData()
+    public void ClearData()
     {
         PoolingManager.Instance.Enqueue(gameObject);
     }

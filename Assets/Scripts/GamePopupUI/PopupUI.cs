@@ -22,7 +22,7 @@ public class PopupUI : MonoBehaviour
 
     protected virtual void Start()
     {
-        if(closeButton != null)
+        if (closeButton != null)
             closeButton.onClick.AddListener(_GamePopup.ClosePopup);
     }
 

@@ -17,9 +17,12 @@ public class ItemBuyUI : PopupUI
     [SerializeField] Button chargeButton;     // 광고로 무료 횟수 충전
     [Header("Button Texts")]
     [SerializeField] TextMeshProUGUI diaText;
+    [SerializeField] TextMeshProUGUI beforeDiaText;
     [SerializeField] TextMeshProUGUI freeCountText;
-    [SerializeField] TextMeshProUGUI chargeText;
     [SerializeField] TextMeshProUGUI chargeCountText;
+    [Header("Sale")]
+    [SerializeField] GameObject saleObj;
+    [SerializeField] TextMeshProUGUI saleText;
 
     // 선택한 아이템 알아야함
     private LobbyItemData lobbyItemData;
@@ -47,7 +50,6 @@ public class ItemBuyUI : PopupUI
         // lobbyItemData = ?
 
         lobbyItemData = LevelData.Instance.LobbyItemDatas[(int)_GameManager.SelectLobbyItem];
-        price = lobbyItemData.price;
 
         nameText.text = lobbyItemData.nameLanguageNum.Localization();
         descText.text = string.Format(lobbyItemData.descLanguageNum.Localization(), lobbyItemData.value);
@@ -57,6 +59,18 @@ public class ItemBuyUI : PopupUI
         iconImage.sprite = lobbyItemData.sprite;
 
         //diaText.text = $"Buy Dia\n{price}";
+        saleObj.SetActive(lobbyItemData.salePercent > 0);
+        if(lobbyItemData.salePercent > 0)
+        {
+            saleText.text = $"{lobbyItemData.salePercent}%";
+            beforeDiaText.text = $"<s>{lobbyItemData.price}</s>";
+            price = lobbyItemData.price - (lobbyItemData.price * lobbyItemData.salePercent / 100);
+        }
+        else
+        {
+            beforeDiaText.text = "";
+            price = lobbyItemData.price;
+        }
         diaText.text = price.ToString();
 
         UpdateUIs(_GameManager.LobbyItemFreeCount > 0);
@@ -96,6 +110,7 @@ public class ItemBuyUI : PopupUI
         {
             SystemPopupUI.Instance.OpenNoneTouch(52);
         }
+
         _GamePopup.ClosePopup();
     }
 

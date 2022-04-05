@@ -74,9 +74,6 @@ public class GameController : MonoBehaviour
     Dictionary<EInGameItem, int> normalItems;
     Dictionary<EInGameItem, int> rareItems;
 
-    public ReactiveProperty<int> ScoreReactiveProperty = new ReactiveProperty<int>(0);
-
-
     public void OnStart()
     {
         _GameManager = GameManager.Instance;
@@ -148,7 +145,8 @@ public class GameController : MonoBehaviour
                             .AddTo(gameObject);
 
         comboDis = this.ObserveEveryValueChanged(_ => Combo)
-                            .Where(value => value >= Values.ScoreComboInfos[nextComboInfoNum].combo)
+                            .Where(value => nextComboInfoNum < Values.ScoreComboInfos.Length
+                                && value >= Values.ScoreComboInfos[nextComboInfoNum].combo)
                             .Subscribe(value => CheckCombo(value))
                             .AddTo(gameObject);
 
@@ -274,7 +272,7 @@ public class GameController : MonoBehaviour
                 itemShields[i]--;
                 shieldCount--;
 
-                Debug.Log($"Shield Count : {itemShields[i]}");
+                // Debug.Log($"Shield Count : {itemShields[i]}");
                 return true;
             }
         }
@@ -292,16 +290,17 @@ public class GameController : MonoBehaviour
     {
         //Debug.Log($"{value} >= {Values.ScoreComboInfos[nextComboInfoNum].combo}");
 
-        if (nextComboInfoNum >= Values.ScoreComboInfos.Length - 1)
+        if (nextComboInfoNum >= Values.ScoreComboInfos.Length)
         {
-            comboDis.Dispose();
+            return;
         }
         else
         {
             scoreComboInfo = Values.ScoreComboInfos[nextComboInfoNum++];
         }
 
-        if (MaxCombo >= Values.ScoreComboInfos[nextMaxComboNum].combo)
+        if (nextMaxComboNum < Values.ScoreComboInfos.Length - 1 
+            && MaxCombo >= Values.ScoreComboInfos[nextMaxComboNum].combo)
         {
             Score += scoreComboInfo.rewardScore;
             nextMaxComboNum++;
@@ -340,7 +339,7 @@ public class GameController : MonoBehaviour
             //Debug.Log($"{delay} : {calcTime} {calcTime * timeInfo.decreaseTime}");
         }
 
-        _AudioManager.PlaySFX(ESFX.GameOver);
+        _AudioManager.PlaySFX(ESFX.Result);
         _GameManager.GameOver((int)(Score * ExtraScore), MaxCombo);
 
         GamePopup.Instance.OpenPopup(EGamePopup.Result, 
@@ -404,18 +403,19 @@ public class GameController : MonoBehaviour
 
     public InGameItemData NormalGacha()
     {
-        int rand = Random.Range(1, 101);
+        float rand = Random.Range(0f, 100f);
+        //Debug.Log($"normal : {rand}");
         int idx = 0;
         while(idx < itemGachas.Count)
         {
             if(itemGachas[idx].normalPercent > 0)
             {
-                if (rand <= itemGachas[idx].normalPercent)
+                if (rand < itemGachas[idx].normalPercent)
                 {
                     return itemGachas[idx];
                 }
             }
-            rand -= (int)itemGachas[idx++].normalPercent;
+            rand -= itemGachas[idx++].normalPercent;
         }
 
         return null;
@@ -423,18 +423,19 @@ public class GameController : MonoBehaviour
 
     public InGameItemData RareGacha()
     {
-        int rand = Random.Range(1, 101);
+        float rand = Random.Range(0f, 100f);
+        //Debug.Log($"rare : {rand}");
         int idx = 0;
         while (idx < itemGachas.Count)
         {
             if (itemGachas[idx].rarePercent > 0)
             {
-                if (rand <= itemGachas[idx].rarePercent)
+                if (rand < itemGachas[idx].rarePercent)
                 {
                     return itemGachas[idx];
                 }
             }
-            rand -= (int)itemGachas[idx++].rarePercent;
+            rand -= itemGachas[idx++].rarePercent;
         }
 
         return null;
@@ -505,7 +506,6 @@ public class GameController : MonoBehaviour
 
     public void UseItem()
     {
-        // 아이템 보유했는지 확인
         if (Items.Count <= 0)
             return;
 
@@ -597,7 +597,9 @@ public class GameController : MonoBehaviour
             return;
 
         Fever = (Fever + count) > Values.MaxFever ? Values.MaxFever : Fever + count;
-        BackEndServerManager.Instance.Update_Fever(Fever);
+
+        // *인게임 중에는 보내지 않기
+        // BackEndServerManager.Instance.Update_Fever(Fever);
     }
 
     IEnumerator CoApplyFever()
@@ -665,13 +667,12 @@ public class GameController : MonoBehaviour
         Score = 0;
         ExtraScore = 1;
         calcTime = 0.05f;
-        //Time = 0;               // CoCalcTime 실행 못하게
         Time = Values.MaxTimeBase;
         Bomb = 0;
         BombCharacter = Values.DeleteBombCharacters;
         MaxCombo = 0;
         UseFeverCount = 0;
-        // **nextItemCombo = Values.ItemComboInfos[0].combo;
+        shieldCount = 0;
 
         nextTimeInfoNum = 0;
         nextComboInfoNum = 0;
@@ -707,5 +708,8 @@ public class GameController : MonoBehaviour
         {
             BackEndServerManager.Instance.InGameItemLog(itemAddCount, normalCount, normalItems, rareCount, rareItems);
         }
+
+        // 피버 게임 종료시에만 갱신해주기
+        BackEndServerManager.Instance.Update_Fever(Fever);
     }
 }

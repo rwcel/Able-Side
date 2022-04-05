@@ -82,8 +82,8 @@ public class ResultUI : PopupUI
         reviveButton.interactable = !useRevive;             //  && GameManager.Instance.CanRevive;
         rewardButton.interactable = diaValue > 0;        //&& GameManager.Instance.CanDoubleReward;       // 0개면 false
 
-        // 끝날때 새로 추가하기때문에 넣어주기
-        animEvent.SetAnimEvent(() => AudioManager.Instance.PlaySFX(ESFX.Result));
+        // **끝날때 새로 추가하기때문에 넣어주기
+        // animEvent.SetAnimEvent(() => AudioManager.Instance.PlaySFX(ESFX.Result));
     }
 
     void UpdateBestScore(int value)

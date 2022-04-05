@@ -211,6 +211,9 @@ public class GameCharacter : MonoBehaviour
         bonusCharacterCount = 0;
 
         ShowCharacterNum = -1;
+
+        if (scoreDis != null)
+            scoreDis.Dispose();
     }
 
     /// <summary>
@@ -637,7 +640,15 @@ public class GameCharacter : MonoBehaviour
             while (spawnCharacters.Count > 0)
             {
                 GameObject go = spawnCharacters.Dequeue().gameObject;
-                PoolingManager.Instance.Enqueue(go);
+                if (go.TryGetComponent(out BombController bombController))
+                {
+                    Debug.Log($"Bomb ºÎ¸ð Enqueue : {go.name}");
+                    go.transform.parent.GetComponent<Bomb>().ClearData();
+                }
+                else
+                {
+                    PoolingManager.Instance.Enqueue(go);
+                }
             }
 
             for (int i = 0, length = Values.MaxSpawnCharacterNum; i < length; i++)

@@ -28,7 +28,7 @@ MonoBehaviour:
   DeleteBombCharacters: 10
   GoodsSprites:
   - {fileID: 21300000, guid: 1d4e2799179fa1643b446891c692be33, type: 3}
-  - {fileID: 21300000, guid: 2191ae1d0c0e4814f8251bf07701abeb, type: 3}
+  - {fileID: 21300000, guid: bc95197152542cc4daf5eebfe437fd27, type: 3}
   - {fileID: 21300000, guid: 7dbd0251aaa70004dade4425ff70a0e5, type: 3}
   PackageSprite: {fileID: 21300000, guid: 72fe7c1d4541e2047996958b8f426861, type: 3}
   LobbyItemDatas:
@@ -141,11 +141,11 @@ MonoBehaviour:
     rewardScore: 0
     color: {r: 0.827451, g: 1, b: 0.73333335, a: 1}
   - combo: 200
-    score: 1950
+    score: 600
     rewardScore: 0
     color: {r: 0.64705884, g: 0.93333334, b: 1, a: 1}
   - combo: 250
-    score: 2990
+    score: 600
     rewardScore: 0
     color: {r: 0.64705884, g: 0.93333334, b: 1, a: 1}
   - combo: 300
@@ -163,29 +163,29 @@ MonoBehaviour:
   ItemComboInfos:
   - combo: 100
     normalBoxCount: 1
-    normalBoxPercent: 50
-    rareBoxCount: 1
-    rareBoxPercent: 50
-  - combo: 200
-    normalBoxCount: 1
     normalBoxPercent: 40
     rareBoxCount: 1
-    rareBoxPercent: 60
+    rareBoxPercent: 35
+  - combo: 200
+    normalBoxCount: 1
+    normalBoxPercent: 50
+    rareBoxCount: 1
+    rareBoxPercent: 40
   - combo: 300
     normalBoxCount: 1
-    normalBoxPercent: 70
+    normalBoxPercent: 60
     rareBoxCount: 1
-    rareBoxPercent: 100
+    rareBoxPercent: 45
   - combo: 1000
     normalBoxCount: 0
     normalBoxPercent: 0
     rareBoxCount: 2
-    rareBoxPercent: 100
+    rareBoxPercent: 50
   - combo: 1000000
     normalBoxCount: 0
     normalBoxPercent: 0
     rareBoxCount: 2
-    rareBoxPercent: 100
+    rareBoxPercent: 55
   ItemComboUnit: 10
   JumbleInfos:
   - score: 80000

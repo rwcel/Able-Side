@@ -21,13 +21,13 @@ public class GameManager : Singleton<GameManager>
     public int Rank => BackEndServerManager.Instance.GetMyScoreRank();
     public ProfileData ProfileData => LevelData.Instance.ProfileDatas[BackEndServerManager.Instance.ProfileIcon];
 
-    public int BestScore;
-    public int BestMaxCombo;
-    public int AccumulateScore;
-    public int Ticket;
+    [HideInInspector] public int BestScore;
+    [HideInInspector] public int BestMaxCombo;
+    [HideInInspector] public int AccumulateScore;
+    [HideInInspector] public int Ticket;
     [HideInInspector] public int TicketTime;
 
-    public int PlayRewardCount;
+    [HideInInspector] public int PlayRewardCount;
     public DateTime TimeRewardTime;              // 분단위 표시 필요
 
     [HideInInspector] public int FreeDia;
@@ -58,9 +58,9 @@ public class GameManager : Singleton<GameManager>
 
 
     // **여기에 다 들어오는게 맞나?
-    public ELobbyItem SelectLobbyItem;
-    public FPostInfo SelectPostInfo;
-    public string SelectSerialCode;
+    [HideInInspector] public ELobbyItem SelectLobbyItem;
+    [HideInInspector] public FPostInfo SelectPostInfo;
+    [HideInInspector] public string SelectSerialCode;
 
     private int updateScore, updateCombo;
 
@@ -106,10 +106,9 @@ public class GameManager : Singleton<GameManager>
                     AudioManager.Instance.PlayLobbyBGM();
                 }
                 else
-                {   // GameManager가 intro씬에서 없기떄문에 직접 호출
-                    AudioManager.Instance.PlaySFX(ESFX.ReadyGo);
+                {
+                    // GameManager가 intro씬에서 없기떄문에 직접 호출
                     AudioManager.Instance.PlayInGameBGM();
-                    //AudioManager.Instance.StopBGM();
                 }
 
                 OnGameStart?.Invoke(isGameStart);
@@ -357,6 +356,8 @@ public class GameManager : Singleton<GameManager>
                     break;
             }
 
+            Firebase.Analytics.FirebaseAnalytics.LogEvent("Reward_Ad", "Ad_Name", type.ToString());
+
             if (type == EDailyGift.LobbyItem)
             {   // 로비 아이템은 충전만
                 useAction += () => DailyGifts[type].freeCount += LevelData.Instance.DailyGiftDatas[(int)EDailyGift.LobbyItem].chargeValue;
@@ -482,8 +483,6 @@ public class GameManager : Singleton<GameManager>
     {
         //if (!CanGameStart)
         //    return;
-
-        // Debug.Log("게임시작");
 
         --Ticket;
         IsGameStart = true;

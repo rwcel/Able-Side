@@ -110,7 +110,7 @@ public class AdvertiseUI : MonoBehaviour
         if (curDailyGift.adCount <= 0
             || delayObj.activeSelf)
         {
-            SystemPopupUI.Instance.OpenNoneTouch(52);
+            // SystemPopupUI.Instance.OpenNoneTouch(52);
             OnCancel();
             return;
         }

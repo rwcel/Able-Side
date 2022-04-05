@@ -26,6 +26,16 @@ public class PlayerController : MonoBehaviour
     private static readonly int _Anim_Obstacle = Animator.StringToHash("IsObstacle");
     private static readonly int _Anim_Clear = Animator.StringToHash("Clear");
 
+    //private void OnEnable()
+    //{
+    //    if(_GameManager == null)
+    //    {
+    //        _GameManager = GameManager.Instance;
+    //    }
+
+    //    shieldObj.SetActive(_GameManager.GameController.CanShield);
+    //}
+
     private void Start()
     {
         _GameManager = GameManager.Instance;

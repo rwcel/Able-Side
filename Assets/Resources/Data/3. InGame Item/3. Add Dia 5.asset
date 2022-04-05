@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: 3. Add Dia 5
   m_EditorClassIdentifier: 
   type: 2
-  sprite: {fileID: 21300000, guid: 2fa7aa9d69cca984a9d3a2e833f72181, type: 3}
+  sprite: {fileID: 21300000, guid: b8f6a015c88197d4fbbc2f071a9067f6, type: 3}
   itemName: "\uB2E4\uC774\uC544 +5"
   languageNum: 350
-  value: 7
+  value: 5
   valueTime: 0
   normalPercent: 0
-  rarePercent: 9
+  rarePercent: 0.7
   startPercent: 0

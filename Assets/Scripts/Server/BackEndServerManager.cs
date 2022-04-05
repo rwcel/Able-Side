@@ -13,6 +13,7 @@ using BackEnd;
 using static BackEnd.SendQueue;
 using BackEnd.GlobalSupport;
 using LitJson;
+using UniRx;
 
 public class DailyGift
 {
@@ -89,6 +90,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     private static readonly int _Code_SignUp = 201;
     private static readonly int _Code_Login = 200;
+    private static readonly int _Code_DuplicateLogin = 409;
 
     #region 게임 데이터
 
@@ -97,6 +99,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     private string nickName = "";                       // 닉네임
     private string gamerID = "";                        // UUID
     private ELogin loginType;
+    private bool isProgressLogin;
     private string serverDate;
     private bool isDailyReset = false;
     private int profileIcon = 0;
@@ -135,13 +138,14 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     protected override void AwakeInstance()
     {
-        var obj = FindObjectsOfType<BackEndServerManager>();
-        if (obj.Length == 1)
-            DontDestroyOnLoad(gameObject);
-        else
-        {
-            Destroy(gameObject);
-        }
+        DontDestroyOnLoad(gameObject);
+        //var obj = FindObjectsOfType<BackEndServerManager>();
+        //if (obj.Length == 1)
+        //    DontDestroyOnLoad(gameObject);
+        //else
+        //{
+        //    Destroy(gameObject);
+        //}
 
         recvItems = new List<FItemInfo>(Values.Max_Reward_Items);
     }
@@ -150,8 +154,13 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     private void Start()
     {
+        // *LocalizationManager가 CI 씬에 있기 때문에 여기서 처리를 해줘야함. 거기서 처리하는 순간 생성때문에 _LoginUI가 사라짐
+        this.ObserveEveryValueChanged(_ => Language)
+            .Subscribe(value => LocalizationManager.Instance.OnLocalize(value))
+            .AddTo(this.gameObject);
+
         // 인터넷 문제
-        if(Application.internetReachability == NetworkReachability.NotReachable)
+        if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             _LoginUI.ShowUpdateUI();
             return;
@@ -199,7 +208,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         if(bro.IsSuccess())
         {
             if (!string.IsNullOrEmpty(Backend.Utils.GetGoogleHash()))
-                Debug.Log(Backend.Utils.GetGoogleHash());
+                Debug.Log("HashKey : " + Backend.Utils.GetGoogleHash());
             // Debug.Log(Backend.Utils.GetGoogleHash());
 
             var servertime = Backend.Utils.GetServerTime();
@@ -239,12 +248,13 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     {
         Backend.Utils.GetLatestVersion(versionBRO =>
         {
-            if (versionBRO.IsSuccess())
+            if (versionBRO.IsSuccess())         // 에디터에서는 안됨
             {
                 string latest = versionBRO.GetReturnValuetoJSON()["version"].ToString();
                 Debug.Log("version info - current: " + currentVersion + " latest: " + latest);
-                if (currentVersion != latest)
-                {       
+                if (currentVersion.VersionCheck() < latest.VersionCheck())
+                {
+                    Debug.Log("버전 낮음");
                     // 버전이 다른 경우
                     int type = (int)versionBRO.GetReturnValuetoJSON()["type"];
                     // type = 1 : 선택, type = 2 : 강제
@@ -351,8 +361,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     #region 회원가입
 
-    private bool isProgressLogin;
-
     public void GoogleLogin()
     {
         if (isProgressLogin)
@@ -362,18 +370,16 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         loginType = ELogin.Google;
         if(Social.localUser.authenticated)
         {
-            var bro = Backend.BMember.AuthorizeFederation(GetTokens(), FederationType.Google, "gpgs");
+            var bro = Backend.BMember.AuthorizeFederation(GetTokens(ELogin.Google), FederationType.Google, "gpgs");
             OnBackendAuthorized();
-            Debug.Log("접속됨");
         }
         else
         {
             Social.localUser.Authenticate((bool success) => 
             {
-                Debug.Log("접속됨? : " + success);
                 if (success)
                 {
-                    var bro = Backend.BMember.AuthorizeFederation(GetTokens(), FederationType.Google, "gpgs");
+                    var bro = Backend.BMember.AuthorizeFederation(GetTokens(ELogin.Google), FederationType.Google, "gpgs");
                     if (bro.IsSuccess())
                     {
                         if (int.Parse(bro.GetStatusCode()) == _Code_SignUp)
@@ -392,26 +398,28 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 else
                 {
                     Debug.LogError("로그인 실패");
+                    isProgressLogin = false;
                 }
             });
         }
     }
 
-    private string GetTokens()
+    private string GetTokens(ELogin type)
     {
-        if(loginType == ELogin.Google)
+        if(type == ELogin.Google)
         {
             if (PlayGamesPlatform.Instance.localUser.authenticated)
             {
+                Debug.Log("토큰 ID : " + PlayGamesPlatform.Instance.GetIdToken());
                 return PlayGamesPlatform.Instance.GetIdToken();
             }
             else
             {
-                Debug.Log("접속되어있지 않습니다!");
+                Debug.LogError("접속되어있지 않습니다!");
                 return null;
             }
         }
-        else if(loginType == ELogin.Facebook)
+        else if(type == ELogin.Facebook)
         {
             var aToken = Facebook.Unity.AccessToken.CurrentAccessToken;
             //string facebookToken = aToken.TokenString;
@@ -458,18 +466,16 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             loginType = ELogin.Facebook;
             if (Social.localUser.authenticated)
             {
-                var bro = Backend.BMember.AuthorizeFederation(GetTokens(), FederationType.Facebook);
-                Debug.Log("접속됨");
+                var bro = Backend.BMember.AuthorizeFederation(GetTokens(ELogin.Facebook), FederationType.Facebook);
                 OnBackendAuthorized();
             }
             else
             {
                 Social.localUser.Authenticate((bool success) =>
                 {
-                    Debug.Log("접속됨? : " + success);
                     if (success)
                     {
-                        var bro = Backend.BMember.AuthorizeFederation(GetTokens(), FederationType.Facebook);
+                        var bro = Backend.BMember.AuthorizeFederation(GetTokens(ELogin.Facebook), FederationType.Facebook);
                         if (bro.IsSuccess())
                         {
                             if (int.Parse(bro.GetStatusCode()) == _Code_SignUp)
@@ -488,6 +494,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                     else
                     {
                         Debug.LogError("로그인 실패");
+                        isProgressLogin = false;
                     }
                 });
             }
@@ -531,7 +538,11 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             // 정보 삭제
             Backend.BMember.DeleteGuestInfo();
 
-            SystemPopupUI.Instance.OpenOneButton(14, 114, 2, GameApplication.Instance.Quit);
+            SystemPopupUI.Instance.OpenOneButton(14, 114, 2, GameSceneManager.Instance.Restart);
+            // 기존 : GameApplication.Instance.Quit
+
+            isProgressLogin = false;
+
         }
     }
 
@@ -627,9 +638,8 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     private string PlayRewardColumnName = "playReward";
     private string EndTimeRewardColumnName = "endTimeReward";                    // 받을 수 있는 시간
 
-    //private static readonly string scoreRankUUID = "783e9680-8ee7-11ec-b0f8-11d63a08d6e5";          // 월간
-    //private static readonly string comboRankUUID = "f5fc83e0-943f-11ec-a8f8-13e7955bbb97";       // 일일
-    private static readonly string resultRankUUID = "12e8c840-a405-11ec-afae-c5cd66ba001b";                   // 통합 월간 랭킹
+    //private static readonly string resultRankUUID = "12e8c840-a405-11ec-afae-c5cd66ba001b";                   // 통합 월간 랭킹
+    private static readonly string resultRankUUID = "ffc6cda0-b158-11ec-84cc-158e3b4dbc64";                   // 데이터 초기화 x
 
     private static readonly string key_ItemGacha_Probability = "4392";
     private static readonly string key_PlayReward_Probability = "4472";
@@ -1143,7 +1153,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             if (!bro.IsSuccess())
                 return;
 
-            Debug.Log("피버 개수 업데이트.. : " + value);
+            // Debug.Log("피버 개수 업데이트.. : " + value);
         });
     }
 
@@ -2011,6 +2021,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 LevelData.Instance.LobbyItemDatas[i].value = int.Parse(rows[i]["value"].ToString());
                 LevelData.Instance.LobbyItemDatas[i].price = int.Parse(rows[i]["price"].ToString());
                 LevelData.Instance.LobbyItemDatas[i].isFree = rows[i]["isFree"].ToString() == "Y";
+                LevelData.Instance.LobbyItemDatas[i].salePercent = int.Parse(rows[i]["salePercent"].ToString());
 
                 // Debug.Log(lobbyItems[i].isFree);
             }
@@ -2038,6 +2049,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             LevelData.Instance.LobbyItemDatas[i].value = int.Parse(rows[i]["value"]["S"].ToString());
             LevelData.Instance.LobbyItemDatas[i].price = int.Parse(rows[i]["price"]["S"].ToString());
             LevelData.Instance.LobbyItemDatas[i].isFree = rows[i]["isFree"]["S"].ToString() == "Y";
+            LevelData.Instance.LobbyItemDatas[i].salePercent = int.Parse(rows[i]["salePercent"]["S"].ToString());
         }
     }
 
@@ -2059,6 +2071,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 LevelData.Instance.LobbyItemDatas[i].value = int.Parse(rows[i]["value"].ToString());
                 LevelData.Instance.LobbyItemDatas[i].price = int.Parse(rows[i]["price"].ToString());
                 LevelData.Instance.LobbyItemDatas[i].isFree = rows[i]["isFree"].ToString() == "Y";
+                LevelData.Instance.LobbyItemDatas[i].salePercent = int.Parse(rows[i]["salePercent"].ToString());
             }
         });
     }
@@ -2154,7 +2167,8 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             for (int i = 0, length = rows.Count; i < length; i++)
             {
                 LevelData.Instance.ShopDatas[i].type = (EShopItem)Enum.Parse(typeof(EShopItem), rows[i]["type"].ToString());
-                LevelData.Instance.ShopDatas[i].price = int.Parse(rows[i]["price"].ToString());         // **여기서?
+                LevelData.Instance.ShopDatas[i].price = int.Parse(rows[i]["price"].ToString());
+                LevelData.Instance.ShopDatas[i].salePercent = int.Parse(rows[i]["salePercent"].ToString());
                 int itemLength = int.Parse(rows[i]["itemCount"].ToString());
                 LevelData.Instance.ShopDatas[i].items = new FShopItem[itemLength];
                 for (int j = 0; j < itemLength; j++)
@@ -2184,7 +2198,8 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         for (int i = 0, length = rows.Count; i < length; i++)
         {
             LevelData.Instance.ShopDatas[i].type = (EShopItem)Enum.Parse(typeof(EShopItem), rows[i]["type"]["S"].ToString());
-            LevelData.Instance.ShopDatas[i].price = int.Parse(rows[i]["price"]["S"].ToString());         // **여기서?
+            LevelData.Instance.ShopDatas[i].price = int.Parse(rows[i]["price"]["S"].ToString());
+            LevelData.Instance.ShopDatas[i].salePercent = int.Parse(rows[i]["salePercent"]["S"].ToString());
             int itemLength = int.Parse(rows[i]["itemCount"]["S"].ToString());
             LevelData.Instance.ShopDatas[i].items = new FShopItem[itemLength];
             for (int j = 0; j < itemLength; j++)
@@ -2209,7 +2224,8 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             for (int i = 0, length = rows.Count; i < length; i++)
             {
                 LevelData.Instance.ShopDatas[i].type = (EShopItem)Enum.Parse(typeof(EShopItem), rows[i]["type"].ToString());
-                LevelData.Instance.ShopDatas[i].price = int.Parse(rows[i]["price"].ToString());         // **여기서?
+                LevelData.Instance.ShopDatas[i].price = int.Parse(rows[i]["price"].ToString());
+                LevelData.Instance.ShopDatas[i].salePercent = int.Parse(rows[i]["salePercent"].ToString());
                 int itemLength = int.Parse(rows[i]["itemCount"].ToString());
                 LevelData.Instance.ShopDatas[i].items = new FShopItem[itemLength];
                 for (int j = 0; j < itemLength; j++)
@@ -2803,16 +2819,92 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     public void ChangeFederation(ELogin _type)
     {
+        if (isProgressLogin)
+            return;
+
+        isProgressLogin = true;
+
         FederationType type = _type == ELogin.Google ? FederationType.Google : FederationType.Facebook;
-        var bro = Backend.BMember.ChangeCustomToFederation(GetTokens(), type);
-        if(bro.IsSuccess())
+        if (_type == ELogin.Google)
         {
-            Debug.Log("계정전환 : " + bro);
-            GameSceneManager.Instance.Restart();
+            Social.localUser.Authenticate((bool success) =>
+            {
+                if (success)
+                {
+                    var bro = Backend.BMember.ChangeCustomToFederation(GetTokens(_type), type);
+                    if (bro.IsSuccess())
+                    {
+                        GamePopup.Instance.ClosePopup();
+                        loginType = _type;
+                        isProgressLogin = false;
+                    }
+                    else
+                    { 
+                        if(int.Parse(bro.GetStatusCode()) == _Code_DuplicateLogin)
+                        {
+                            SystemPopupUI.Instance.OpenOneButton(15, 54, 0);
+                            isProgressLogin = false;
+                        }
+                        else
+                        {
+                            Debug.Log("전환실패 : " + bro);
+                            GamePopup.Instance.ClosePopup();
+                            isProgressLogin = false;
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.LogError("로그인 실패");
+                    SystemPopupUI.Instance.OpenNoneTouch(50);
+                    isProgressLogin = false;
+                }
+            });
         }
-        else
+        else if (_type == ELogin.Facebook)
         {
-            Debug.Log("전환실패 : " + bro);
+            var perms = new List<string>() { "public_profile", "email" };
+            FB.LogInWithReadPermissions(perms, AuthChangeFacebook);
+        }
+    }
+
+    private void AuthChangeFacebook(ILoginResult result)
+    {
+        if (FB.IsLoggedIn)
+        {
+            Social.localUser.Authenticate((bool success) =>
+            {
+                if (success)
+                {
+                    var bro = Backend.BMember.ChangeCustomToFederation(GetTokens(ELogin.Facebook), FederationType.Facebook);
+                    if (bro.IsSuccess())
+                    {
+                        GamePopup.Instance.ClosePopup();
+                        loginType = ELogin.Facebook;
+                        isProgressLogin = false;
+                    }
+                    else
+                    {
+                        if (int.Parse(bro.GetStatusCode()) == _Code_DuplicateLogin)
+                        {
+                            SystemPopupUI.Instance.OpenOneButton(15, 54, 0);
+                            isProgressLogin = false;
+                        }
+                        else
+                        {
+                            Debug.Log("전환실패 : " + bro);
+                            GamePopup.Instance.ClosePopup();
+                            isProgressLogin = false;
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.LogError("로그인 실패");
+                    SystemPopupUI.Instance.OpenNoneTouch(50);
+                    isProgressLogin = false;
+                }
+            });
         }
     }
 

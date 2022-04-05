@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Ingame
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: Android
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 47
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 2
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 5115a462e0af0b2419362acb61a3e537, type: 3}
+    - {fileID: 102900000, guid: 19cd81c9eb3c8d24fbc9449f93838305, type: 3}
+    - {fileID: 102900000, guid: fff3928be98af494bb4128c18d529ab7, type: 3}
+    - {fileID: 102900000, guid: 13369321c59fa1b4e8c32da65958e9e0, type: 3}
+    - {fileID: 102900000, guid: ec94667ca909c60478c1f616858d0e52, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: bedebdc04f82a6e49b880c5ddc0dee3b, type: 3}
+  - {fileID: 21300000, guid: 4ba8e3f02a8d5824b904552297a9d563, type: 3}
+  - {fileID: 21300000, guid: dd1f083182e7c744a8e8f0eebf8bc3d5, type: 3}
+  - {fileID: 21300000, guid: f99c9a516d6966245ba10e070f97178d, type: 3}
+  - {fileID: 21300000, guid: 7840e942fcf558845a136c0f8a429076, type: 3}
+  - {fileID: 21300000, guid: 3e32457296da8444f9b6ca2564dd9a47, type: 3}
+  - {fileID: 21300000, guid: b81686d29e205464aa7e96b7f074abc5, type: 3}
+  - {fileID: 21300000, guid: 81d4ece26d4a19f43b22618b97c3d8f8, type: 3}
+  - {fileID: 21300000, guid: 7bfb85035b185e14e8a52a94f1a40f54, type: 3}
+  - {fileID: 21300000, guid: c2fc2c138dc3adb46ba6ff29d0d8da08, type: 3}
+  - {fileID: 21300000, guid: b0226743d643db74db9b2725f09f43a5, type: 3}
+  - {fileID: 21300000, guid: 28df4b4303346d44c83db7d880524a59, type: 3}
+  - {fileID: 21300000, guid: 7d35ad93facfc634c8e3d812ef4329ba, type: 3}
+  - {fileID: 21300000, guid: e65a012484c4680408af559acad3328b, type: 3}
+  - {fileID: 21300000, guid: 26922cb4852512941a8ca910901853f8, type: 3}
+  - {fileID: 21300000, guid: beb7bb159ed132642ba585b9bea0fbf0, type: 3}
+  - {fileID: 21300000, guid: a1a8ae450b02da64691c3f6a060cc457, type: 3}
+  - {fileID: 21300000, guid: b1f579752d84d8449a6685043aa5ab83, type: 3}
+  - {fileID: 21300000, guid: 86f8ce8526f17414f8cca3a6046f2187, type: 3}
+  - {fileID: 21300000, guid: 45b48cd5cddfc91408f56e222ab22b86, type: 3}
+  - {fileID: 21300000, guid: 9ccb1b2622a3d0f44a4d14accc718ceb, type: 3}
+  - {fileID: 21300000, guid: 8042e076979622245b69ee409d19cb80, type: 3}
+  - {fileID: 21300000, guid: 32958876158d8314e9731386917aaa1f, type: 3}
+  - {fileID: 21300000, guid: a1aaaed648623db419ad6ce90ef49032, type: 3}
+  - {fileID: 21300000, guid: 478d7167012519a40b9137786f2096c3, type: 3}
+  - {fileID: 21300000, guid: b4294297a8325a344b7b3e1ae590f06c, type: 3}
+  - {fileID: 21300000, guid: 431d37d7f065fc84eb332ec9542d6d30, type: 3}
+  - {fileID: 21300000, guid: 32056c08b0a61d949ba1261aac9ab0aa, type: 3}
+  - {fileID: 21300000, guid: 7132cac8a5f24bc40bf05cbaece2d27e, type: 3}
+  - {fileID: 21300000, guid: c41ee4d8ed3a0ea47b99989ca5f7e14b, type: 3}
+  - {fileID: 21300000, guid: 3da3ae997c7876b49a15bada8b8f8e0a, type: 3}
+  - {fileID: 21300000, guid: abb4671a7b26d7d4a87e9e7bbcd43b1c, type: 3}
+  - {fileID: 21300000, guid: 9dd3778a75782a048a716e392540dcf4, type: 3}
+  - {fileID: 21300000, guid: fe49911c1bc4553489ae3cc3fd73c5d0, type: 3}
+  - {fileID: 21300000, guid: 8e15bfcc0944be140b9e639efa14c0d9, type: 3}
+  - {fileID: 21300000, guid: e97f58ec28352b2489e7b43c9e4635a1, type: 3}
+  - {fileID: 21300000, guid: 78e5371d38aa3ae449534bc1c05f40c3, type: 3}
+  - {fileID: 21300000, guid: ce23098d73b06aa4d8c4bb47804b57c6, type: 3}
+  - {fileID: 21300000, guid: 247b89bd945de0d4ebb29bd358cd9366, type: 3}
+  - {fileID: 21300000, guid: 43c8a56e763662748bee874db45783a5, type: 3}
+  - {fileID: 21300000, guid: 3f842d7e074018c46a8729ab72e1e147, type: 3}
+  - {fileID: 21300000, guid: 5da4c68e462ad384281a48fa403290d1, type: 3}
+  - {fileID: 21300000, guid: 3025b4cef7ea81d48bd04d321b97f66a, type: 3}
+  - {fileID: 21300000, guid: 9c919bfe4bd0a3c42ae4fbb687e837f1, type: 3}
+  - {fileID: 21300000, guid: 4e9d342f92e138947a708bb72c7e2eba, type: 3}
+  - {fileID: 21300000, guid: fc6ed27f315d38a46a7e847b261bfdff, type: 3}
+  - {fileID: 21300000, guid: 50089ebfccda3d54db0ca7e114d7d8d7, type: 3}
+  - {fileID: 21300000, guid: 7c3804cf49c4d2747ac169b8c6a77676, type: 3}
+  - {fileID: 21300000, guid: 208901ef3f68d664a8415525cad593af, type: 3}
+  - {fileID: 21300000, guid: 683f78efc9d396d4fa44f911c0456dc5, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - BonusItem
+  - ShieldItem
+  - FullBombItem
+  - Fill_Wht
+  - BG_Fill
+  - Text_Combo
+  - Icon_Reverse
+  - Text_REVERSE_Eng
+  - Light
+  - Pipe
+  - RestoreItem
+  - Ribbon_FeverUltra
+  - Fever Item
+  - BG_Fill_Bomb
+  - TrafficBox1
+  - Frog_Head
+  - Obstacle Fill
+  - face
+  - Alpaca_Head
+  - Btn_arrow_Pressed
+  - Wing_L
+  - Ribbon_FeverHyper
+  - Fill_Bomb
+  - Icon_arrow
+  - Icon_clock
+  - Icon_bomb
+  - ring
+  - Hyper Fever Item
+  - Text_JumbleUp_Kor
+  - Text_BLURRED_Kor
+  - Item_Bomb_Enhance
+  - Btn_Arrow
+  - Panel_2
+  - Slot_Item
+  - Dog_Head
+  - Ribbon_Fever
+  - Text_JumbleUp_Eng
+  - Slot_BonusChar
+  - Monkey_Head
+  - Text_BLURRED_Eng
+  - Chicken_Head
+  - Ultra Fever Item
+  - DiaPocket
+  - Text_REVERSE_Kor
+  - Text_Score
+  - ObstacleArm
+  - InfiniteClockItem
+  - Text_FEVER
+  - Slot_Char
+  - Bear_Head
+  m_RenderDataMap: {}
+  m_Tag: Ingame
+  m_IsVariant: 0

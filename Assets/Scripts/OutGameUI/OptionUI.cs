@@ -192,8 +192,8 @@ public class OptionUI : DockUI
     /// </summary>
     public void OnGuide()
     {
-        // SystemPopupUI.Instance.OpenNoneTouch(41);
-        GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/ablegames/68");
+        _GamePopup.OpenPopup(EGamePopup.Guide);
+        // GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/ablegames/68");
     }
 
     public void OnCopy()

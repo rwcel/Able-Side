@@ -105,7 +105,7 @@ public class ProfileEditUI : PopupUI
         }
 
         //missionText.text = 28.Localization() + " " + string.Format(231.Localization(), curData.missionScore);
-        missionText.text = string.Format(231.Localization(), curData.missionScore);
+        missionText.text = string.Format(231.Localization(), curData.missionScore.NumberFormat());
         descText.text = curData.descNum.Localization();
     }
 
@@ -151,7 +151,7 @@ public class ProfileEditUI : PopupUI
         isIconOpen = isOpen;
 
         nameLangText.ChangeText(profileData.nameNum);
-        missionText.text = string.Format(231.Localization(), curData.missionScore);
+        missionText.text = string.Format(231.Localization(), curData.missionScore.NumberFormat());
         descText.text = curData.descNum.Localization();
 
         //tooltipText.gameObject.SetActive(!isOpen);

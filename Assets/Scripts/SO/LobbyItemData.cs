@@ -19,6 +19,7 @@ public class LobbyItemData : ScriptableObject
     [Header("내용")]
     public int value;               // 효과
     public int price;
+    public int salePercent;
 
     [Header("광고")]
     // **하루 광고 시청 제한 변수가 들어갈 수 있음

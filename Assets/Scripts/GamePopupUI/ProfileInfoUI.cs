@@ -41,7 +41,7 @@ public class ProfileInfoUI : PopupUI
         nicknameText.text = _GameManager.NickName;
         bestScoreText.text = _GameManager.BestScore.CommaThousands();
         comboText.text = _GameManager.BestMaxCombo.ToString();
-        accuScoreText.text = _GameManager.AccumulateScore.ToString();
+        accuScoreText.text = _GameManager.AccumulateScore.CommaThousands();
         rankText.text = _GameManager.Rank.Ordinalnumber();
     }
 

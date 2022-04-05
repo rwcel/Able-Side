@@ -225,6 +225,11 @@ public class IAPManager : Singleton<IAPManager>, IStoreListener
         return $"{GetProduct(_productId).metadata.localizedPriceString}";
     }
 
+    public decimal GetPriceToDecimal(string _productId)
+    {
+        return GetProduct(_productId).metadata.localizedPrice;
+    }
+
     // 아래 예시 부분은 추후 필요할때 적용 할 수 있도록 유지.
     /*
     public void RestoreVariable() // 구매 정보를 확인 후 알림 표시.

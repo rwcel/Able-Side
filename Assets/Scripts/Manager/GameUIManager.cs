@@ -38,10 +38,15 @@ public class GameUIManager : Singleton<GameUIManager>
 
     private void AddActions()
     {
-        GameManager.Instance.OnGameStart += (value) => outGameObj.SetActive(!value);
-        GameManager.Instance.OnGameStart += (value) => inGameObj.SetActive(value);
+        var gameManager = GameManager.Instance;
 
-        GameManager.Instance.IsGameStart = false;
+        gameManager.OnGameStart += (value) => 
+        {
+            outGameObj.SetActive(!value);
+            inGameObj.SetActive(value);
+        };
+
+        gameManager.IsGameStart = false;
     }
 
 
@@ -70,6 +75,8 @@ public class GameUIManager : Singleton<GameUIManager>
     public void InGameBonusCharImg(bool isBonus, ESide side, int arrayNum) => inGameUI.BonusCharImg(isBonus, side, arrayNum);
 
     public void InGameFeverBonus(bool isBonus) => inGameUI.FeverBonus(isBonus);
+
+    public void InGamePauseReady(bool isPause) => inGameUI.PauseReadyAnim(isPause);
 
     #endregion
 }

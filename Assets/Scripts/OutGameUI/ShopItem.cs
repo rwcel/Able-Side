@@ -10,6 +10,9 @@ public class ShopItem : MonoBehaviour
     [SerializeField] protected TextMeshProUGUI nameText;
     [SerializeField] protected TextMeshProUGUI priceText;
     [SerializeField] protected Button buyButton;
+    [SerializeField] protected GameObject saleObj;
+    [SerializeField] protected TextMeshProUGUI saleText;
+    [SerializeField] protected TextMeshProUGUI beforePriceText;
 
     protected ShopData shopData;
 
@@ -28,18 +31,46 @@ public class ShopItem : MonoBehaviour
         this.shopData = shopData;
         _BackEndServerManager = BackEndServerManager.Instance;
 
+        if(saleObj != null)
+            saleObj.SetActive(shopData.salePercent > 0);
+
         UpdateData();
     }
 
     public virtual void UpdateData()
     {
         nameText.text = shopData.nameNum.Localization();
+
+        // *ShopItem은 역산을 통해 원가를 산정하기
+        if (shopData.salePercent > 0)
+        {
+            saleText.text = $"{shopData.salePercent}%";
 #if UNITY_EDITOR
-        priceText.text = $"\\{shopData.price.CommaThousands()}";
+            beforePriceText.text = $"<s>\\{shopData.price.CommaThousands()}</s>";
+
+            int price = shopData.price - (shopData.price * shopData.salePercent / 100);
+            priceText.text = $"\\{price.CommaThousands()}";
+#else
+            if (shopData.productID != "")
+            {
+                priceText.text = IAPManager.Instance.GetPrice(shopData.productID);
+                float beforePrice = (float)(IAPManager.Instance.GetPriceToDecimal(shopData.productID)
+                                            * 100 / (100 - shopData.salePercent));
+                beforePriceText.text = $"<s>{beforePrice}</s>";                     // **숫자만 나옴
+            }
+#endif
+        }
+        else
+        {
+            if(beforePriceText != null)
+                beforePriceText.text = "";
+#if UNITY_EDITOR
+            priceText.text = $"\\{shopData.price.CommaThousands()}";
 #else
     if(shopData.productID != "")
         priceText.text = IAPManager.Instance.GetPrice(shopData.productID);
 #endif
+        }
     }
 
     protected virtual void OnBuy()

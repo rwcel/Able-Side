@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-
+using UnityEngine.UI;
 
 namespace Obstacle
 {
@@ -10,16 +10,15 @@ namespace Obstacle
     {
         [SerializeField] AnimEvent animEvent;
         [SerializeField] List<GameObject> eventObjs;            // *Hue 포함
-        //[SerializeField] Sprite textSprite;
-        //[SerializeField] UnityEngine.UI.Image textImage;
         [SerializeField] ParticleSystem[] applyParticles;
-        //[SerializeField] protected Animation eventAnim;
-        [SerializeField] UnityEngine.UI.Image timeImage;
+        [SerializeField] Image timeImage;
+        [SerializeField] Image textImage;
+        [SerializeField] Sprite korSprite;
+        [SerializeField] Sprite engSprite;
 
         [HideInInspector] public int score;     // 기준 점수
         protected int arrayNum;
         protected int count;                        // Correct 카운트
-        // *겹쳐서도 안되면 static 사용
         protected static bool isApply;                  // 이미 적용중인 경우 계산 안함
         public static bool IsApply => isApply;
 
@@ -56,7 +55,9 @@ namespace Obstacle
             };
         }
 
-        // **Query를 계속 Dispose하고 null로 만드는데 performance 상 문제가 없나
+        /// <summary>
+        /// 데이터 초기화
+        /// </summary>
         protected virtual void InitSet()
         {
             obstacleDis = _GameController.ObserveEveryValueChanged(_ => _GameController.Score)
@@ -64,6 +65,9 @@ namespace Obstacle
                 .Where(value => value >= score)
                 .Subscribe(_ => UpdateObstacle())
                 .AddTo(this.gameObject);
+
+            textImage.sprite = (BackEndServerManager.Instance.Language == ELanguage.English) ? engSprite : korSprite;
+            timeImage.fillAmount = 0f;
         }
 
         protected void ClearData()
@@ -112,9 +116,7 @@ namespace Obstacle
         /// <summary>
         /// true일때만 효과 있음
         /// </summary>
-        protected virtual void CheckObstacle()
-        {
-        }
+        protected virtual void CheckObstacle() { }
 
         /// <summary>
         /// 100분위 확률
@@ -124,8 +126,6 @@ namespace Obstacle
             return Random.Range(0f, 100f) < percent;
         }
 
-        //bool isStart;
-
         /// <summary>
         /// 변경 : BeginApply -> Apply -> EndApply
         /// </summary>
@@ -133,9 +133,6 @@ namespace Obstacle
 
         public virtual void BeginApply()
         {
-            // Debug.Log("Begin Apply : " + _GameManager.InputValue);
-            //isStart = true;
-
             isApply = true;
             _GameController.OnItemObstacle += ItemEndApply;
             foreach (var eventObj in eventObjs)
@@ -163,8 +160,6 @@ namespace Obstacle
             }
 
             ++_GameManager.InputValue;
-
-            //isStart = false;
         }
 
         public virtual void EndApply()
@@ -184,16 +179,11 @@ namespace Obstacle
                 eventObj.SetActive(false);
             }
 
-            // isStart = false;
             // ++_GameManager.InputValue;
         }
 
         public virtual void ItemEndApply()
         {
-            //if(isStart)
-            //{
-            //    ++_GameManager.InputValue;
-            //}
             EndApply();
         }
 

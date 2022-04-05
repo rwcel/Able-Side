@@ -25,6 +25,8 @@ public class ItemSelectUI : PopupUI
         public Image buttonImage;
         // public TextMeshProUGUI nameText;
         public TextMeshProUGUI countText;
+        public GameObject saleObj;
+        public TextMeshProUGUI saleText;
         public Transform stateParent;
         [HideInInspector] public EItemState state;
         [HideInInspector] public GameObject[] stateObjs;
@@ -97,8 +99,12 @@ public class ItemSelectUI : PopupUI
             // *i값을 바로 넣으면 참조로 들어가서 모두가 6이 된다
             var lobbyItem = (ELobbyItem)i;
 
+            var lobbyItemData = LevelData.Instance.LobbyItemDatas[i];
+
             //itemsUI[i].nameText.text = LevelData.Instance.LobbyItemDatas[i].type.ToString();
-            itemsUI[i].itemImage.sprite = LevelData.Instance.LobbyItemDatas[i].sprite;
+            itemsUI[i].itemImage.sprite = lobbyItemData.sprite;
+            itemsUI[i].saleObj.SetActive(lobbyItemData.salePercent != 0);
+            itemsUI[i].saleText.text = $"{lobbyItemData.salePercent}%";
 
             itemsUI[i].button.onClick.AddListener(() => OnClickItem(lobbyItem));
         }

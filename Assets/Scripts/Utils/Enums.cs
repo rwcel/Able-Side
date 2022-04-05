@@ -41,6 +41,8 @@ public enum EGamePopup
     Gacha,
     TicketShop,
     Notice,
+    Guide,
+    Tutorial,
     Account,
     Reward,                 // 위에 올라오는 경우 많아서 맨 밑
 }

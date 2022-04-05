@@ -38,6 +38,7 @@
 51 : Coming soon..
 52 : Be short of Gems.
 53 : Please check the Internet status.
+54 : Already have a registered account.<br>It can be changed after deleting the account.
 100 : Tap to Play!
 101 : <#ffda6b>C/S</color>; ablegames_help@ablex.co.kr
 102 : Terms of Service & Policy
@@ -127,7 +128,7 @@
 350 : Gem +{0}
 351 : Add Bomb Power
 352 : Bonus Character
-353 : Bomc
+353 : Bomb
 354 : Max Time
 355 : Debuff Clean
 356 : Magic Shield
@@ -160,3 +161,9 @@
 455 : Badge made by outstanding neighbor country craftsman
 456 : Badge made of very rare jewelry<br>It's priceless
 457 : The Legendary Badge Only for SideTab Heroes
+500 : Jumble Up
+501 : Blurred
+502 : Reverse
+520 : Portraits of animals are randomly mixed
+521 : Portraits of animals are covered for a certain period of time
+522 : Animals must be sent in the opposite direction for a certain period of time

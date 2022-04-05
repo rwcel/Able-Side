@@ -33,6 +33,7 @@ public class InGameUI : MonoBehaviour
 
     [Header("========== Ready ==========")]
     [SerializeField] GameObject readyObj;
+    [SerializeField] Animator readyAnim;
     [SerializeField] AnimEvent readyAnimEvent;
 
     [Header("========== Item ==========")]
@@ -69,6 +70,8 @@ public class InGameUI : MonoBehaviour
     private float maxTime;        // 보관값
     private int itemCount;          // 아이템 갯수 보관값
 
+    GameManager _GameManager;
+
     public static readonly int _Anim_Combo = Animator.StringToHash("Combo");
 
     #endregion 변수 선언
@@ -86,6 +89,8 @@ public class InGameUI : MonoBehaviour
 
     private void InitSet()
     {
+        _GameManager = GameManager.Instance;
+
         leftSlotObjs = new List<GameObject>();
         rightSlotObjs = new List<GameObject>();
 
@@ -111,13 +116,13 @@ public class InGameUI : MonoBehaviour
             GamePopup.Instance.OpenPopup(EGamePopup.Pause
                 , () =>
                 {
-                    --GameManager.Instance.InputValue;
+                    --_GameManager.InputValue;
                     Time.timeScale = 0;
                     AudioManager.Instance.PauseBGM(true);
                 }
                 , () =>
                 {
-                    ++GameManager.Instance.InputValue;
+                    ++_GameManager.InputValue;
                     Time.timeScale = 1;
                     AudioManager.Instance.PauseBGM(false);
                 });
@@ -126,7 +131,7 @@ public class InGameUI : MonoBehaviour
 
     private void AddActions()
     {
-        GameManager.Instance.OnGameStart += (value) =>
+        _GameManager.OnGameStart += (value) =>
         {
             if (value == false)
             {
@@ -135,21 +140,32 @@ public class InGameUI : MonoBehaviour
             else
             {
                 readyObj.SetActive(true);
+
+                if (_GameManager.BestScore <= 0)         // **InGame에서 조절하는건 바람직한 방법이 아니긴함
+                {
+                    GamePopup.Instance.OpenPopup(EGamePopup.Tutorial);
+                    PauseReadyAnim(true);
+                }
+                else
+                {
+                    AudioManager.Instance.PlaySFX(ESFX.ReadyGo);
+                }
             }
         };
 
         readyAnimEvent.SetAnimEvent(() => 
         {
             BackEndServerManager.Instance.GameStartTime = System.DateTime.Now;
-            GameManager.Instance.InputValue = 1;
-            GameManager.Instance.GameController.StartTime();
             readyObj.SetActive(false);
+
+            _GameManager.InputValue = 1;
+            _GameManager.GameController.StartTime();
         });
     }
 
     void AddObserves()
     {
-        GameController gameController = GameManager.Instance.GameController;
+        GameController gameController = _GameManager.GameController;
 
         gameController.ObserveEveryValueChanged(_ => gameController.Score)
             .Subscribe(value => UpdateScore(value))
@@ -292,7 +308,7 @@ public class InGameUI : MonoBehaviour
     {
         //timeSlider.maxValue = value;
         maxTime = value;
-        UpdateTime(GameManager.Instance.GameController.Time);
+        UpdateTime(_GameManager.GameController.Time);
     }
 
     public void UpdateTime(float value)
@@ -427,5 +443,14 @@ public class InGameUI : MonoBehaviour
 
         leftArrowRect.localScale = new Vector3(isReverse ? -1 : 1, 1, 1);
         rightArrowRect.localScale = new Vector3(isReverse ? 1 : -1, 1, 1);
+    }
+
+    public void PauseReadyAnim(bool isPause)
+    {
+        readyAnim.speed = isPause ? 0 : 1;
+        if(!isPause)
+        {
+            AudioManager.Instance.PlaySFX(ESFX.ReadyGo);
+        }
     }
 }
