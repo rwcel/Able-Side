@@ -13,8 +13,8 @@ public class ItemBuyUI : PopupUI
     [SerializeField] Image iconImage;
     [Header("Buttons")]
     [SerializeField] Button buyButton;              // 다이아로 구매
-    [SerializeField] Button freeButton;             // 무료 버튼
-    [SerializeField] Button chargeButton;     // 광고로 무료 횟수 충전
+    [SerializeField] Button freeButton;                 // 무료 버튼
+    [SerializeField] Button chargeButton;           // 광고로 무료 횟수 충전
     [Header("Button Texts")]
     [SerializeField] TextMeshProUGUI diaText;
     [SerializeField] TextMeshProUGUI beforeDiaText;
@@ -54,15 +54,13 @@ public class ItemBuyUI : PopupUI
         nameText.text = lobbyItemData.nameLanguageNum.Localization();
         descText.text = string.Format(lobbyItemData.descLanguageNum.Localization(), lobbyItemData.value);
 
-        //nameText.text = lobbyItemData.type.ToString();
-        //descText.text = string.Format(lobbyItemData.description, lobbyItemData.value);
         iconImage.sprite = lobbyItemData.sprite;
 
         //diaText.text = $"Buy Dia\n{price}";
         saleObj.SetActive(lobbyItemData.salePercent > 0);
         if(lobbyItemData.salePercent > 0)
         {
-            saleText.text = $"{lobbyItemData.salePercent}%";
+            // saleText.text = $"{lobbyItemData.salePercent}%";
             beforeDiaText.text = $"<s>{lobbyItemData.price}</s>";
             price = lobbyItemData.price - (lobbyItemData.price * lobbyItemData.salePercent / 100);
         }

@@ -104,7 +104,7 @@ public class GameApplication : Singleton<GameApplication>
 
     IEnumerator CoQuitGame()
     {
-        yield return Values.Delay1;
+        yield return new WaitForSeconds(0.2f);
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

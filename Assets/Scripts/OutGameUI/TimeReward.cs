@@ -37,7 +37,15 @@ public class TimeReward : MonoBehaviour
             _GameManager = GameManager.Instance;
         }
 
-        timeText.text = (_GameManager.TimeRewardTime - System.DateTime.Now).MinRemainTime();
+        //timeText.text = (_GameManager.TimeRewardTime - System.DateTime.Now).MinRemainTime();
+        if (System.DateTime.Now < _GameManager.TimeRewardTime)
+        {   // 아직 못받음. 1분 이상을 유지해야함
+            timeText.text = (_GameManager.TimeRewardTime.AddMinutes(1) - System.DateTime.Now).ToString(@"hh\:mm");
+        }
+        else
+        {   // 받을 수 있음
+            timeText.text = 151.Localization();
+        }
         OnOff(timeText.text == 151.Localization());
     }
 

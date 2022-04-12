@@ -92,6 +92,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 78e5371d38aa3ae449534bc1c05f40c3, type: 3}
   - {fileID: 21300000, guid: ce23098d73b06aa4d8c4bb47804b57c6, type: 3}
   - {fileID: 21300000, guid: 247b89bd945de0d4ebb29bd358cd9366, type: 3}
+  - {fileID: 21300000, guid: 6522901ed2ffdf34a9d7ae1a00f6d424, type: 3}
   - {fileID: 21300000, guid: 43c8a56e763662748bee874db45783a5, type: 3}
   - {fileID: 21300000, guid: 3f842d7e074018c46a8729ab72e1e147, type: 3}
   - {fileID: 21300000, guid: 5da4c68e462ad384281a48fa403290d1, type: 3}
@@ -99,6 +100,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9c919bfe4bd0a3c42ae4fbb687e837f1, type: 3}
   - {fileID: 21300000, guid: 4e9d342f92e138947a708bb72c7e2eba, type: 3}
   - {fileID: 21300000, guid: fc6ed27f315d38a46a7e847b261bfdff, type: 3}
+  - {fileID: 21300000, guid: 9d0b71af2ab729340a2c91531cf4a25a, type: 3}
   - {fileID: 21300000, guid: 50089ebfccda3d54db0ca7e114d7d8d7, type: 3}
   - {fileID: 21300000, guid: 7c3804cf49c4d2747ac169b8c6a77676, type: 3}
   - {fileID: 21300000, guid: 208901ef3f68d664a8415525cad593af, type: 3}
@@ -143,6 +145,7 @@ SpriteAtlas:
   - Text_JumbleUp_Eng
   - Slot_BonusChar
   - Monkey_Head
+  - Rope_end
   - Text_BLURRED_Eng
   - Chicken_Head
   - Ultra Fever Item
@@ -150,6 +153,7 @@ SpriteAtlas:
   - Text_REVERSE_Kor
   - Text_Score
   - ObstacleArm
+  - Tile_Rope
   - InfiniteClockItem
   - Text_FEVER
   - Slot_Char

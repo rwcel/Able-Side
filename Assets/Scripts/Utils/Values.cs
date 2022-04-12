@@ -110,6 +110,7 @@ public static class Values
     // public static readonly string Key_Character = "Character";
     public static readonly string Key_CorrectEffect = "Flash";
     public static readonly string Key_ShieldEffect = "Shield";
+    public static readonly string Key_DiaEffect = "Diamond";
 
     public static readonly WaitForSeconds BombDelay = new WaitForSeconds(0.05f);
     public static readonly WaitForSeconds Delay05 = new WaitForSeconds(0.5f);

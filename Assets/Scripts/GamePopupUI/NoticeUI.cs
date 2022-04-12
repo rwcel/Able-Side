@@ -10,8 +10,6 @@ public class NoticeUI : PopupUI
     [SerializeField] GameObject[] engObjs;          
     [SerializeField] GameObject[] korObjs;
 
-    [SerializeField] Button exitButton;
-
     GameApplication _GameApplication;
 
     protected override void Start()
@@ -19,7 +17,6 @@ public class NoticeUI : PopupUI
         base.Start();
 
         _GameApplication = GameApplication.Instance;
-        exitButton.onClick.AddListener(_GamePopup.ClosePopup);
     }
 
     protected override void UpdateData()

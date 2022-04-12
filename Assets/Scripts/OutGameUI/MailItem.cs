@@ -7,7 +7,7 @@ using TMPro;
 public struct FPostInfo
 {
     public BackEnd.PostType serverType;         // Admin, Ranking, User
-    public EPost postType;           // 일반, 패키지, 시리얼
+    public EPost postType;                           // 일반, 패키지, 시리얼
     public EItem itemType;
     public int count;
 
@@ -58,7 +58,7 @@ public class MailItem : MonoBehaviour
     public void UpdateRemainText() => remainText.text = PostInfo.remainTime.HourRemainTime();
 
     /// <summary>
-    /// 데이터 읽어오기
+    /// 받기 클릭 시 보상 아이템 데이터 보내주기
     /// </summary>
     protected virtual void RecvMail()
     {

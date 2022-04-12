@@ -10,7 +10,6 @@ public class LocalizationManager : Singleton<LocalizationManager>
 
     // public System.Action<ELanguage> OnChangeLanguage;
 
-    //List<KeyValuePair<TextMeshProUGUI, int>> localizes = new List<KeyValuePair<TextMeshProUGUI, int>>();
     Dictionary<TextMeshProUGUI, int> localizes = new Dictionary<TextMeshProUGUI, int>();
 
     public Dictionary<int, string> englishs = new Dictionary<int, string>();
@@ -71,9 +70,4 @@ public class LocalizationManager : Singleton<LocalizationManager>
                                 ? englishs[item.Value] : koreans[item.Value];
         }
     }
-
-    //private void OnApplicationQuit()
-    //{
-    //    localizes = null;
-    //}
 }

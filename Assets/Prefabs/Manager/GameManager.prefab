@@ -99,6 +99,9 @@ MonoBehaviour:
   - _Count: 5
     _Obj: {fileID: 6232515331159570974, guid: 48205bdd53688154faa67f2ab16c9e92, type: 3}
     parent: {fileID: 0}
+  - _Count: 5
+    _Obj: {fileID: 6694328772350925409, guid: 1999b49d28b8a4b4ab0c0beb6dd8c4d0, type: 3}
+    parent: {fileID: 0}
   charPoolInfo:
     _Count: 25
     _Obj: {fileID: 0}
@@ -218,5 +221,3 @@ MonoBehaviour:
   Fever: 0
   UseFeverCount: 0
   itemGachas: []
-  ScoreReactiveProperty:
-    value: 0

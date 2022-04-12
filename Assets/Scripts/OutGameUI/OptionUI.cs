@@ -145,7 +145,7 @@ public class OptionUI : DockUI
     /// </summary>
     public void OnNotice()
     {
-        GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/ArticleList.nhn?search.clubid=30546852&search.menuid=1&search.boardtype=L");
+        GameApplication.Instance.ShowWebView("Cafe", "http://m.cafe.naver.com/ca-fe/web/cafes/30546852/menus/1#");
     }
 
     /// <summary>
@@ -153,7 +153,7 @@ public class OptionUI : DockUI
     /// </summary>
     public void OnCS()
     {
-        GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/MemoList.nhn?search.clubid=30546852&search.menuid=20&viewType=pc");
+        GameApplication.Instance.ShowWebView("Cafe", "https://cafe.naver.com/MemoList.nhn?search.clubid=30546852&search.menuid=20&viewType=Mobile");
     }
 
     /// <summary>

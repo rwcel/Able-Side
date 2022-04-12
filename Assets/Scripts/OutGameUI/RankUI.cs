@@ -30,18 +30,18 @@ public class RankUI : DockUI
     }
 
     /// <summary>
-    /// 전체 랭킹, 자신 랭킹 다시 계산하기
+    /// 전체 랭킹, 자신 랭킹 계산
     /// </summary>
     public override void UpdateDatas()
     {
         var rankList = BackEndServerManager.Instance.GetScoreRankList();
-        if (rankList == null)               // 서버쪽에서 변경 확인 작업 필요
+        if (rankList == null)               // 서버쪽에서 데이터 변경 확인
             return;
 
         int count = poolParent.childCount;
         int topTier = topRanks.Length;
 
-        Debug.Log($"rank List count : {rankList.Count}");
+        // Debug.Log($"rank List count : {rankList.Count}");
 
         for (int i = 0, length = topTier; i < length && i < rankList.Count; i++)
         {

@@ -26,16 +26,6 @@ public class PlayerController : MonoBehaviour
     private static readonly int _Anim_Obstacle = Animator.StringToHash("IsObstacle");
     private static readonly int _Anim_Clear = Animator.StringToHash("Clear");
 
-    //private void OnEnable()
-    //{
-    //    if(_GameManager == null)
-    //    {
-    //        _GameManager = GameManager.Instance;
-    //    }
-
-    //    shieldObj.SetActive(_GameManager.GameController.CanShield);
-    //}
-
     private void Start()
     {
         _GameManager = GameManager.Instance;
@@ -81,11 +71,10 @@ public class PlayerController : MonoBehaviour
             })
             .AddTo(this.gameObject);
 
-        // *이 스크립트가 먼저 들어가서 먼저 실행
+        // 클린 아이템 사용시 방해요소 적용중이면 클리어 애니메이션 재생
         gameController.OnItemObstacle += () =>
         {
             if(Obstacle.Obstacle.IsApply)
-            //if(anim.GetCurrentAnimatorStateInfo(0).IsName("Obstacle"))
             {
                 playerAnim.SetTrigger(_Anim_Clear);
             }

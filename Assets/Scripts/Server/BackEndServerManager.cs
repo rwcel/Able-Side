@@ -113,7 +113,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     public DateTime GameStartTime;
 
-    public string NickName => nickName;//Backend.UserNickName;
+    public string NickName => nickName;                             //Backend.UserNickName;
     public string UUID => gamerID;
     public ELogin LoginType => loginType;
     public string UserIndate => Backend.UserInDate;               // UserInDate가 SDK용. Gamer_id는 조회 불가
@@ -299,6 +299,22 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         GetUserInfo();  // 유저정보 가져오기 후 변수에 저장
     }
 
+    /// <summary>
+    /// 회원가입
+    /// 국가코드 등록
+    /// </summary>
+    public void SignUp()
+    {
+        Backend.BMember.UpdateCountryCode(GetLanguageCountry(), countryBro =>
+        {
+            // 확인?
+            Debug.Log("언어 국가 : " + GetLanguageCountry());
+        });
+
+        _LoginUI.ShowPrivacyUI();
+        isProgressLogin = false;
+    }
+
     public void GetIntroDatas()
     {
         GetChartLists();            // Time Reset보다 빨리 불러와야함
@@ -385,8 +401,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                         if (int.Parse(bro.GetStatusCode()) == _Code_SignUp)
                         {
                             // 회원가입
-                            _LoginUI.ShowPrivacyUI();
-                            isProgressLogin = false;
+                            SignUp();
                         }
                         else if (int.Parse(bro.GetStatusCode()) == _Code_Login)
                         {
@@ -433,7 +448,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     // 페이스북 회원가입
     private void InitCallback()
     {
-        if(FB.IsInitialized)
+        if (FB.IsInitialized)
         {
             FB.ActivateApp();
         }
@@ -481,8 +496,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                             if (int.Parse(bro.GetStatusCode()) == _Code_SignUp)
                             {
                                 // 회원가입
-                                _LoginUI.ShowPrivacyUI();
-                                isProgressLogin = false;
+                                SignUp();
                             }
                             else if (int.Parse(bro.GetStatusCode()) == _Code_Login)
                             {
@@ -503,8 +517,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
 
     /// <summary>
-    /// 게스트 회원가입
-    /// *동기 처리
+    /// 게스트 로그인
     /// </summary>
     public void GuestLogin()
     {
@@ -519,8 +532,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             if(int.Parse(bro.GetStatusCode()) == _Code_SignUp)
             {
                 // 회원가입
-                _LoginUI.ShowPrivacyUI();
-                isProgressLogin = false;
+                SignUp();
             }
             else if(int.Parse(bro.GetStatusCode()) == _Code_Login)
             {
@@ -532,14 +544,12 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         else
         {
             // **로그 남기기 불가능 : 로그인을 해야 그 뒤에 InsertLog가 가능
-
             Debug.LogError("게스트 로그인 실패 : " + bro);
 
             // 정보 삭제
             Backend.BMember.DeleteGuestInfo();
 
             SystemPopupUI.Instance.OpenOneButton(14, 114, 2, GameSceneManager.Instance.Restart);
-            // 기존 : GameApplication.Instance.Quit
 
             isProgressLogin = false;
 
@@ -610,7 +620,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     private string DailyGiftTableName = "DailyGift";
     private string FreeCountColumnName = "freeCount", AdCountColumnName = "adCount";
-    private string ChargeValueColumnName = "chargeValue", AdDelayColumnName = "adDelay";
 
     private string ResultTableName = "Result";
     private string ScoreColumnName = "score", ComboColumnName = "maxCombo", AccumulateScoreColumnName = "acScore";
@@ -1219,7 +1228,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 return;
             }
 
-            Debug.Log($"로비 아이템 갱신 : {(ELobbyItem)num}");
+            // Debug.Log($"로비 아이템 갱신 : {(ELobbyItem)num}");
         });
     }
 
@@ -1261,7 +1270,6 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
                 (
                     int.Parse(rows[0][item.ToString()][FreeCountColumnName].ToString()),
                     int.Parse(rows[0][item.ToString()][AdCountColumnName].ToString())
-                // int.Parse(rows[0][item.ToString()][AdDelayColumnName].ToString())
                 );
 
             _GameManager.CheckDailyGiftAdExitTime(item);
@@ -1309,6 +1317,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
     /// <summary>
     /// 일일 초기화 작업
+    /// SO 데이터 넣어주기
     /// </summary>
     private void GiftReset()
     {
@@ -1807,13 +1816,9 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     {
         var result = new List<FRankInfo>();
 
-        //private int tmpScore;
-        //if (tmpScore == GameManager.Instance.BestScore)
-        //    tmpScore = GameManager.Instance.BestScore;
-
+        // 랭킹 갱신 여부 확인 : 게임 플레이 1회 or 프로필 아이콘 수정
         if (isUpdatedRank)
             return null;
-
 
         var bro = Backend.URank.User.GetRankList(resultRankUUID, 100);
         if (!bro.IsSuccess())
@@ -1827,7 +1832,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             rankInfo.inDate = row["gamerInDate"].ToString();
             // Debug.Log($"{row["gamerInDate"]} - {row["owner_inDate"]}");
             try
-            {   // **랭킹에 닉네임이 기록되지 않는 경우가 있음
+            {   // *랭킹에 닉네임이 기록되지 않는 경우가 있음
                 rankInfo.nickname = row["nickname"].ToString();
             }
             catch
@@ -1848,7 +1853,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
             {   // 탈퇴한 회원의 경우
                 rankInfo.iconNum = 0;
                 result.Add(rankInfo);
-                Debug.Log("실패 : " + rankInfo.nickname);
+                Debug.LogWarning("실패 : " + rankInfo.nickname);
                 continue;
             }
 
@@ -2264,7 +2269,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
         // 로그용 코드 추가
         var gachaItem = Probability_Gacha(key);
 
-        Debug.Log($"가챠 아이템 획득 : {type} : {gachaItem.item} - {gachaItem.count}");
+        // Debug.Log($"가챠 아이템 획득 : {type} : {gachaItem.item} - {gachaItem.count}");
         Param param = new Param();
         // param.Add("가챠 종류", type.ToString());
         param.Add("획득 아이템", gachaItem.item);
@@ -2708,7 +2713,7 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
 
         recvItems.Add(new FItemInfo(item, GetItemSprite(item), value));
 
-        Debug.Log("Recv Itmes");
+        // Debug.Log("Recv Itmes");
     }
 
     public Sprite GetItemSprite(EItem item)
@@ -2932,6 +2937,40 @@ public class BackEndServerManager : Singleton<BackEndServerManager>
     public void ClearRecvItems()
     {
         recvItems.Clear();
+    }
+
+    public CountryCode GetLanguageCountry()
+    {
+        var systemLanguage = Application.systemLanguage;
+        switch (systemLanguage)
+        {
+            case SystemLanguage.Chinese:
+                return CountryCode.China;
+            case SystemLanguage.English:
+                return CountryCode.UnitedKingdom;
+            case SystemLanguage.French:
+                return CountryCode.France;
+            case SystemLanguage.German:
+                return CountryCode.Germany;
+            case SystemLanguage.Italian:
+                return CountryCode.Italy;
+            case SystemLanguage.Japanese:
+                return CountryCode.Japan;
+            case SystemLanguage.Korean:
+                return CountryCode.SouthKorea;
+            case SystemLanguage.Polish:
+                return CountryCode.Poland;
+            case SystemLanguage.Spanish:
+                return CountryCode.Spain;
+            case SystemLanguage.Thai:
+                return CountryCode.Thailand;
+            case SystemLanguage.Vietnamese:
+                return CountryCode.VietNam;
+            case SystemLanguage.Unknown:
+                return CountryCode.UnitedStates;
+            default:
+                return CountryCode.UnitedStates;
+        }
     }
 
     #endregion

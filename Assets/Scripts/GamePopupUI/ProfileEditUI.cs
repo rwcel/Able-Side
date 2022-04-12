@@ -81,11 +81,9 @@ public class ProfileEditUI : PopupUI
         nicknameText.text = _GameManager.NickName;
         profileIconImage.sprite = _GameManager.ProfileData.sprite;
 
-        // *Unirx 작동 확인
         curData = _GameManager.ProfileData;
 
-
-        // 계속 전체를 검사하는게 맞는지
+        // **점수에 따라 isOpen이 바뀌기 때문에 계속 Toggle 데이터를 변경해 주어야함
         for (int i = 0, length = profileIcons.Count; i < length; i++)
         {
             int idx = i;

@@ -26,6 +26,10 @@ public class TutorialUI : PopupUI
     {
         base.UpdateData();
 
+        if (idx > 0)
+        {
+            tutorialObjs[idx].SetActive(false);
+        }
         idx = -1;
         NextTutorial();
     }

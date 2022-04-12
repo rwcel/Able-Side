@@ -19,30 +19,22 @@ public class CharacterController : MonoBehaviour
     protected float duration;
     protected Ease ease;
 
-    //private Sequence moveSequence;
-
     private void Awake()
     {
         sortingGroup = GetComponent<SortingGroup>();
         anim = GetComponent<Animator>();
     }
 
-    //private void OnDisable()
-    //{
-    //    moveSequence.Kill();
-    //}
-
     public virtual void SetSortingGroup(int layer = -1)
     {
         if (layer == -1)
         {
             ++sortingGroup.sortingOrder;
-            // PlayRun(true);
         }
         else
+        {
             sortingGroup.sortingOrder = layer;
-
-        //MaxSpawnCharacterNum
+        }
     }
 
     /// <summary>
@@ -69,11 +61,6 @@ public class CharacterController : MonoBehaviour
         transform.DOMove(movePos, duration)
             .SetEase(ease)
             .OnComplete(() => PlayRun(false));
-
-        //moveSequence = DOTween.Sequence();
-        //moveSequence.Append(transform.DOMove(movePos, duration)
-        //    .SetEase(ease)
-        //    .OnComplete(() => PlayRun(false)));
     }
 
     public virtual void OutMove(Vector3 movePos, float duration, Ease ease)
@@ -91,14 +78,5 @@ public class CharacterController : MonoBehaviour
                 PoolingManager.Instance.Enqueue(gameObject);
                 PlayRun(false);
             });
-
-        //moveSequence = DOTween.Sequence();
-        //moveSequence.Append(transform.DOMove(movePos, duration)
-        //    .SetEase(ease)
-        //    .OnComplete(() => 
-        //    {
-        //        PoolingManager.Instance.Enqueue(gameObject);
-        //        PlayRun(false);
-        //    }));
     }
 }

@@ -8,8 +8,6 @@ public class UnityAdsBanner : MonoBehaviour
     [SerializeField] BannerPosition bannerPosition = BannerPosition.BOTTOM_CENTER;
     private string bannerID;
 
-    private bool isBannerShowed;            // **로비에서 켜주기때문에 문제가 발생할 수 있다
-
     public void Load(string unitID)
     {
         bannerID = unitID;
@@ -25,13 +23,13 @@ public class UnityAdsBanner : MonoBehaviour
 
     private void OnBannerLoaded()
     {
-        Debug.Log("****** Banner Loaded");
+        Debug.Log("Banner Loaded");
         // Show();
     }
 
     private void OnBannerError(string msg)
     {
-        Debug.Log($"********** Banner Error : {msg}");
+        Debug.Log($"Banner Error : {msg}");
     }
 
     public void Show()
@@ -43,8 +41,7 @@ public class UnityAdsBanner : MonoBehaviour
             showCallback = OnBannerShown
         };
 
-        Debug.Log($"********** Show Banner {bannerID}");
-        isBannerShowed = true;
+        Debug.Log($"Show Banner {bannerID}");
         Advertisement.Banner.Show(bannerID, options);
     }
 
@@ -54,8 +51,7 @@ public class UnityAdsBanner : MonoBehaviour
 
     public void Hide()
     {
-        Debug.Log("********* Hide");
+        Debug.Log("Hide");
         Advertisement.Banner.Hide();
-        isBannerShowed = false;
     }
 }

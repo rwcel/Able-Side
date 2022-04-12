@@ -35,14 +35,13 @@ public class LocalizationText : MonoBehaviour
         _LocalizationManager.SubLocalize(text);
     }
 
+    // 언어 변경 시 텍스트 변경
     public void ChangeText(int num)
     {
         if (_LocalizationManager == null)
             _LocalizationManager = LocalizationManager.Instance;
 
-        //_LocalizationManager.SubLocalize(text, languageNum);
         languageNum = num;
         text.text = languageNum.Localization();
-        //_LocalizationManager.AddLocalize(text, languageNum);
     }
 }

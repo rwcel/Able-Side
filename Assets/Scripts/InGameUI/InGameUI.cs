@@ -12,6 +12,7 @@ public class InGameUI : MonoBehaviour
     [Header("========== Texts ==========")]
     [SerializeField] TextMeshProUGUI scoreText;
     [SerializeField] TextMeshProUGUI diaText;
+    [SerializeField] GameObject diaParticleObj;
 
     [Header("========== Buttons ==========")]
     [SerializeField] Button pauseButton;
@@ -41,13 +42,8 @@ public class InGameUI : MonoBehaviour
     [SerializeField] ParticleSystem itemParticle;
 
     [Header("========== Slot ==========")]
-    [SerializeField] Sprite normalSlot;
-    [SerializeField] Sprite bonusSlot;
+    public SlotUI SlotUI;
 
-    [SerializeField] Image[] leftSlotImgs;
-    [SerializeField] Image[] rightSlotImgs;
-    [SerializeField] Image[] leftSideImgs;
-    [SerializeField] Image[] rightSideImgs;
     [SerializeField] Image[] itemImages;
 
     [Header("========== Time ==========")]
@@ -59,13 +55,6 @@ public class InGameUI : MonoBehaviour
 
     [Header("========== Clean ==========")]
     [SerializeField] GameObject cleanObj;
-
-
-    protected List<Sprite> leftSide = new List<Sprite>();
-    protected List<Sprite> rightSide = new List<Sprite>();
-
-    protected List<GameObject> leftSlotObjs;
-    protected List<GameObject> rightSlotObjs;
 
     private float maxTime;        // 보관값
     private int itemCount;          // 아이템 갯수 보관값
@@ -90,18 +79,6 @@ public class InGameUI : MonoBehaviour
     private void InitSet()
     {
         _GameManager = GameManager.Instance;
-
-        leftSlotObjs = new List<GameObject>();
-        rightSlotObjs = new List<GameObject>();
-
-        foreach (var leftSlotImg in leftSlotImgs)
-        {
-            leftSlotObjs.Add(leftSlotImg.gameObject);
-        }
-        foreach (var rightSlotImg in rightSlotImgs)
-        {
-            rightSlotObjs.Add(rightSlotImg.gameObject);
-        }
 
         ClearData();
     }
@@ -199,7 +176,7 @@ public class InGameUI : MonoBehaviour
             .AddTo(this.gameObject);
 
         gameController.ObserveEveryValueChanged(_ => gameController.AddDia)
-            .Subscribe(value => diaText.text = value.CommaThousands())
+            .Subscribe(value => UpdateDia(value))
             .AddTo(this.gameObject);
 
         gameController.ObserveEveryValueChanged(_ => gameController.IsInvincible)
@@ -222,71 +199,24 @@ public class InGameUI : MonoBehaviour
 
     private void ClearData()
     {
-        foreach (var leftSlot in leftSlotObjs)
-        {
-            leftSlot.SetActive(false);
-        }
-        foreach (var rightSlot in rightSlotObjs)
-        {
-            rightSlot.SetActive(false);
-        }
-
-        foreach (var leftSlotImg in leftSlotImgs)
-        {
-            leftSlotImg.sprite = normalSlot;
-        }
-        foreach (var rightSlotImg in rightSlotImgs)
-        {
-            rightSlotImg.sprite = normalSlot;
-        }
-
-        Blur(false);
-
         feverUI.ClearData();
+        SlotUI.ClearData();
 
         UpdateTimer(false);
 
         itemCount = 0;
     }
 
-    /// <summary>
-    /// 왼쪽 오른쪽 이미지들
-    /// 
-    /// **Jumble 이후 망가짐. sprite Out of bound array
-    /// </summary>
-    public void SetSideImage(List<Sprite> leftSide, List<Sprite> rightSide)
-    {
-        this.leftSide = leftSide;
-        this.rightSide = rightSide;
-
-        for (int i = 0, length = leftSide.Count; i < length; i++)
-        {
-            leftSideImgs[i].sprite = leftSide[i];
-        }
-        for (int i = 0, length = rightSide.Count; i < length; i++)
-        {
-            rightSideImgs[i].sprite = rightSide[i];
-        }
-
-        // 기본 오픈
-        OpenImage(ESide.Left, 0);
-        OpenImage(ESide.Right, 0);
-    }
-
-    public void OpenImage(ESide side, int arrayNum)
-    {
-        // Debug.Log($"{side}, {arrayNum}");
-        if (side == ESide.Left)
-        {
-            leftSlotObjs[arrayNum].SetActive(true);
-        }
-        else
-        {
-            rightSlotObjs[arrayNum].SetActive(true);
-        }
-    }
-
     #region UpdateDatas
+
+    public void UpdateDia(int value)
+    {
+        diaText.text = value.CommaThousands();
+        if (value != 0)
+        {
+            diaParticleObj.SetActive(true);
+        }
+    }
 
     public void UpdateScore(int value)
     {
@@ -306,7 +236,6 @@ public class InGameUI : MonoBehaviour
 
     public void SetMaxTime(float value)
     {
-        //timeSlider.maxValue = value;
         maxTime = value;
         UpdateTime(_GameManager.GameController.Time);
     }
@@ -314,14 +243,12 @@ public class InGameUI : MonoBehaviour
     public void UpdateTime(float value)
     {
         timeSliderImg.fillAmount = value / maxTime;
-        //timeSlider.value = value;
         timeText.text = ((int)value).ToString();
     }
 
     public void UpdateBomb(float value)
     {
         bombSliderImg.fillAmount = value / (Values.MaxBombCount - 1);
-        // bombSlider.value = value;
 
         if(bombSliderImg.fillAmount == 0)
             bombParticle.Play();
@@ -356,7 +283,6 @@ public class InGameUI : MonoBehaviour
             itemImages[0].sprite = itemNullSprite;
         }
 
-        // **증가했을때만 가능?
         if(items.Count > itemCount)
             itemParticle.Play();
 
@@ -377,70 +303,9 @@ public class InGameUI : MonoBehaviour
 
     #endregion
 
-    public void BonusCharImg(bool isBonus, ESide side, int arrayNum)
-    {
-        if (side == ESide.Left)
-        {
-            leftSlotImgs[arrayNum].sprite = isBonus ? bonusSlot : normalSlot;
-        }
-        else
-        {
-            rightSlotImgs[arrayNum].sprite = isBonus ? bonusSlot : normalSlot;
-        }
-
-        // Debug.Log($"보너스 여부 : {isBonus} / {side} - {arrayNum}");
-    }
-
-    /// <summary>
-    /// 모두 설정되게
-    /// </summary>
-    /// <param name="isBonus"></param>
-    public void FeverBonus(bool isBonus)
-    {
-        for (int i = 0, length = leftSide.Count; i < length; i++)
-        {
-            //leftSideImgs[i].sprite = characterPairs[leftSide[i]];
-        }
-        for (int i = 0, length = rightSide.Count; i < length; i++)
-        {
-            //rightSideImgs[i].sprite = characterPairs[rightSide[i]];
-        }
-    }
-
-    /// <summary>
-    /// 이미지 블러처리
-    /// </summary>
-    public void Blur(bool isBlur)
-    {
-        if(isBlur)
-        {
-            for (int i = 0, length = leftSide.Count; i < length; i++)
-            {
-                leftSideImgs[i].gameObject.SetActive(false);
-            }
-            for (int i = 0, length = rightSide.Count; i < length; i++)
-            {
-                rightSideImgs[i].gameObject.SetActive(false);
-            }
-        }
-        else
-        {
-            for (int i = 0, length = leftSide.Count; i < length; i++)
-            {
-                leftSideImgs[i].gameObject.SetActive(true);
-            }
-            for (int i = 0, length = rightSide.Count; i < length; i++)
-            {
-                rightSideImgs[i].gameObject.SetActive(true);
-            }
-        }
-    }
-
+    // *IsReverse *= -1 불가능
     public void ReverseButton(bool isReverse)
     {
-        // IsReverse *= -1 못하나?
-        //leftArrowRect.localScale *= Vector3.left;
-
         leftArrowRect.localScale = new Vector3(isReverse ? -1 : 1, 1, 1);
         rightArrowRect.localScale = new Vector3(isReverse ? 1 : -1, 1, 1);
     }

@@ -95,7 +95,6 @@ public class GameCharacter : MonoBehaviour
         //}
         for (int i = 0, type = (int)ECharacter.Bomb; i < type; i++)
         {
-
             characterTypes.Add((ECharacter)i);
         }
 
@@ -138,9 +137,9 @@ public class GameCharacter : MonoBehaviour
                     _ = nextSide == ESide.Left ? (++leftOpenCount) : (++rightOpenCount);
                 }
 
-                Debug.Log($"새로운 캐릭터 : {value} - {nextSide} : {leftOpenCount} - {rightOpenCount}");
+                // Debug.Log($"새로운 캐릭터 : {value} - {nextSide} : {leftOpenCount} - {rightOpenCount}");
 
-                _GameUIManager.InGameOpenImage(nextSide, (value - 1) / 2);
+                _GameUIManager.InGameSlotOpenImage(nextSide, (value - 1) / 2);
             })
             .AddTo(this.gameObject);
 
@@ -244,16 +243,7 @@ public class GameCharacter : MonoBehaviour
         tmpLeftChars = leftSideChars.ToList();
         tmpRightChars = rightSideChars.ToList();
 
-        _GameUIManager.InGameSideImg(GetCharacterSprites(leftSideChars), GetCharacterSprites(rightSideChars));
-
-        //foreach (var item in leftSideChars)
-        //{
-        //    Debug.Log($"Left : {item}");
-        //}
-        //foreach (var item in rightSideChars)
-        //{
-        //    Debug.Log($"Right : {item}");
-        //}
+        _GameUIManager.InGameSlotSideImg(GetCharacterSprites(leftSideChars), GetCharacterSprites(rightSideChars));
     }
 
     /// <summary>
@@ -414,7 +404,13 @@ public class GameCharacter : MonoBehaviour
         }
 
         // 보너스 캐릭터 조사 필요
-        gameController.IsBonus = bonusCharacters[charType];
+        var isBonus = bonusCharacters[charType];
+        gameController.IsBonus = isBonus;
+        if(isBonus)
+        {
+            var bonusSlot = GetCharacterSlot(side, charType);
+            _GameUIManager.InGameSlotMoveBonusChar(bonusSlot.side, bonusSlot.arrayNum);
+        }
 
         gameController.OnCorrect?.Invoke(bCorrect);
         if (!bCorrect)
@@ -483,7 +479,6 @@ public class GameCharacter : MonoBehaviour
 
     #region Bomb
 
-    // *이미지 없음
     public void SpawnBomb(int order = -1)
     {
         int layer = Values.MaxSpawnCharacterNum - order;
@@ -557,11 +552,11 @@ public class GameCharacter : MonoBehaviour
             // 피버 상태에서는 특정 캐릭터만 활성화 되어야함 + 모든 캐릭터 이펙트 활성화
             bonusCharacters[0] = true;
             bonusCharacterCount++;
-            _GameUIManager.InGameFeverBonus(true);
+            _GameUIManager.InGameSlotFeverBonus(true);
             yield return waitTime;
             bonusCharacters[0] = false;
             bonusCharacterCount--;
-            _GameUIManager.InGameFeverBonus(false);
+            _GameUIManager.InGameSlotFeverBonus(false);
         }
         else
         {
@@ -597,11 +592,11 @@ public class GameCharacter : MonoBehaviour
 
             bonusCharacters[bonusCharacter] = true;
             bonusCharacterCount++;
-            _GameUIManager.InGameBonusCharImg(true, side, arrayNum);
+            _GameUIManager.InGameSlotSetBonusChar(true, side, arrayNum);
             yield return waitTime;
             bonusCharacters[bonusCharacter] = false;
             bonusCharacterCount--;
-            _GameUIManager.InGameBonusCharImg(false, side, arrayNum);
+            _GameUIManager.InGameSlotSetBonusChar(false, side, arrayNum);
         }
     }
 
@@ -612,15 +607,6 @@ public class GameCharacter : MonoBehaviour
         if (isFever)
         {
             feverCharacter = leftSideChars[0];          // 0번캐릭터 고정 지정하기
-            //var rand = Random.Range(0, leftOpenCount + rightOpenCount);
-            //if (rand < leftOpenCount)
-            //{
-            //    feverCharacter = leftSideChars[rand];
-            //}
-            //else
-            //{
-            //    feverCharacter = rightSideChars[rand - leftOpenCount];
-            //}
 
             tmpLeftChars.Clear();
             tmpRightChars.Clear();
@@ -634,7 +620,7 @@ public class GameCharacter : MonoBehaviour
             tmpLeftChars.Add(feverCharacter);
             tmpRightChars.Add(feverCharacter);
 
-            _GameUIManager.InGameSideImg(GetCharacterSprites(tmpLeftChars), GetCharacterSprites(tmpRightChars));
+            _GameUIManager.InGameSlotSideImg(GetCharacterSprites(tmpLeftChars), GetCharacterSprites(tmpRightChars));
 
             // 게임 캐릭터들 통일 시키기
             while (spawnCharacters.Count > 0)
@@ -655,8 +641,6 @@ public class GameCharacter : MonoBehaviour
             {
                 SpawnCharacters(i);
             }
-
-            // Debug.Log("선택됨");
         }
         else
         {
@@ -665,68 +649,13 @@ public class GameCharacter : MonoBehaviour
             tmpLeftChars = leftSideChars.ToList();
             tmpRightChars = rightSideChars.ToList();
 
-            _GameUIManager.InGameSideImg(GetCharacterSprites(tmpLeftChars), GetCharacterSprites(tmpRightChars));
+            _GameUIManager.InGameSlotSideImg(GetCharacterSprites(tmpLeftChars), GetCharacterSprites(tmpRightChars));
         }
-
-        //if (isFever)
-        //{
-        //    // 캐릭터 이미지 하나로 통일
-        //    tmpLeftCharacters = leftSideChars.ToList();
-        //    tmpRightCharacters = rightSideChars.ToList();
-
-        //    var rand = Random.Range(0, leftOpenCount + rightOpenCount);
-        //    if (rand < leftOpenCount)
-        //    {
-        //        feverCharacter = leftSideChars[rand];
-        //    }
-        //    else
-        //    {
-        //        feverCharacter = rightSideChars[rand - leftOpenCount];
-        //    }
-
-        //    leftSideChars.Clear();
-        //    rightSideChars.Clear();
-
-        //    leftSideChars.Add(feverCharacter);
-        //    rightSideChars.Add(feverCharacter);
-
-        //    leftSideChars.Add(feverCharacter);
-        //    rightSideChars.Add(feverCharacter);
-
-        //    leftSideChars.Add(feverCharacter);
-        //    rightSideChars.Add(feverCharacter);
-
-        //    _GameUIManager.InGameSideImg(GetCharacterSprites(ESide.Left), GetCharacterSprites(ESide.Right));
-
-        //    // 게임 캐릭터들 통일 시키기
-        //    while (spawnCharacters.Count > 0)
-        //    {
-        //        GameObject go = spawnCharacters.Dequeue().gameObject;
-        //        PoolingManager.Instance.Enqueue(go);
-        //    }
-
-        //    for (int i = 0, length = Values.MaxSpawnCharacterNum; i < length; i++)
-        //    {
-        //        SpawnCharacters(i);
-        //    }
-
-        //    Debug.Log("선택됨");
-        //}
-        //else
-        //{
-        //    // 캐릭터 이미지 되돌리기
-
-        //    leftSideChars = tmpLeftCharacters;
-        //    rightSideChars = tmpRightCharacters;
-
-        //    _GameUIManager.InGameSideImg(GetCharacterSprites(ESide.Left), GetCharacterSprites(ESide.Right));
-        //}
     }
 
     /// <summary>
     /// 캐릭터 뒤섞기
-    /// *SetCharacters와 다른점은 이미 있는 캐릭터에서 랜덤을 돌려야 한다는 것
-    /// 번호 내에서 랜덤을 돌려야 함
+    /// *처음(SetCharacters)과 다른점은 열린 캐릭터에서만 랜덤을 돌려야 한다는 것
     /// </summary>
     public void Jumble()
     {
@@ -734,17 +663,11 @@ public class GameCharacter : MonoBehaviour
         List<ECharacter> tmpList = randomCharacters.ToList();
         int rand = -1;
 
-        //foreach (var item in tmpList)
-        //{
-        //    Debug.Log("Tmp Item : " + item.ToString());
-        //}
-
         for (int i = 0, length = ShowCharacterNum; i < length; i++)
         {
             rand = Random.Range(0, length - i);
             result.Add(tmpList[rand]);
             tmpList.RemoveAt(rand);
-            //Debug.Log(tmpList[rand].ToString());
         }
         foreach (var item in tmpList)
         {
@@ -808,7 +731,7 @@ public class GameCharacter : MonoBehaviour
         this.tmpLeftChars = leftSideChars.ToList();
         this.tmpRightChars = rightSideChars.ToList();
 
-        _GameUIManager.InGameSideImg(GetCharacterSprites(leftSideChars), GetCharacterSprites(rightSideChars));
+        _GameUIManager.InGameSlotSideImg(GetCharacterSprites(leftSideChars), GetCharacterSprites(rightSideChars));
     }
 
     protected List<Sprite> GetCharacterSprites(List<ECharacter> characters)
@@ -820,21 +743,28 @@ public class GameCharacter : MonoBehaviour
             result.Add(CharacterDictionary[character].headSprite);
         }
 
-        //if(side == ESide.Left)
-        //{
-        //    foreach (var character in leftSideChars)
-        //    {
-        //        result.Add(CharacterDictionary[character].headSprite);
-        //    }
-        //}
-        //else
-        //{
-        //    foreach (var character in rightSideChars)
-        //    {
-        //        result.Add(CharacterDictionary[character].headSprite);
-        //    }
-        //}
-
         return result;
+    }
+
+    protected (ESide side, int arrayNum) GetCharacterSlot(ESide side, ECharacter type)
+    {
+        if(side == ESide.Left)
+        {
+            for (int i = 0, length = leftSideChars.Count; i < length; i++)
+            {
+                if (leftSideChars[i] == type)
+                    return (side, i);
+            }
+        }
+        else
+        {
+            for (int i = 0, length = rightSideChars.Count; i < length; i++)
+            {
+                if (rightSideChars[i] == type)
+                    return (side, i);
+            }
+        }
+
+        return (side, -1);
     }
 }

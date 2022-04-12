@@ -534,6 +534,7 @@ public class GameManager : Singleton<GameManager>
 
     /// <summary>
     /// **Pause, Focus에서 발생 시 초기화해줘야하기때문에 변수명을 저장할 필요가 있음
+    /// (기존에 진행중인 ObserverCoroutine을 종료 시켜야 하기 때문)
     /// </summary>
     /// <param name="dailyGift"></param>
     public void SetAdTimer(EDailyGift dailyGift, int time = -1)

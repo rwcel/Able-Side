@@ -44,7 +44,7 @@ public class ShopItem : MonoBehaviour
         // *ShopItem은 역산을 통해 원가를 산정하기
         if (shopData.salePercent > 0)
         {
-            saleText.text = $"{shopData.salePercent}%";
+            // saleText.text = $"{shopData.salePercent}%";
 #if UNITY_EDITOR
             beforePriceText.text = $"<s>\\{shopData.price.CommaThousands()}</s>";
 
@@ -54,9 +54,9 @@ public class ShopItem : MonoBehaviour
             if (shopData.productID != "")
             {
                 priceText.text = IAPManager.Instance.GetPrice(shopData.productID);
-                float beforePrice = (float)(IAPManager.Instance.GetPriceToDecimal(shopData.productID)
-                                            * 100 / (100 - shopData.salePercent));
-                beforePriceText.text = $"<s>{beforePrice}</s>";                     // **숫자만 나옴
+                int beforePrice = (int)(IAPManager.Instance.GetPriceToDecimal(shopData.productID)
+                                        * 100 / (100 - shopData.salePercent));
+                beforePriceText.text = $"<s>{beforePrice.CommaThousands()}</s>";                     // **숫자만 나옴
             }
 #endif
         }
@@ -80,7 +80,6 @@ public class ShopItem : MonoBehaviour
 
     /// <summary>
     /// Gacha Item은 사용하지 않음
-    /// 
     /// base.OnPUrchaseComplete를 마지막에 실행하게 하기
     /// *RewardUI가 AddItem보다 뒤에 밀려야함
     /// </summary>

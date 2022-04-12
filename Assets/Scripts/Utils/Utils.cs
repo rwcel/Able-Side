@@ -19,7 +19,8 @@ public static class Utils
     {
         // 순위권 밖
         if (value == 0 || value > 100)
-            return 233.Localization();
+            return "-";
+            //return 233.Localization();
 
         if (BackEndServerManager.Instance.Language == ELanguage.English)
         {

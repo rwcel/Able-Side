@@ -58,7 +58,6 @@ public class ItemSelectUI : PopupUI
             itemsUI[i].type = (ELobbyItem)i;
 
             itemsUI[i].stateObjs = new GameObject[stateCount];
-            //new GameObject[Enum.GetValues(typeof(EItemState)).Length];
 
             for (int state = 0; state < stateCount; state++)
             {
@@ -72,7 +71,6 @@ public class ItemSelectUI : PopupUI
     {
         base.UpdateData();
 
-        //*foreach 안됨
         ClearItems();
     }
 
@@ -92,8 +90,6 @@ public class ItemSelectUI : PopupUI
         startButton.onClick.AddListener(OnGameStart);
         cancelButton.onClick.AddListener(_GamePopup.ClosePopup);
 
-
-        // **아이템 이름 설정 : Language
         for (int i = 0, length = itemsUI.Length; i < length; i++)
         {
             // *i값을 바로 넣으면 참조로 들어가서 모두가 6이 된다
@@ -101,10 +97,8 @@ public class ItemSelectUI : PopupUI
 
             var lobbyItemData = LevelData.Instance.LobbyItemDatas[i];
 
-            //itemsUI[i].nameText.text = LevelData.Instance.LobbyItemDatas[i].type.ToString();
             itemsUI[i].itemImage.sprite = lobbyItemData.sprite;
             itemsUI[i].saleObj.SetActive(lobbyItemData.salePercent != 0);
-            itemsUI[i].saleText.text = $"{lobbyItemData.salePercent}%";
 
             itemsUI[i].button.onClick.AddListener(() => OnClickItem(lobbyItem));
         }
@@ -138,7 +132,6 @@ public class ItemSelectUI : PopupUI
 
     /// <summary>
     /// select가 아닌 상태로 바꾸기
-    /// button clicked도?
     /// </summary>
     public void ClearItems()
     {
@@ -149,15 +142,20 @@ public class ItemSelectUI : PopupUI
         }
     }
 
+    /// <summary>
+    ///  **state변경과 count변경이 동시에 일어나는 문제로 인해 따로 처리
+    /// </summary>
+    /// <param name="item"></param>
     private void OnBuyItem(ELobbyItem item)
     {
-        // **state변경과 count변경이 동시에 일어나는 문제
         isBuy = true;
         itemsUI[(int)item].state = EItemState.Select;
     }
 
     /// <summary>
     /// 아이템 클릭 -> 정보 저장
+    /// 해당 아이템이 0개라면 구입 화면으로 이동
+    /// 1개 이상이라면 선택 or 선택 해제
     /// </summary>
     private void OnClickItem(ELobbyItem item)
     {
@@ -184,11 +182,6 @@ public class ItemSelectUI : PopupUI
             itemsUI[(int)item].state = EItemState.Select;
             itemsUI[(int)item].buttonImage.sprite = selectSprite;
         }
-
-        // itemInfo = itemsUI[(int)item];
-        // itemInfo.button.targetGraphic.color = itemInfo.isClicked ? Color.gray : Color.white;     // Anim?
-
-        // Debug.Log($"{itemUI.Length} / {(int)item} : {itemInfo.isClicked}");
     }
 
     /// <summary>
@@ -287,7 +280,6 @@ public class ItemSelectUI : PopupUI
     {
         // Debug.Log($"{num} - {state}");
 
-        // itemsUI[num].state = (num > 0) ? EItemState.Count : EItemState.Empty;
         foreach (var item in itemsUI[num].stateObjs)
         {
             item.SetActive(false);

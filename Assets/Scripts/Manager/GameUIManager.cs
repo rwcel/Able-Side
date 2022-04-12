@@ -62,19 +62,21 @@ public class GameUIManager : Singleton<GameUIManager>
 
     #region InGame
 
-    public void InGameOpenImage(ESide side, int arrayNum) => inGameUI.OpenImage(side, arrayNum);
+    public void InGameSlotOpenImage(ESide side, int arrayNum) => inGameUI.SlotUI.OpenImage(side, arrayNum);
 
-    public void InGameSideImg(List<Sprite> leftSprites, List<Sprite> rightSprites) => inGameUI.SetSideImage(leftSprites, rightSprites);
+    public void InGameSlotSideImg(List<Sprite> leftSprites, List<Sprite> rightSprites) => inGameUI.SlotUI.SetSideImage(leftSprites, rightSprites);
 
     public void InGameMaxTime(float time) => inGameUI.SetMaxTime(time);
 
     // *옵저버 패턴?
-    public void InGameBlur(bool isBlur) => inGameUI.Blur(isBlur);
+    public void InGameSlotBlur(bool isBlur) => inGameUI.SlotUI.Blur(isBlur);
     // public void InGameReverse(bool isReverse) => inGameUI.ReverseButton(isReverse);
 
-    public void InGameBonusCharImg(bool isBonus, ESide side, int arrayNum) => inGameUI.BonusCharImg(isBonus, side, arrayNum);
+    public void InGameSlotSetBonusChar(bool isBonus, ESide side, int arrayNum) => inGameUI.SlotUI.SetBonusChar(isBonus, side, arrayNum);
 
-    public void InGameFeverBonus(bool isBonus) => inGameUI.FeverBonus(isBonus);
+    public void InGameSlotMoveBonusChar(ESide side, int arrayNum) => inGameUI.SlotUI.MoveBonusChar(side, arrayNum);
+
+    public void InGameSlotFeverBonus(bool isBonus) => inGameUI.SlotUI.FeverBonus(isBonus);
 
     public void InGamePauseReady(bool isPause) => inGameUI.PauseReadyAnim(isPause);
 

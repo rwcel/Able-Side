@@ -85,13 +85,13 @@ namespace Obstacle
             base.Apply();
 
             // 블러처리
-            GameUIManager.Instance.InGameBlur(true);
+            GameUIManager.Instance.InGameSlotBlur(true);
         }
 
         public override void EndApply() 
         {
             base.EndApply();
-            GameUIManager.Instance.InGameBlur(false);
+            GameUIManager.Instance.InGameSlotBlur(false);
         }
     }
 }

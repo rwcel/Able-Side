@@ -158,7 +158,7 @@ public class GameController : MonoBehaviour
         // 효과등에 따른 시간 추가?
         resultTime = Time;
         GameUIManager.Instance.InGameMaxTime(resultTime);
-        Debug.Log($"{resultTime} / {Time}");
+        // Debug.Log($"{resultTime} / {Time}");
 
         // 로그 기록 데이터
         itemAddCount = 0;
@@ -233,11 +233,6 @@ public class GameController : MonoBehaviour
             OnBomb?.Invoke();
         }
 
-        //if (!IsFever && Combo >= LevelData.Instance.FeverComboNum)
-        //{
-        //    IsFever = true;
-        //}
-
         AddTime(IsBomb ? Values.BombAddTime : timeInfo.successTime);
     }
 
@@ -263,8 +258,6 @@ public class GameController : MonoBehaviour
 
     public bool UseShield()
     {
-        //Debug.Log($"Shield Count : {itemShields} , {Shield}");
-
         for (int i = 0, length = itemShields.Count; i < length; i++)
         {
             if (itemShields[i] > 0)
@@ -272,7 +265,6 @@ public class GameController : MonoBehaviour
                 itemShields[i]--;
                 shieldCount--;
 
-                // Debug.Log($"Shield Count : {itemShields[i]}");
                 return true;
             }
         }
@@ -339,7 +331,7 @@ public class GameController : MonoBehaviour
             //Debug.Log($"{delay} : {calcTime} {calcTime * timeInfo.decreaseTime}");
         }
 
-        _AudioManager.PlaySFX(ESFX.Result);
+        _AudioManager.PlaySFX(ESFX.GameOver);
         _GameManager.GameOver((int)(Score * ExtraScore), MaxCombo);
 
         GamePopup.Instance.OpenPopup(EGamePopup.Result, 
@@ -402,7 +394,7 @@ public class GameController : MonoBehaviour
     }
 
     public InGameItemData NormalGacha()
-    {
+    {        
         float rand = Random.Range(0f, 100f);
         //Debug.Log($"normal : {rand}");
         int idx = 0;
@@ -477,6 +469,7 @@ public class GameController : MonoBehaviour
             case EInGameItem.AddDia9:
                 // 인게임 중 재화 모으다가 나중에 전해주기
                 AddDia += inGameItem.value;
+                // PoolingManager.Instance.Dequeue(Values.Key_DiaEffect, Values.FrontParticlePos, Quaternion.identity);
                 _AudioManager.PlaySFX(ESFX.GetDia);
                 break;
             case EInGameItem.SuperFever:

@@ -107,8 +107,8 @@
 222 : Go back Lobby?<br>Used item won't be restored.
 230 : Edit Profile
 231 : Higher {0} Cumulative score
-232 : If all of profile unlock, you can get {0}% bonus.
-233 : UnRanked
+232 : Earning all badges will result in a {0}% point bonus.
+233 :  - 
 240 : Serial Code
 250 : Magic Mushroom Shop
 251 : You can buy special magic mushrooms for playing games!
@@ -145,6 +145,11 @@
 377 : You can get 1.2 times at extra score in 5.5s, and only one animal comes out.
 378 : If it is two super fever items overlapped.<br>You can get 1.5 times at extra score in 5.5s, and only one animal comes out.
 379 : If it is three super fever items overlapped.<br>You can get 2 times at extra score in 5.5s, and only one animal comes out.
+380 : Touch the left and right buttons to send the animal in the direction that fits the portrait
+381 : Acquire items or gems with probability every 10 combo!
+382 : Portraits are added one by one when they reach a certain scores, increasing to a total of 6.
+383 : The more combos you get, the more points you get!
+384 : If you send the animal in the right direction, the gauge will accumulate and create a bomb that can send the animal at once.
 400 : Wood
 401 : Bronze
 402 : Silver

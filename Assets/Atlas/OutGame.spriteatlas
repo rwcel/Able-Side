@@ -23,7 +23,7 @@ SpriteAtlas:
     platformSettings:
     - serializedVersion: 3
       m_BuildTarget: Android
-      m_MaxTextureSize: 2048
+      m_MaxTextureSize: 4096
       m_ResizeAlgorithm: 0
       m_TextureFormat: 47
       m_TextureCompression: 1
@@ -59,6 +59,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ef1f3ad09864a2f489aa91a054bfe0aa, type: 3}
   - {fileID: 21300000, guid: 6352dae0905e7d44bbe215daec3edf64, type: 3}
   - {fileID: 21300000, guid: 93399d21339e2774abf8c51846c854f3, type: 3}
+  - {fileID: 21300000, guid: c2c188318d18b8d4799b42814a51a713, type: 3}
   - {fileID: 21300000, guid: eb3e49416d0af02468838f668a927b89, type: 3}
   - {fileID: 21300000, guid: 7dbd0251aaa70004dade4425ff70a0e5, type: 3}
   - {fileID: 21300000, guid: d7d1106143f490649ae37d4d445dcfd5, type: 3}
@@ -78,6 +79,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cbbbc8a2ed36c2242bb1f1b76b470c8f, type: 3}
   - {fileID: 21300000, guid: b0526dd2fda891445b9e739dfb4df259, type: 3}
   - {fileID: 21300000, guid: 8ef654f24cfc2c84cb970db45e8ceb82, type: 3}
+  - {fileID: 21300000, guid: 9a096323fe3acf44e9b45ac31e4867ac, type: 3}
   - {fileID: 21300000, guid: 4f35dd33191318e45a2223e879ab1e41, type: 3}
   - {fileID: 21300000, guid: f3ca534359e5037458219e64d1ce6dd5, type: 3}
   - {fileID: 21300000, guid: 9fb1aca382c9f6c468ae67fe7c310b6b, type: 3}
@@ -148,6 +150,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4a33941ef46fdfd40a47656675b99861, type: 3}
   - {fileID: 21300000, guid: 3512342ea2d9fdd4a9ca3d45bd25dda5, type: 3}
   - {fileID: 21300000, guid: 5de87feefa76be44583736635e12158f, type: 3}
+  - {fileID: 21300000, guid: 1397eb0f567ea6d4091f1fed0da9414f, type: 3}
   - {fileID: 21300000, guid: 4ef51e1fde48b7a438deb4c9bb546822, type: 3}
   - {fileID: 21300000, guid: c40cd79f5f6776144a379bbd0c4abc70, type: 3}
   - {fileID: 21300000, guid: 91882e9f76ee98545a08b8e8bfaac48f, type: 3}
@@ -161,6 +164,7 @@ SpriteAtlas:
   - Icon_diamond
   - Line_2
   - Icon_mail
+  - Text_Timeup
   - Panel_WHT
   - Icon_Mushroom
   - Icon_Language
@@ -180,6 +184,7 @@ SpriteAtlas:
   - DailyBox_Top
   - Panel_BLK
   - DailyBox_Bottom
+  - Ribbon_Sale
   - Slot_Circle
   - Btn_Start
   - Border_2
@@ -250,6 +255,7 @@ SpriteAtlas:
   - Slot_StartItem_Select
   - DailyBox
   - Badge_Red
+  - TutorialChar
   - Texture_Nomail
   - Toggle_Green
   - Icon_Shop

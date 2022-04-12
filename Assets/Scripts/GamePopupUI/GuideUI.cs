@@ -71,6 +71,7 @@ public class GuideUI : PopupUI
 
     private void ShowGuide(int addNum)
     {
+        AudioManager.Instance.PlaySFX(ESFX.Touch);
         dotImages[curNum].color = Color.gray;
 
         curNum += addNum;
@@ -94,6 +95,6 @@ public class GuideUI : PopupUI
         guideImage.sprite = guides[curNum].image;
         guideImage.SetNativeSize();
         var guideRectTr = guideImage.transform as RectTransform;
-        guideRectTr.sizeDelta = new Vector2(guideRectTr.sizeDelta.x, guideRectTr.sizeDelta.y) * 2.5f;
+        guideRectTr.sizeDelta = new Vector2(guideRectTr.sizeDelta.x, guideRectTr.sizeDelta.y) * 2f;
     }
 }
